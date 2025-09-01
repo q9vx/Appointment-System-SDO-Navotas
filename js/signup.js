@@ -1,8 +1,3 @@
-// signup.js
-import { auth, db } from "./firebase-config.js";
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { setDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
 const signupForm = document.querySelector("form");
 
 signupForm.addEventListener("submit", async (e) => {
@@ -17,7 +12,7 @@ signupForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("signupPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    if (!role || !idNumber || !firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!role  !idNumber  !firstName  !lastName  !email  !password  !confirmPassword) {
         alert("Please fill in all fields.");
         return;
     }
@@ -28,12 +23,10 @@ signupForm.addEventListener("submit", async (e) => {
     }
 
     try {
-        // Create Firebase Auth user
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // Save user info to Firestore
-        await setDoc(doc(db, "users", user.uid), {
+        await firebase.firestore().collection("users").doc(user.uid).set({
             role: role,
             idNumber: idNumber,
             firstName: firstName,
