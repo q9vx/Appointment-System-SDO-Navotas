@@ -135,31 +135,27 @@ footer {
   min-height: 60vh;
 }
 
-/* Hero image container */
 .hero-section {
   width: 100%;
-  height: 100vh; /* full viewport height */
-  overflow: hidden; /* hide any overflow */
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* Hero image */
 .hero-img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* cover entire area, crop if needed */
+  object-fit: cover;
 }
 
-/* Optional: overlay for readability */
 .hero-section::before {
   content: '';
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.35); /* dark overlay for contrast */
+  background-color: rgba(0,0,0,0.35);
   z-index: 0;
 }
 
-/* Hero text overlay */
 .hero-text {
-  z-index: 1; /* ensures text is above image and overlay */
+  z-index: 1;
 }
