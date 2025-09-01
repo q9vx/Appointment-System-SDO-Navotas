@@ -1,0 +1,165 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(248 249 250);
+}
+
+header {
+    text-align: center;
+    background-color: #727272;
+    padding: 20px 10px;
+}
+
+header .logo {
+    width: 80px;
+    height: auto;
+}
+
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #727272;
+    font-weight: bold;
+}
+
+main {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+section {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.cta-buttons {
+    text-align: center;
+}
+
+.cta-buttons .btn-primary, .cta-buttons .btn-secondary {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #415378;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #979696;
+    color: #fff;
+}
+
+footer {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #727272;
+    margin-top: 30px;
+}
+
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 5px 0;
+}
+
+.timeline-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding: 5px 0;
+    color: #888;
+    font-weight: bold;
+}
+
+.timeline-step::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.timeline-step.active {
+    color: #fff;
+    background-color: #727272;
+    border-radius: 5px;
+}
+
+.timeline-step.active::before {
+    background-color: #727272;
+}
+
+.position-relative::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.35);
+  z-index: 0;
+}
+
+.position-relative h1,
+.position-relative p,
+.position-relative a {
+  z-index: 1;
+}
+
+.card-body {
+  padding: 10px;
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 10px;
+  }
+}
+
+.container-fluid.position-relative {
+  min-height: 60vh;
+}
+
+/* Hero image container */
+.hero-section {
+  width: 100%;
+  height: 100vh; /* full viewport height */
+  overflow: hidden; /* hide any overflow */
+}
+
+/* Hero image */
+.hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cover entire area, crop if needed */
+}
+
+/* Optional: overlay for readability */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.35); /* dark overlay for contrast */
+  z-index: 0;
+}
+
+/* Hero text overlay */
+.hero-text {
+  z-index: 1; /* ensures text is above image and overlay */
+}
