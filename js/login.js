@@ -39,7 +39,7 @@ loginForm.addEventListener("submit", async (e) => {
       return;
     }
 
-    window.location.href = "dashboard.html";
+    window.location.href = "index.html";
 
   } catch (error) {
     console.error(error);
