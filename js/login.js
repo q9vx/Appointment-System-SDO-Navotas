@@ -1,5 +1,3 @@
-// login.js
-
 const loginForm = document.getElementById("loginForm");
 const loginError = document.getElementById("loginError");
 
@@ -18,11 +16,17 @@ loginForm.addEventListener("submit", async (e) => {
   }
 
   try {
-    // Sign in user
+
     const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
     const user = userCredential.user;
 
-    // Verify ID in Firestore
+    await user.reload();
+      if (!user.emailVerified) {
+        loginError.textContent = "Please verify your email before logging in.";
+        await auth.signOut();
+        return;
+      }
+
     const userDoc = await firebase.firestore().collection("users").doc(user.uid).get();
     if (!userDoc.exists) {
       loginError.textContent = "User record not found.";
@@ -35,7 +39,6 @@ loginForm.addEventListener("submit", async (e) => {
       return;
     }
 
-    // Redirect to dashboard
     window.location.href = "dashboard.html";
 
   } catch (error) {

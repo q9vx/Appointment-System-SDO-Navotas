@@ -12,7 +12,7 @@ signupForm.addEventListener("submit", async (e) => {
     const password = document.getElementById("signupPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    if (!role  !idNumber  !firstName  !lastName  !email  !password  !confirmPassword) {
+    if (!role || !idNumber || !firstName || !lastName || !email || !password || !confirmPassword) {
         alert("Please fill in all fields.");
         return;
     }
@@ -23,8 +23,10 @@ signupForm.addEventListener("submit", async (e) => {
     }
 
     try {
+
         const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
+        await user.sendEmailVerification();
 
         await firebase.firestore().collection("users").doc(user.uid).set({
             role: role,
@@ -34,7 +36,7 @@ signupForm.addEventListener("submit", async (e) => {
             email: email
         });
 
-        alert("Account created successfully!");
+        alert("Account created successfully! Please check your email to verify your account.");
         window.location.href = "login.html";
 
     } catch (error) {

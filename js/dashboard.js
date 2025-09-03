@@ -42,5 +42,4 @@ window.updateStatus = async function(id, status) {
   loadAppointments();
 }
 
-// Initial load
 loadAppointments();
