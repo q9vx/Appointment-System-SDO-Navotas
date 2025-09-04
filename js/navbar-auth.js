@@ -11,11 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const navMyAppointments = document.getElementById("navMyAppointments");
     const navCreateAppointment = document.getElementById("navCreateAppointment");
-    const navLogout = document.getElementById("navLogout");
     const navLogin = document.getElementById("navLogin");
     const navSignup = document.getElementById("navSignup");
+    const navProfile = document.getElementById("navProfile");
+    const profileName = document.getElementById("profileName");
 
-    if (!navMyAppointments || !navCreateAppointment || !navLogout || !navLogin || !navSignup) {
+    if (!navMyAppointments || !navCreateAppointment || !navLogin || !navSignup || !navProfile) {
       console.error("⚠️ Navbar elements not found. Check your HTML IDs.");
       return;
     }
@@ -25,25 +26,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const userDoc = await db.collection("users").doc(user.uid).get();
         const userData = userDoc.exists ? userDoc.data() : { role: "user" };
 
+        navProfile.classList.remove("d-none");
         navMyAppointments.classList.remove("d-none");
-        navLogout.classList.remove("d-none");
+        navCreateAppointment.classList.remove("d-none");
+
         navLogin.classList.add("d-none");
         navSignup.classList.add("d-none");
 
+        profileName.textContent = user.displayName || user.email.split("@")[0];
+
         if (userData.role === "admin") {
           navCreateAppointment.classList.add("d-none");
-        } else {
-          navCreateAppointment.classList.remove("d-none");
         }
 
       } catch (err) {
         console.error("Error fetching user data:", err);
       }
     } else {
-      // Show guest nav items
+
+      navProfile.classList.add("d-none");
       navMyAppointments.classList.add("d-none");
       navCreateAppointment.classList.add("d-none");
-      navLogout.classList.add("d-none");
 
       navLogin.classList.remove("d-none");
       navSignup.classList.remove("d-none");

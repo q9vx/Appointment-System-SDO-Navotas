@@ -15,25 +15,49 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-3">
   <div class="container-fluid">
+
     <a class="navbar-brand d-flex align-items-center" href="index.html">
-      <img src="assets/logo.png" alt="SDO Navotas" width="60" height="60" class="me-2">
-      <span class="fw-bold">SDO Navotas Appointment System</span>
+      <img src="assets/logo.png" alt="SDO Navotas" width="60" height="60" class="me-3">
+      <span class="fw-bold fs-5">SDO Navotas Appointment System</span>
     </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-lg-center">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="my-appointments.html">My Appointments</a></li>
-        <li class="nav-item ms-lg-3">
-          <a class="nav-link p-0 active" href="create-appointment.html" title="Create Appointment">
-            <i class="bi bi-calendar-plus fs-4"></i>
+
+        <li class="nav-item" id="navLogin">
+          <a class="nav-link px-3 py-2" href="login.html">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Login
           </a>
         </li>
+        <li class="nav-item" id="navSignup">
+          <a class="nav-link px-3 py-2" href="signup.html">
+            <i class="bi bi-pencil-square me-2"></i> Signup
+          </a>
+        </li>
+
+        <li class="nav-item dropdown d-none" id="navProfile">
+          <a class="nav-link dropdown-toggle d-flex align-items-center px-3 py-2" href="#" id="profileDropdown"
+             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-5 me-2"></i>
+            <span id="profileName" class="fw-medium">Profile</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="profileDropdown" style="min-width: 220px;">
+            <li class="dropdown-header py-2">Welcome, <strong id="profileNameHeader">User</strong></li>
+            <li><a class="dropdown-item py-2" href="my-appointments.html"><i class="bi bi-calendar3 me-2"></i> My Appointments</a></li>
+            <li><a class="dropdown-item py-2" href="create-appointment.html"><i class="bi bi-plus-circle me-2"></i> Create Appointment</a></li>
+            <li><a class="dropdown-item py-2" href="profile.html"><i class="bi bi-gear me-2"></i> Account Settings</a></li>
+            <li><hr class="dropdown-divider my-2"></li>
+            <li><a class="dropdown-item text-danger py-2" href="#" onclick="logoutUser()"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+          </ul>
+        </li>
+
       </ul>
     </div>
   </div>
