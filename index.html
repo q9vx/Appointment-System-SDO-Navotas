@@ -13,31 +13,38 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
   <div class="container-fluid">
     <a class="navbar-brand d-flex align-items-center" href="index.html">
-      <img src="assets/logo.png" alt="SDO Navotas" width="60" height="60" class="me-2">
-      <span class="fw-bold">SDO Navotas Appointment System</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <img src="assets/logo.png" alt="SDO Navotas" width="50" height="50" class="me-2">
+        <span class="fw-bold">SDO Navotas Teacher Appointment System</span>
+            </a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-<ul class="navbar-nav ms-auto align-items-lg-center">
-<li class="nav-item d-none" id="navMyAppointments">
-  <a class="nav-link" href="my-appointments.html">My Appointments</a>
-</li>
-<li class="nav-item d-none" id="navCreateAppointment">
-  <a class="nav-link" href="create-appointment.html">Create Appointment</a>
-</li>
-<li class="nav-item" id="navLogin"><a class="nav-link" href="login.html">Login</a></li>
-<li class="nav-item" id="navSignup"><a class="nav-link" href="signup.html">Signup</a></li>
-<li class="nav-item d-none" id="navLogout">
-  <a class="nav-link" href="#" onclick="logoutUser()">Logout</a>
-</li>
-
+  <div class="collapse navbar-collapse" id="navbarNav">
+<ul class="navbar-nav ms-auto align-items-lg-center text-center">
+  <li class="nav-item d-none" id="navMyAppointments">
+    <a class="nav-link" href="my-appointments.html">
+      📅 My Appointments
+        </a>
+            </li>
+  <li class="nav-item d-none" id="navCreateAppointment">
+    <a class="nav-link" href="create-appointment.html">
+      ➕ Create Appointment
+        </a>
+            </li>
+  <li class="nav-item" id="navLogin">
+    <a class="nav-link" href="login.html">🔑 Login</a>
+            </li>
+  <li class="nav-item" id="navSignup">
+    <a class="nav-link" href="signup.html">📝 Signup</a>
+            </li>
+  <li class="nav-item d-none" id="navLogout">
+    <a class="nav-link" href="#" onclick="logoutUser()">🚪 Logout</a>
+            </li>
 </ul>
     </div>
   </div>
@@ -45,14 +52,17 @@
 
 <div class="hero-section position-relative text-center text-white">
   <img src="assets/school-hero.jpg" alt="Schools Division Office" class="hero-img">
-  
+
   <div class="position-absolute top-50 start-50 translate-middle px-3 hero-text">
-    <h1 class="display-4 fw-bold">Welcome to the Teacher Appointment System</h1>
-    <p class="lead">Create and track your appointments with the Schools Division Office of Navotas City in real-time.</p>
-    
-    <div class="d-flex justify-content-center mt-3 flex-wrap">
-      <a href="create-appointment.html" class="btn btn-primary mb-2 me-3">Create an Appointment</a>
-      <a href="dashboard.html" class="btn btn-success mb-2">Access for Teachers</a>
+    <h1 class="display-4 fw-bold">Schools Division Office Of Navotas</h1>
+    <p class="lead">Unofficial Teacher's Appointment System - Create and track your appointment in real time.</p>
+    <div class="d-flex flex-column flex-sm-row justify-content-center mt-3">
+      <a href="create-appointment.html" class="btn btn-primary mb-2 mb-sm-0 me-0 me-sm-3 w-100 w-sm-auto">
+        Create an Appointment
+      </a>
+      <a href="dashboard.html" class="btn btn-success w-100 w-sm-auto">
+        Access for Teachers
+      </a>
     </div>
   </div>
 </div>
