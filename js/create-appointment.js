@@ -1,57 +1,54 @@
-auth.onAuthStateChanged(async (user) => {
-  const protectedContent = document.getElementById("protectedContent");
+document.addEventListener("DOMContentLoaded", () => {
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-  if (user) {
-    const userDoc = await db.collection("users").doc(user.uid).get();
-    const userData = userDoc.exists ? userDoc.data() : null;
+  const overlay = document.getElementById("guestOverlay");
+  const goSignup = document.getElementById("goSignup");
 
-    if (userData && userData.role === "admin") {
-      alert("Admins cannot create appointments.");
-      window.location.href = "admin-dashboard.html";
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      overlay.style.display = "flex";
+
+      goSignup.addEventListener("click", () => {
+        window.location.href = "signup.html";
+      });
+
+      return;
+    }
+  });
+
+  const form = document.getElementById("createAppointmentForm");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    const reason = document.getElementById("reason").value.trim();
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const notes = document.getElementById("notes").value.trim();
+
+    if (!reason || !date || !time) {
+      alert("Please fill in all required fields.");
       return;
     }
 
-    protectedContent.style.display = "block";
+    try {
+      await db.collection("appointments").add({
+        userId: user.uid,
+        reason,
+        appointmentDate: date,
+        appointmentTime: time,
+        notes,
+        status: "Pending",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-    const form = document.getElementById("appointmentForm");
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const fullName = document.getElementById("fullName").value;
-      const email = document.getElementById("email").value;
-      const role = document.getElementById("role").value;
-      const teacherId = document.getElementById("teacherId").value || "";
-      const studentId = document.getElementById("studentId").value || "";
-      const appointmentDate = document.getElementById("appointmentDate").value;
-      const appointmentTime = document.getElementById("appointmentTime").value;
-      const reason = document.getElementById("reason").value;
-
-      try {
-        await db.collection("appointments").add({
-          fullName,
-          email,
-          role,
-          teacherId,
-          studentId,
-          appointmentDate,
-          appointmentTime,
-          reason,
-          status: "Pending",
-          userId: user.uid,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        alert("✅ Appointment created successfully!");
-        form.reset();
-        window.location.href = "my-appointments.html";
-      } catch (error) {
-        console.error("Error creating appointment:", error);
-        alert("❌ Failed to create appointment. Please try again.");
-      }
-    });
-
-  } else {
- alert("⚠️ You must log in first before creating an appointment.");
-    window.location.href = "login.html";
-  }
+      alert("✅ Appointment created successfully!");
+      window.location.href = "my-appointments.html";
+    } catch (error) {
+      console.error("Error creating appointment:", error);
+      alert("❌ Failed to create appointment. Try again.");
+    }
+  });
 });
