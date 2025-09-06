@@ -4,20 +4,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const overlay = document.getElementById("guestOverlay");
   const goSignup = document.getElementById("goSignup");
+  const form = document.getElementById("createAppointmentForm");
 
   auth.onAuthStateChanged(user => {
     if (!user) {
-      overlay.style.display = "flex";
-
-      goSignup.addEventListener("click", () => {
+      document.body.classList.add("guest-blur");
+      if (overlay) overlay.style.display = "flex";
+      if (goSignup) goSignup.addEventListener("click", () => {
         window.location.href = "signup.html";
       });
-
       return;
     }
+
+    document.body.classList.remove("guest-blur");
+    if (overlay) overlay.style.display = "none";
   });
 
-  const form = document.getElementById("createAppointmentForm");
+  if (!form) return;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
@@ -35,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await db.collection("appointments").add({
-        userId: user.uid,
+        userId: user.uid,    
         reason,
         appointmentDate: date,
         appointmentTime: time,
