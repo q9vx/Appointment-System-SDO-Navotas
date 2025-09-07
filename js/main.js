@@ -1,11 +1,10 @@
-// main.js
 auth.onAuthStateChanged(async (user) => {
   const authNav = document.getElementById("authNav");
   if (!authNav) return;
 
   if (user) {
     try {
-      // Fetch user role from Firestore
+
       const userDoc = await db.collection("users").doc(user.uid).get();
       const userData = userDoc.exists ? userDoc.data() : null;
 
@@ -16,7 +15,6 @@ auth.onAuthStateChanged(async (user) => {
         return;
       }
 
-      // Role-based redirect (only when on login or signup page)
       const path = window.location.pathname;
       if (path.includes("login.html") || path.includes("signup.html")) {
         if (userData.role === "admin") {
@@ -28,7 +26,6 @@ auth.onAuthStateChanged(async (user) => {
         }
       }
 
-      // Build dropdown menu
       let html = `
         <div class="dropdown">
           <a class="nav-link dropdown-toggle p-0" href="#" role="button" data-bs-toggle="dropdown">
@@ -41,7 +38,6 @@ auth.onAuthStateChanged(async (user) => {
             <li><hr class="dropdown-divider"></li>
       `;
 
-      // Show dashboard link depending on role
       if (userData.role === "admin") {
         html += `<li><a class="dropdown-item" href="admin/admin-dashboard.html">Admin Dashboard</a></li>`;
       } else {
@@ -52,7 +48,6 @@ auth.onAuthStateChanged(async (user) => {
         `;
       }
 
-      // Terms + logout
       html += `
             <li><a class="dropdown-item" href="terms.html">Terms of Service</a></li>
             <li><a class="dropdown-item text-danger" href="#" id="logoutBtn">Logout</a></li>
@@ -62,7 +57,6 @@ auth.onAuthStateChanged(async (user) => {
 
       authNav.innerHTML = html;
 
-      // Add logout listener
       const logoutBtn = document.getElementById("logoutBtn");
       if (logoutBtn) {
         logoutBtn.addEventListener("click", async (e) => {
@@ -75,7 +69,7 @@ auth.onAuthStateChanged(async (user) => {
       console.error("Auth check error:", err);
     }
   } else {
-    // Not logged in → show login button
+
     authNav.innerHTML = `
       <a class="nav-link p-0" href="login.html" title="Login">
         <i class="bi bi-person-circle fs-4"></i>

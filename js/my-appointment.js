@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("guest-blur");
     if (overlay) overlay.style.display = "none";
 
-    // Fetch all user's appointments without orderBy to avoid index requirement
     db.collection("appointments")
       .where("userId", "==", user.uid)
       .get()
@@ -32,10 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        // Map docs to array and sort by createdAt descending
+
         const appointments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         appointments.sort((a, b) => {
-          // Use 0 if createdAt is missing
+
           return (b.createdAt || 0) - (a.createdAt || 0);
         });
 
