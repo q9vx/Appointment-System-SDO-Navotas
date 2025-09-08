@@ -6,6 +6,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlay = document.getElementById("guestOverlay");
   const goSignup = document.getElementById("goSignup");
 
+  function formatPHDateTime(dateObj) {
+    const pad = (n) => String(n).padStart(2, "0");
+    const mm = pad(dateObj.getMonth() + 1);
+    const dd = pad(dateObj.getDate());
+    const yy = String(dateObj.getFullYear()).slice(-2);
+
+    let hours = dateObj.getHours();
+    const minutes = pad(dateObj.getMinutes());
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+
+    return `${mm}/${dd}/${yy} ${hours}:${minutes} ${ampm}`;
+  }
+
   list.innerHTML = "<p class='text-center text-muted'>Loading your appointments...</p>";
 
   auth.onAuthStateChanged(user => {
@@ -31,11 +45,9 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-
         const appointments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         appointments.sort((a, b) => {
-
-          return (b.createdAt || 0) - (a.createdAt || 0);
+          return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
         list.innerHTML = "";
@@ -58,14 +70,18 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             `;
           }).join("");
+          let appointmentDateTime = "N/A";
+          if (appt.appointmentDateTime && appt.appointmentDateTime.toDate) {
+            appointmentDateTime = formatPHDateTime(appt.appointmentDateTime.toDate());
+          }
 
           list.innerHTML += `
             <div class="card mb-4 shadow-sm">
               <div class="card-body">
                 <h5>${appt.reason || "Appointment"}</h5>
-                <p class="mb-1"><strong>Date:</strong> ${appt.appointmentDate || "N/A"}</p>
-                <p class="mb-1"><strong>Time:</strong> ${appt.appointmentTime || "N/A"}</p>
+                <p class="mb-1"><strong>Appointment:</strong> ${appointmentDateTime}</p>
                 <p class="mb-1"><strong>Status:</strong> <span class="badge ${badgeClass}">${appt.status}</span></p>
+                <p class="mb-1"><strong>Created At:</strong> ${appt.createdAt || "N/A"}</p>
                 <div class="status-tracker mt-3">${trackerHTML}</div>
                 ${appt.notes ? `<p class="mt-2 text-muted"><strong>Notes:</strong> ${appt.notes}</p>` : ""}
               </div>
