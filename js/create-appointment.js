@@ -2,6 +2,36 @@ document.addEventListener("DOMContentLoaded", () => {
   const auth = firebase.auth();
   const db = firebase.firestore();
 
+  const guestOverlay = document.getElementById("guestOverlay");
+  const goSignup = document.getElementById("goSignup");
+
+  // ---------- Auth check ----------
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      // ❌ Guest → show overlay
+      if (guestOverlay) guestOverlay.style.display = "flex";
+
+      // Redirect to signup if they click the button
+      if (goSignup) {
+        goSignup.addEventListener("click", () => {
+          window.location.href = "signup.html";
+        });
+      }
+
+      // Hide main content for guests
+      document.body.style.display = "block"; // keep visible so overlay works
+      return;
+    }
+
+    // ✅ Logged-in → hide overlay and init form
+    if (guestOverlay) guestOverlay.style.display = "none";
+    document.body.style.display = "block";
+    initAppointmentForm(user, db);
+  });
+});
+
+// ---------- Form initialization for logged-in users ----------
+function initAppointmentForm(user, db) {
   function getPHNow() {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
   }
@@ -24,64 +54,44 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
+  // Autofill date & time
   const dateField = document.getElementById("date");
   const timeField = document.getElementById("time");
-
   const phNow = getPHNow();
   const formatted = formatPHDateTime(phNow);
 
   if (dateField) dateField.value = formatted.date;
   if (timeField) timeField.value = formatted.time;
 
-  const guestOverlay = document.getElementById("guestOverlay");
-  const navProfile = document.getElementById("navProfile");
-  const goSignup = document.getElementById("goSignup");
-
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      if (navProfile) navProfile.href = "dashboard.html"; // Or another page if needed
-      if (guestOverlay) guestOverlay.style.display = "none";
-    } else {
-      if (navProfile) navProfile.href = "login.html";
-      if (guestOverlay) guestOverlay.style.display = "flex";
-    }
-  });
-
-  if (goSignup) {
-    goSignup.addEventListener("click", () => {
-      window.location.href = "signup.html";
-    });
-  }
-
+  // Form submission
   const createForm = document.getElementById("createAppointmentForm");
-  if (createForm) {
-    createForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+  if (!createForm) return;
 
-      auth.onAuthStateChanged(user => {
-        if (!user) {
-          alert("⚠ You must be logged in to create an appointment.");
-          return;
-        }
+  createForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-        const purpose = document.getElementById("purpose").value;
-        const notes = document.getElementById("notes").value.trim();
+    const purpose = document.getElementById("purpose").value;
+    const notes = document.getElementById("notes").value.trim();
+    const appointmentDateTime = getPHNow();
 
-        db.collection("appointments").add({
-          userId: user.uid,
-          purpose: purpose,
-          notes: notes || null,
-          status: "Pending",
-          appointmentDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-          createdAt: formatted.full
-        }).then(() => {
-          alert("✅ Appointment created successfully!");
-          window.location.href = "my-appointments.html";
-        }).catch(err => {
-          console.error("Error creating appointment:", err);
-          alert("❌ Failed to create appointment. Please try again.");
-        });
-      });
+    db.collection("appointments").add({
+      userId: user.uid,
+      userEmail: user.email,
+      purpose: purpose,
+      notes: notes || null,
+      status: "Pending",
+      date: formatted.date,
+      time: formatted.time,
+      appointmentDateTime: appointmentDateTime,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      alert("✅ Appointment created successfully!");
+      window.location.href = "my-appointments.html";
+    })
+    .catch(err => {
+      console.error("Error creating appointment:", err);
+      alert("❌ Failed to create appointment. Please try again.");
     });
-  }
-});
+  });
+}

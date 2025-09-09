@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     db.collection("appointments")
       .where("userId", "==", user.uid)
+      .orderBy("createdAt", "desc")
       .get()
       .then(snapshot => {
         if (snapshot.empty) {
@@ -45,13 +46,22 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
         }
 
-        const appointments = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        appointments.sort((a, b) => {
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        });
-
         list.innerHTML = "";
-        appointments.forEach(appt => {
+        snapshot.forEach(doc => {
+          const appt = doc.data();
+
+          // ✅ Fix: format createdAt
+          let createdAtDisplay = "N/A";
+          if (appt.createdAt && appt.createdAt.toDate) {
+            createdAtDisplay = formatPHDateTime(appt.createdAt.toDate());
+          }
+
+          // ✅ Fix: format appointment date & time
+          let appointmentDateTime = "N/A";
+          if (appt.date && appt.time) {
+            appointmentDateTime = `${appt.date} ${appt.time}`;
+          }
+
           let badgeClass = "bg-secondary";
           if (appt.status === "Pending") badgeClass = "bg-warning text-dark";
           if (appt.status === "Confirmed") badgeClass = "bg-success";
@@ -70,18 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             `;
           }).join("");
-          let appointmentDateTime = "N/A";
-          if (appt.appointmentDateTime && appt.appointmentDateTime.toDate) {
-            appointmentDateTime = formatPHDateTime(appt.appointmentDateTime.toDate());
-          }
 
           list.innerHTML += `
             <div class="card mb-4 shadow-sm">
               <div class="card-body">
-                <h5>${appt.reason || "Appointment"}</h5>
+                <h5>${appt.purpose || "Appointment"}</h5>
                 <p class="mb-1"><strong>Appointment:</strong> ${appointmentDateTime}</p>
                 <p class="mb-1"><strong>Status:</strong> <span class="badge ${badgeClass}">${appt.status}</span></p>
-                <p class="mb-1"><strong>Created At:</strong> ${appt.createdAt || "N/A"}</p>
+                <p class="mb-1"><strong>Created At:</strong> ${createdAtDisplay}</p>
                 <div class="status-tracker mt-3">${trackerHTML}</div>
                 ${appt.notes ? `<p class="mt-2 text-muted"><strong>Notes:</strong> ${appt.notes}</p>` : ""}
               </div>

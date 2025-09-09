@@ -1,45 +1,51 @@
-import { db } from './firebase-config.js';
-import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+const auth = firebase.auth();
+const db = firebase.firestore();
+const userName = document.getElementById("userName");
+const logoutBtn = document.getElementById("logoutBtn");
+const guestOverlay = document.getElementById("guestOverlay");
+const goSignup = document.getElementById("goSignup");
 
-const appointmentTable = document.getElementById('appointmentTable');
+// Auth check
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    document.body.style.display = "block";
+    if (guestOverlay) guestOverlay.style.display = "none";
+    if (userName) userName.textContent = user.displayName || user.email.split("@")[0];
 
-async function loadAppointments() {
-  appointmentTable.innerHTML = '';
-  
-  const querySnapshot = await getDocs(collection(db, "appointments"));
-  querySnapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${docSnap.id}</td>
-      <td>${data.name}</td>
-      <td>${data.role}</td>
-      <td>${data.email}</td>
-      <td>${data.dateTime}</td>
-      <td><span class="badge ${getBadgeClass(data.status)}">${data.status}</span></td>
-      <td>
-        <button class="btn btn-success btn-sm me-1" onclick="updateStatus('${docSnap.id}', 'Confirmed')">Confirm</button>
-        <button class="btn btn-danger btn-sm" onclick="updateStatus('${docSnap.id}', 'Cancelled')">Cancel</button>
-      </td>
-    `;
-    appointmentTable.appendChild(row);
+    // Load appointments for dashboard counters
+    const snapshot = await db.collection("appointments").where("userId", "==", user.uid).get();
+    let pending = 0, confirmed = 0, cancelled = 0;
+
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.status === "Pending") pending++;
+      if (data.status === "Confirmed") confirmed++;
+      if (data.status === "Cancelled") cancelled++;
+    });
+
+    document.getElementById("pendingCount").textContent = pending;
+    document.getElementById("confirmedCount").textContent = confirmed;
+    document.getElementById("cancelledCount").textContent = cancelled;
+
+  } else {
+    // Not logged in → show guest overlay
+    document.body.style.display = "block";
+    if (guestOverlay) guestOverlay.style.display = "flex";
+  }
+});
+
+// Go to signup
+if (goSignup) {
+  goSignup.addEventListener("click", () => {
+    window.location.href = "signup.html";
   });
 }
 
-function getBadgeClass(status) {
-  switch(status) {
-    case "Pending": return "bg-warning";
-    case "Confirmed": return "bg-success";
-    case "Completed": return "bg-info";
-    case "Cancelled": return "bg-danger";
-    default: return "bg-secondary";
-  }
+// Logout
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    auth.signOut().then(() => {
+      window.location.href = "login.html";
+    });
+  });
 }
-
-window.updateStatus = async function(id, status) {
-  await updateDoc(doc(db, "appointments", id), { status });
-  loadAppointments();
-}
-
-loadAppointments();
