@@ -11,3 +11,11 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("Persistence set to LOCAL");
+  })
+  .catch((error) => {
+    console.error("Error setting persistence:", error);
+  });

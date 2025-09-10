@@ -181,18 +181,31 @@ footer {
 
 <script>
   const auth = firebase.auth();
+  const db = firebase.firestore();
   const navProfile = document.getElementById("navProfile");
   const guestOverlay = document.getElementById("guestOverlay");
   const goSignup = document.getElementById("goSignup");
 
   auth.onAuthStateChanged(user => {
     if (user) {
-      // ✅ Logged in → show page
       document.body.style.display = "block";
       navProfile.href = "dashboard.html";
       if (guestOverlay) guestOverlay.style.display = "none";
+
+      // Check if user is admin
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().role === "admin") {
+          navProfile.href = "admin/admin-dashboard.html";
+          // Add Admin Dashboard link
+          const navbar = document.getElementById("navbarContent");
+          const ul = navbar.querySelector("ul");
+          const li = document.createElement("li");
+          li.className = "nav-item";
+          li.innerHTML = '<a class="nav-link" href="admin/admin-dashboard.html"><i class="bi bi-speedometer2 me-1"></i> Admin Dashboard</a>';
+          ul.appendChild(li);
+        }
+      });
     } else {
-      // ❌ Not logged in → redirect immediately
       window.location.replace("signup.html");
     }
   });

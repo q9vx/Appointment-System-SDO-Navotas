@@ -157,7 +157,6 @@ auth.onAuthStateChanged(user => {
   if (user) {
     userName.textContent = user.displayName || user.email.split("@")[0];
 
-    // Fetch appointment stats
     db.collection("appointments")
       .where("userId", "==", user.uid)
       .get()

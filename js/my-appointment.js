@@ -36,27 +36,35 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("guest-blur");
     if (overlay) overlay.style.display = "none";
 
-    db.collection("appointments")
-      .where("userId", "==", user.uid)
-      .orderBy("createdAt", "desc")
-      .get()
-      .then(snapshot => {
+    db.collection("users").doc(user.uid).get().then(doc => {
+      const isAdmin = doc.exists && doc.data().role === "admin";
+      if (isAdmin) {
+        const navbar = document.getElementById("navbarContent");
+        const ul = navbar.querySelector("ul");
+        const li = document.createElement("li");
+        li.className = "nav-item";
+        li.innerHTML = '<a class="nav-link" href="admin/admin-dashboard.html"><i class="bi bi-speedometer2 me-1"></i> Admin Dashboard</a>';
+        ul.appendChild(li);
+      }
+
+      const query = isAdmin ? db.collection("appointments").orderBy("createdAt", "desc") : db.collection("appointments").where("userId", "==", user.uid);
+      query.get().then(snapshot => {
         if (snapshot.empty) {
           list.innerHTML = "<p class='text-center text-muted'>No appointments yet.</p>";
           return;
         }
 
         list.innerHTML = "";
+        let appointments = [];
         snapshot.forEach(doc => {
           const appt = doc.data();
+          appointments.push(appt);
 
-          // ✅ Fix: format createdAt
           let createdAtDisplay = "N/A";
           if (appt.createdAt && appt.createdAt.toDate) {
             createdAtDisplay = formatPHDateTime(appt.createdAt.toDate());
           }
 
-          // ✅ Fix: format appointment date & time
           let appointmentDateTime = "N/A";
           if (appt.date && appt.time) {
             appointmentDateTime = `${appt.date} ${appt.time}`;
@@ -90,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p class="mb-1"><strong>Created At:</strong> ${createdAtDisplay}</p>
                 <div class="status-tracker mt-3">${trackerHTML}</div>
                 ${appt.notes ? `<p class="mt-2 text-muted"><strong>Notes:</strong> ${appt.notes}</p>` : ""}
+                ${appt.adminNotes ? `<p class="mt-2 text-info"><strong>Admin Note:</strong> ${appt.adminNotes}</p>` : ""}
               </div>
             </div>
           `;
@@ -99,5 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error fetching appointments:", err);
         list.innerHTML = "<p class='text-center text-danger'>Failed to load appointments.</p>";
       });
+    });
   });
 });

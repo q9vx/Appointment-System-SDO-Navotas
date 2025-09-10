@@ -1,125 +1,212 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const auth = firebase.auth();
-  const db = firebase.firestore();
 
-  const list = document.getElementById("appointmentsList");
-  const overlay = document.getElementById("guestOverlay");
-  const goHomepage = document.getElementById("GoHomepage");
+const tableBody = document.getElementById("appointmentsTable");
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const logoutBtn = document.getElementById("logoutBtn");
+const overlay = document.getElementById("guestOverlay");
 
-  // PH date formatting
-  function formatPHDateTime(dateObj) {
-    const pad = (n) => String(n).padStart(2, "0");
-    const mm = pad(dateObj.getMonth() + 1);
-    const dd = pad(dateObj.getDate());
-    const yy = String(dateObj.getFullYear()).slice(-2);
-    let hours = dateObj.getHours();
-    const minutes = pad(dateObj.getMinutes());
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12 || 12;
-    return `${mm}/${dd}/${yy} ${hours}:${minutes} ${ampm}`;
-  }
+const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+const modalUser = document.getElementById('modalUser');
+const modalPurpose = document.getElementById('modalPurpose');
+const modalDateTime = document.getElementById('modalDateTime');
+const modalStatus = document.getElementById('modalStatus');
+const modalNotes = document.getElementById('modalNotes');
+const modalCreatedAt = document.getElementById('modalCreatedAt');
+const statusSelect = document.getElementById('statusSelect');
+const reasonDiv = document.getElementById('reasonDiv');
+const reasonTextarea = document.getElementById('reasonTextarea');
+const updateBtn = document.getElementById('updateBtn');
 
-  // Auth check
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) {
-      if (overlay) overlay.style.display = "flex";
-      list.innerHTML = "<p class='text-center text-danger'>Access denied. Admins only.</p>";
-      return;
-    }
+let currentAppointmentId = null;
+let allAppointments = [];
 
-    try {
-      const userDoc = await db.collection("users").doc(user.uid).get();
-      const isAdmin = userDoc.exists && userDoc.data().role === "admin";
+function updateStats() {
+  const pending = allAppointments.filter(a => a.status === "Pending").length;
+  const confirmed = allAppointments.filter(a => a.status === "Confirmed").length;
+  const completed = allAppointments.filter(a => a.status === "Completed").length;
+  const cancelled = allAppointments.filter(a => a.status === "Cancelled").length;
+  document.getElementById("statPending").textContent = pending;
+  document.getElementById("statConfirmed").textContent = confirmed;
+  document.getElementById("statCompleted").textContent = completed;
+  document.getElementById("statCancelled").textContent = cancelled;
+}
 
-      if (!isAdmin) {
-        if (overlay) overlay.style.display = "flex";
-        list.innerHTML = "<p class='text-center text-danger'>Access denied. Admins only.</p>";
-        return;
-      }
+logoutBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+  await auth.signOut();
+  window.location.href = "../index.html";
+});
 
-      if (overlay) overlay.style.display = "none";
+function applyFilters() {
+  const search = searchInput.value.toLowerCase();
+  const status = statusFilter.value;
 
-      // Load all appointments for admin
-      loadAppointments();
-    } catch (err) {
-      console.error("Error checking admin:", err);
-      list.innerHTML = "<p class='text-center text-danger'>Failed to verify admin. Check console.</p>";
-    }
+  const filtered = allAppointments.filter(app => {
+    const matchSearch =
+      app.userEmail.toLowerCase().includes(search) ||
+      app.purpose.toLowerCase().includes(search);
+
+    const matchStatus = !status || app.status === status;
+
+    return matchSearch && matchStatus;
   });
 
-  // Redirect button
-  if (goHomepage) goHomepage.addEventListener("click", () => window.location.href = "index.html");
+  renderAppointments(filtered);
+  updateStats();
+}
 
-  async function loadAppointments() {
-    list.innerHTML = "<p class='text-center text-muted'>Loading appointments...</p>";
+searchInput.addEventListener("input", applyFilters);
+statusFilter.addEventListener("change", applyFilters);
 
-    try {
-      const snapshot = await db.collection("appointments").orderBy("createdAt", "desc").get();
+function renderAppointments(list) {
+  tableBody.innerHTML = "";
 
-      if (snapshot.empty) {
-        list.innerHTML = "<p class='text-center text-muted'>No appointments found.</p>";
-        return;
-      }
-
-      list.innerHTML = "";
-
-      snapshot.forEach((doc) => {
-        const appt = doc.data();
-
-        // Auto-complete past appointments
-        if (appt.status !== "Completed" && appt.status !== "Cancelled") {
-          const apptTime = appt.appointmentDateTime?.toDate ? appt.appointmentDateTime.toDate() : new Date();
-          if (apptTime < new Date()) {
-            db.collection("appointments").doc(doc.id).update({ status: "Completed" });
-            appt.status = "Completed";
-          }
-        }
-
-        let badgeClass = "bg-secondary";
-        if (appt.status === "Pending") badgeClass = "bg-warning text-dark";
-        if (appt.status === "Confirmed") badgeClass = "bg-success";
-        if (appt.status === "Completed") badgeClass = "bg-primary";
-        if (appt.status === "Cancelled") badgeClass = "bg-danger";
-
-        list.innerHTML += `
-          <div class="appointment-card">
-            <h5>${appt.purpose || "Appointment"}</h5>
-            <p><strong>User:</strong> ${appt.userEmail || "-"}</p>
-            <p><strong>Appointment:</strong> ${appt.date} ${appt.time}</p>
-            <p><strong>Status:</strong> <span class="badge ${badgeClass}">${appt.status}</span></p>
-            <p><strong>Created At:</strong> ${appt.createdAt?.toDate ? formatPHDateTime(appt.createdAt.toDate()) : "N/A"}</p>
-            <p><strong>Notes:</strong> ${appt.notes || "None"}</p>
-
-            ${appt.status === "Pending" ? `
-              <div class="mt-2">
-                <input type="text" id="reason-${doc.id}" class="form-control mb-2" placeholder="Add reason/note">
-                <button class="btn btn-success btn-sm me-1" onclick="updateStatus('${doc.id}', 'Confirmed')">Confirm</button>
-                <button class="btn btn-danger btn-sm" onclick="updateStatus('${doc.id}', 'Cancelled')">Cancel</button>
-              </div>
-            ` : ""}
-          </div>
-        `;
-      });
-    } catch (err) {
-      console.error("Error fetching appointments:", err);
-      list.innerHTML = "<p class='text-center text-danger'>Failed to load appointments.</p>";
-    }
+  if (!list.length) {
+    tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No appointments found.</td></tr>`;
+    return;
   }
 
-  // Update status
-  window.updateStatus = async function (id, status) {
-    const reasonInput = document.getElementById(`reason-${id}`);
-    const reason = reasonInput?.value?.trim() || null;
+  list.forEach(app => {
+    const tr = document.createElement("tr");
 
-    try {
-      await db.collection("appointments").doc(id).update({
-        status,
-        notes: reason || firebase.firestore.FieldValue.delete()
-      });
-      loadAppointments();
-    } catch (err) {
-      console.error("Failed to update status:", err);
-      alert("Failed to update appointment. Check console for details.");
+    if (app.status === "Pending") {
+      tr.classList.add("table-warning");
     }
-  };
+
+    tr.innerHTML = `
+      <td>${app.userEmail}</td>
+      <td>${app.purpose}</td>
+      <td>${app.date} ${app.time}</td>
+      <td><span class="badge bg-${statusColor(app.status)}">${app.status}</span></td>
+      <td>${new Date(app.createdAt?.toDate?.() || app.createdAt).toLocaleString()}</td>
+      <td>${app.notes || "-"}</td>
+      <td class="text-center"><button class="btn btn-info btn-sm" data-action="View">View</button></td>
+      <td>
+        <button class="btn btn-sm btn-success me-1" data-action="Confirm">Confirm</button>
+        <button class="btn btn-sm btn-info me-1" data-action="Complete">Complete</button>
+        <button class="btn btn-sm btn-danger" data-action="Cancel">Cancel</button>
+      </td>
+    `;
+
+    tr.querySelectorAll("button").forEach(btn => {
+      if (btn.dataset.action === "View") {
+        btn.addEventListener("click", () => openModal(app));
+      } else {
+        btn.addEventListener("click", () => updateStatus(app.id, btn.dataset.action));
+      }
+    });
+
+    tableBody.appendChild(tr);
+  });
+}
+
+function statusColor(status) {
+  switch (status) {
+    case "Pending": return "warning";
+    case "Confirmed": return "primary";
+    case "Completed": return "success";
+    case "Cancelled": return "danger";
+    default: return "secondary";
+  }
+}
+
+async function updateStatus(id, newStatus) {
+  try {
+    await db.collection("appointments").doc(id).update({
+      status: newStatus,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    console.log(`✅ Appointment ${id} updated to ${newStatus}`);
+  } catch (err) {
+    console.error("Error updating status:", err);
+    alert("Failed to update status.");
+  }
+}
+
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    overlay.style.display = "flex";
+    return;
+  }
+
+  console.log("Logged in user UID:", user.uid);
+  console.log("Expected admin UID: oU96E4ZGt1cvQ5mEnTAXDWQ8s4K2");
+
+  if (user.uid !== "oU96E4ZGt1cvQ5mEnTAXDWQ8s4K2") {
+    console.log("Access denied: UID does not match admin UID");
+    overlay.style.display = "flex";
+    return;
+  }
+
+  console.log("Admin access granted");
+  // No additional checks needed, UID check above is sufficient
+
+  db.collection("appointments")
+    .onSnapshot(snapshot => {
+      allAppointments = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      // Sort by createdAt descending
+      allAppointments.sort((a, b) => {
+        const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt || 0);
+        const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt || 0);
+        return bTime - aTime;
+      });
+
+      updateStats();
+      applyFilters();
+    }, err => {
+      console.error("Error loading appointments:", err);
+      tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Failed to load appointments. Check console for details.</td></tr>`;
+    });
+});
+
+function openModal(app) {
+  currentAppointmentId = app.id;
+  modalUser.textContent = app.userEmail;
+  modalPurpose.textContent = app.purpose;
+  modalDateTime.textContent = `${app.date} ${app.time}`;
+  modalStatus.textContent = app.status;
+  modalNotes.textContent = app.notes || "-";
+  modalCreatedAt.textContent = new Date(app.createdAt?.toDate?.() || app.createdAt).toLocaleString();
+
+  statusSelect.value = app.status || "Pending";
+  reasonTextarea.value = app.adminNotes || "";
+  reasonDiv.style.display = statusSelect.value === "Cancelled" ? "block" : "none";
+
+  modal.show();
+}
+
+statusSelect.addEventListener("change", () => {
+  if (statusSelect.value === "Cancelled") {
+    reasonDiv.style.display = "block";
+  } else {
+    reasonDiv.style.display = "none";
+    reasonTextarea.value = "";
+  }
+});
+
+updateBtn.addEventListener("click", async () => {
+  const newStatus = statusSelect.value;
+  const adminNotes = reasonTextarea.value.trim();
+
+  if (newStatus === "Cancelled" && !adminNotes) {
+    alert("Please provide a reason for cancellation.");
+    return;
+  }
+
+  try {
+    await db.collection("appointments").doc(currentAppointmentId).update({
+      status: newStatus,
+      adminNotes: adminNotes || null,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    modal.hide();
+    console.log(`✅ Appointment ${currentAppointmentId} updated to ${newStatus}`);
+  } catch (err) {
+    console.error("Error updating appointment:", err);
+    alert("Failed to update appointment.");
+  }
 });

@@ -22,7 +22,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Hero section with blurred background */
 .hero-section {
   position: relative;
   width: 100%;
@@ -49,7 +48,6 @@ body {
   z-index: 1;
 }
 
-/* Card content */
 .hero-content {
   position: relative;
   z-index: 2;
@@ -63,8 +61,8 @@ body {
   background-color: #fff;
   border-radius: 12px;
   padding: 30px;
-  width: 90%;        /* Desktop default width */
-  max-width: 1200px; /* Limit so it doesn't stretch too wide */
+  width: 90%;
+  max-width: 1200px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
@@ -90,7 +88,6 @@ body {
   transform: scale(1.02);
 }
 
-/* Scrollbar style */
 .appointment-card-container::-webkit-scrollbar {
   width: 8px;
 }
@@ -99,7 +96,6 @@ body {
   border-radius: 10px;
 }
 
-/* Guest overlay */
 #guestOverlay {
   position: fixed;
   inset: 0;
@@ -124,7 +120,6 @@ body {
   margin: 5px 0;
 }
 
-/* Footer */
 footer {
   background-color: #1b4332;
   color: #d4edda;
@@ -132,7 +127,6 @@ footer {
   padding: 20px;
 }
 
-/* Responsive tweaks */
 @media (max-width: 1200px) {
   .card-appointments {
     width: 95%;
@@ -225,6 +219,7 @@ footer {
 <script src="create-appointment.js" defer></script>
 <script>
   const auth = firebase.auth();
+  const db = firebase.firestore();
   const navProfile = document.getElementById("navProfile");
   const guestOverlay = document.getElementById("guestOverlay");
   const goSignup = document.getElementById("goSignup");
@@ -233,6 +228,20 @@ footer {
     if (user) {
       navProfile.href = "dashboard.html";
       guestOverlay.style.display = "none";
+
+      // Check if user is admin
+      db.collection("users").doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().role === "admin") {
+          navProfile.href = "admin/admin-dashboard.html";
+          // Add Admin Dashboard link
+          const navbar = document.getElementById("navbarContent");
+          const ul = navbar.querySelector("ul");
+          const li = document.createElement("li");
+          li.className = "nav-item";
+          li.innerHTML = '<a class="nav-link" href="admin/admin-dashboard.html"><i class="bi bi-speedometer2 me-1"></i> Admin Dashboard</a>';
+          ul.appendChild(li);
+        }
+      });
     } else {
       navProfile.href = "login.html";
       guestOverlay.style.display = "flex";

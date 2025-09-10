@@ -5,32 +5,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const guestOverlay = document.getElementById("guestOverlay");
   const goSignup = document.getElementById("goSignup");
 
-  // ---------- Auth check ----------
   auth.onAuthStateChanged(user => {
     if (!user) {
-      // ❌ Guest → show overlay
+
       if (guestOverlay) guestOverlay.style.display = "flex";
 
-      // Redirect to signup if they click the button
       if (goSignup) {
         goSignup.addEventListener("click", () => {
           window.location.href = "signup.html";
         });
       }
 
-      // Hide main content for guests
-      document.body.style.display = "block"; // keep visible so overlay works
+      document.body.style.display = "block";
       return;
     }
 
-    // ✅ Logged-in → hide overlay and init form
     if (guestOverlay) guestOverlay.style.display = "none";
     document.body.style.display = "block";
     initAppointmentForm(user, db);
   });
 });
 
-// ---------- Form initialization for logged-in users ----------
 function initAppointmentForm(user, db) {
   function getPHNow() {
     return new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }));
@@ -54,7 +49,6 @@ function initAppointmentForm(user, db) {
     };
   }
 
-  // Autofill date & time
   const dateField = document.getElementById("date");
   const timeField = document.getElementById("time");
   const phNow = getPHNow();
@@ -63,7 +57,6 @@ function initAppointmentForm(user, db) {
   if (dateField) dateField.value = formatted.date;
   if (timeField) timeField.value = formatted.time;
 
-  // Form submission
   const createForm = document.getElementById("createAppointmentForm");
   if (!createForm) return;
 
