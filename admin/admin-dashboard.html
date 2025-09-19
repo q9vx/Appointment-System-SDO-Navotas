@@ -23,19 +23,35 @@ margin: 0;
 body {
 display: flex;
 flex-direction: column;
-background: #f5f7f6;
+background: linear-gradient(135deg, #f5f7f6 0%, #e8f4f8 100%);
 font-family: "Segoe UI", sans-serif;
+animation: fadeIn 0.5s ease-in;
+}
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
 }
 main { flex: 1; }
 
 .navbar {
-background: #1b4332;
+background: linear-gradient(135deg, #1b4332, #2d6a4f);
+box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 header {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
+background: linear-gradient(135deg, #1b4332, #2d6a4f, #40916c);
 color: #fff;
-border-radius: 0 0 20px 20px;
+border-radius: 0 0 30px 30px;
+position: relative;
+overflow: hidden;
+}
+header::before {
+content: '';
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
+opacity: 0.1;
 }
 
 .breadcrumb {
@@ -45,57 +61,112 @@ font-size: 0.9rem;
 }
 
 .stat-card {
-border-radius: 15px;
-padding: 20px;
+border-radius: 20px;
+padding: 25px;
 color: #fff;
 display: flex;
 align-items: center;
 justify-content: space-between;
-box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-transition: transform 0.15s ease;
+box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+transition: all 0.3s ease;
+position: relative;
+overflow: hidden;
+}
+.stat-card::before {
+content: '';
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+transform: translateX(-100%);
+transition: transform 0.5s ease;
+}
+.stat-card:hover::before {
+transform: translateX(100%);
 }
 .stat-card:hover {
-transform: translateY(-4px);
+transform: translateY(-8px) scale(1.02);
+box-shadow: 0 12px 35px rgba(0,0,0,0.2);
 }
-.stat-card h3 { margin: 0; font-weight: bold; }
-.stat-card i { font-size: 2rem; opacity: 0.9; }
+.stat-card h3 { margin: 0; font-weight: bold; font-size: 2rem; }
+.stat-card i { font-size: 2.5rem; opacity: 0.9; animation: pulse 2s infinite; }
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.1); }
+}
 
-.bg-pending { background: #ffc107; color: #000; }
-.bg-confirmed { background: #28a745; }
-.bg-completed { background: #0d6efd; }
-.bg-cancelled { background: #dc3545; }
+.bg-pending { background: linear-gradient(135deg, #ffc107, #ffca2c); color: #000; }
+.bg-confirmed { background: linear-gradient(135deg, #28a745, #20c997); }
+.bg-completed { background: linear-gradient(135deg, #0d6efd, #6610f2); }
+.bg-cancelled { background: linear-gradient(135deg, #dc3545, #fd7e14); }
 
+.table {
+border-radius: 15px;
+overflow: hidden;
+box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
 .table thead {
-background: #edf2f4;
+background: linear-gradient(135deg, #edf2f4, #d4edda);
+color: #1b4332;
+font-weight: bold;
+}
+.table-hover tbody tr {
+transition: all 0.2s ease;
 }
 .table-hover tbody tr:hover {
-background: #f8f9fa;
+background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+transform: scale(1.01);
+box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 .badge {
 font-size: 0.85rem;
+border-radius: 20px;
+padding: 5px 10px;
+}
+
+.btn {
+border-radius: 25px;
+transition: all 0.3s ease;
+}
+.btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.filters {
+background: rgba(255,255,255,0.8);
+backdrop-filter: blur(10px);
+border-radius: 15px;
+padding: 20px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 @media(max-width: 768px) {
-.stat-card { margin-bottom: 12px; }
+.stat-card { margin-bottom: 15px; }
 table thead { display: none; }
 table tbody tr {
 display: block;
-margin-bottom: 15px;
+margin-bottom: 20px;
 background: #fff;
-border-radius: 12px;
-box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-padding: 12px;
+border-radius: 15px;
+box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+padding: 15px;
+animation: slideIn 0.5s ease;
+}
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
 }
 table tbody td {
 display: flex;
 justify-content: space-between;
-padding: 6px 8px;
+padding: 8px 10px;
 border: none;
 }
 table tbody td::before {
 content: attr(data-label);
 font-weight: 600;
-color: #333;
+color: #1b4332;
 margin-right: 10px;
 }
 }
@@ -104,7 +175,7 @@ margin-right: 10px;
 position: fixed;
 inset: 0;
 background: rgba(255,255,255,0.95);
-backdrop-filter: blur(6px);
+backdrop-filter: blur(10px);
 display: none;
 justify-content: center;
 align-items: center;
@@ -112,6 +183,7 @@ z-index: 9999;
 flex-direction: column;
 text-align: center;
 padding: 20px;
+animation: fadeIn 0.3s ease;
 }
 #guestOverlay h2 {
 color: #dc3545;
@@ -120,12 +192,13 @@ margin-bottom: 10px;
 }
 
 footer {
-background-color: #1b4332;
+background: linear-gradient(135deg, #1b4332, #2d6a4f);
 color: #d4edda;
 text-align: center;
-padding: 20px;
+padding: 25px;
 margin-top: auto;
 font-size: 0.9rem;
+box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 }
 </style>
 </head>
@@ -146,6 +219,9 @@ font-size: 0.9rem;
 <li class="nav-item">
 <a class="nav-link" href="../create-appointment.html">Create Appointment</a>
 </li>
+<li class="nav-item">
+<a class="nav-link" href="reports.html">Reports</a>
+</li>
 </ul>
 <button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
 </div>
@@ -153,7 +229,7 @@ font-size: 0.9rem;
 
 <header class="py-5 shadow-sm mb-4 text-center">
 <div class="container">
-<h2 class="fw-bold">📋 Manage Appointments</h2>
+<h2 class="fw-bold">📋 Manage Appointments & Feedback</h2>
 <p class="mb-0">Search, filter, and manage all appointments in real-time</p>
 </div>
 </header>
@@ -167,6 +243,7 @@ font-size: 0.9rem;
 <li>🔍 Filter requests by <strong>status</strong> (Pending, Confirmed, Completed, Cancelled).</li>
 <li>🖱 Update request status instantly with a button click.</li>
 <li>⚡ The system auto-updates in <strong>real-time</strong> as users submit or change appointments.</li>
+<li>💬 View user feedback submissions directly in the dashboard.</li>
 </ul>
 </div>
 </section>
@@ -228,7 +305,7 @@ font-size: 0.9rem;
 </div>
 </div>
 
-<div class="card shadow-sm">
+<div class="card shadow-sm mb-5">
 <div class="card-body p-0">
 <div class="table-responsive">
 <table class="table table-hover align-middle mb-0">
@@ -249,6 +326,36 @@ font-size: 0.9rem;
 <td colspan="8" class="text-center text-muted py-4">
 <div class="spinner-border text-success" role="status"></div>
 <p class="mt-2 mb-0">Loading appointments...</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Feedback Section -->
+<div id="feedback" class="card shadow-sm">
+<div class="card-header bg-info text-white">
+<h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>User Feedback</h5>
+</div>
+<div class="card-body p-0">
+<div class="table-responsive">
+<table class="table table-hover align-middle mb-0">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Subject</th>
+<th>Message</th>
+<th>Submitted At</th>
+</tr>
+</thead>
+<tbody id="feedbackTable">
+<tr>
+<td colspan="5" class="text-center text-muted py-4">
+<div class="spinner-border text-info" role="status"></div>
+<p class="mt-2 mb-0">Loading feedback...</p>
 </td>
 </tr>
 </tbody>

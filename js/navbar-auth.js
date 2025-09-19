@@ -23,6 +23,8 @@ return;
 if (user) {
 try {
 const userDoc = await db.collection("users").doc(user.uid).get();
+if (userDoc.exists) {
+const userData = userDoc.data();
 navLogin.classList.add("d-none");
 navSignup.classList.add("d-none");
 navProfile.classList.remove("d-none");
@@ -33,7 +35,9 @@ navCreateAppointment.classList.add("d-none");
 } else {
 navCreateAppointment.classList.remove("d-none");
 }
-
+} else {
+console.error("User document does not exist");
+}
 } catch (err) {
 console.error("Error fetching user data:", err);
 }

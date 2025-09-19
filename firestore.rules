@@ -1,0 +1,47 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      allow read: if request.auth != null && request.auth.uid == userId;
+
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && !(request.resource.data.keys().hasAny(['role'])); 
+
+      allow list: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    match /appointments/{appointmentId} {
+
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.status == "Pending";
+
+      allow get, list: if request.auth != null &&
+        (resource.data.userId == request.auth.uid
+         || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+         || request.auth.uid == "oU96E4ZGt1cvQ5mEnTAXDWQ8s4K2");
+
+      allow update, delete: if request.auth != null &&
+        (resource.data.userId == request.auth.uid
+         || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+         || request.auth.uid == "oU96E4ZGt1cvQ5mEnTAXDWQ8s4K2");
+    }
+
+    match /feedback/{feedbackId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.userId
+         || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin");
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

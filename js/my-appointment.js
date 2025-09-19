@@ -90,7 +90,7 @@ return `
 }).join("");
 
 list.innerHTML += `
-<div class="card mb-4 shadow-sm">
+<div class="card mb-4 shadow-sm" data-id="${doc.id}">
 <div class="card-body">
 <h5>${appt.purpose || "Appointment"}</h5>
 <p class="mb-1"><strong>Appointment:</strong> ${appointmentDateTime}</p>
@@ -99,9 +99,63 @@ list.innerHTML += `
 <div class="status-tracker mt-3">${trackerHTML}</div>
 ${appt.notes ? `<p class="mt-2 text-muted"><strong>Notes:</strong> ${appt.notes}</p>` : ""}
 ${appt.adminNotes ? `<p class="mt-2 text-info"><strong>Admin Note:</strong> ${appt.adminNotes}</p>` : ""}
+<button class="btn btn-danger btn-sm mt-3 cancel-btn">Cancel Appointment</button>
 </div>
 </div>
 `;
+});
+
+// Add event listener for cancel buttons using event delegation
+list.addEventListener("click", (e) => {
+  if (e.target.classList.contains("cancel-btn")) {
+    const card = e.target.closest(".card");
+    const apptId = card.getAttribute("data-id");
+    if (!apptId) return;
+
+    // Show modal for cancellation reason and notes
+    const cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
+    const cancelReasonSelect = document.getElementById('cancelReason');
+    const cancelNotesTextarea = document.getElementById('cancelNotes');
+    const confirmCancelBtn = document.getElementById('confirmCancel');
+
+    cancelReasonSelect.value = "";
+    cancelNotesTextarea.value = "";
+
+    cancelModal.show();
+
+    const onConfirm = () => {
+      const reason = cancelReasonSelect.value;
+      const notes = cancelNotesTextarea.value.trim();
+
+      if (!reason) {
+        alert("Please select a reason for cancellation.");
+        return;
+      }
+
+      db.collection("appointments").doc(apptId).update({
+        status: "Cancelled",
+        cancellationReason: reason,
+        cancellationNotes: notes || null,
+        cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert("Appointment cancelled successfully.");
+        e.target.disabled = true;
+        e.target.textContent = "Cancelled";
+        const statusBadge = card.querySelector(".badge");
+        if (statusBadge) {
+          statusBadge.textContent = "Cancelled";
+          statusBadge.className = "badge bg-danger";
+        }
+        cancelModal.hide();
+        confirmCancelBtn.removeEventListener('click', onConfirm);
+      }).catch((error) => {
+        console.error("Error cancelling appointment:", error);
+        alert("Failed to cancel appointment. Please try again.");
+      });
+    };
+
+    confirmCancelBtn.addEventListener('click', onConfirm, { once: true });
+  }
 });
 })
 .catch(err => {

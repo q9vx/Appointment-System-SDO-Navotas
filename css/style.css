@@ -2,7 +2,7 @@ body {
 font-family: 'Roboto', sans-serif;
 margin: 0;
 padding: 0;
-background-color: #f5f7f6;
+background-color: #1b4332;
 color: #333;
 }
 
@@ -227,7 +227,7 @@ padding: 16px;
 .card {
 border-top: 3px solid #1b4332;
 border-radius: 10px;
-background-color: #fff;
+background-color: #ffffff;
 transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
@@ -414,42 +414,181 @@ transform: translateY(0);
 @media (max-width: 768px) {
 .hero-section {
 height: auto;
-min-height: 30vh;
+min-height: 50vh;
+padding-top: 0; /* Remove space for mobile */
 }
 
 .hero-img {
-width: 120%;
+width: 100%;
 height: auto;
-object-fit: contain;
+object-fit: cover;
+position: relative;
 }
 
 .hero-overlay {
 position: absolute;
-bottom: 0;
+top: 0;
 left: 0;
 width: 100%;
-height: 30%;
+height: 100%;
 background: linear-gradient(
-to top,
-rgba(255,255,255,1) 0%,
-rgba(255,255,255,0) 100%
+to bottom,
+rgba(27, 67, 50, 0.8) 0%,
+rgba(27, 67, 50, 0.6) 50%,
+rgba(27, 67, 50, 0.4) 100%
 );
 pointer-events: none;
 }
 
-@media (max-width: 768px) {
-.hero-overlay {
-height: 100%;
+.hero-content {
+position: relative;
+z-index: 2;
+padding: 20px 15px;
+}
+
+.hero-text h1 {
+font-size: 2.2rem;
+margin-bottom: 0;
+}
+
+.hero-text p {
+font-size: 1.1rem;
+margin-bottom: 2rem;
+}
+
+.hero-text .btn {
+width: 100%;
+margin-bottom: 10px;
+font-size: 1rem;
+padding: 12px;
+}
+
+.navbar-brand span {
+font-size: 1rem;
+}
+
+.navbar-nav .nav-link {
+padding: 12px 15px;
+font-size: 1rem;
+}
+
+.card {
+margin-bottom: 20px;
+}
+
+.card-body {
+padding: 20px;
+}
+
+.card i {
+font-size: 2.5rem;
+}
+
+.card-title {
+font-size: 1.2rem;
+}
+
+.card-text {
+font-size: 0.95rem;
+}
+
+footer {
+padding: 20px 15px;
+font-size: 0.9rem;
 }
 }
 
-@media (max-width: 480px) {
-.hero-overlay {
-height: 50%;
+@media (max-width: 576px) {
+.hero-text h1 {
+font-size: 1.8rem;
 }
-} 
+
+.hero-text p {
+font-size: 1rem;
+}
+
+.hero-text .btn {
+font-size: 0.95rem;
+padding: 10px;
+}
+
+.navbar-brand img {
+width: 40px;
+height: 40px;
+}
+
+.navbar-brand span {
+font-size: 0.9rem;
+}
+
+.navbar-nav .nav-link {
+padding: 10px 12px;
+font-size: 0.95rem;
+}
+
+.card-body {
+padding: 15px;
+}
+
+.card i {
+font-size: 2rem;
+}
+
+.card-title {
+font-size: 1.1rem;
+}
+
+.card-text {
+font-size: 0.9rem;
+}
 }
 
 .no-scroll {
 overflow: hidden !important;
+}
+
+/* Feedback Button Styling */
+.feedback-button {
+position: fixed;
+bottom: 20px;
+right: 20px;
+width: 60px;
+height: 60px;
+border-radius: 50%;
+background: linear-gradient(135deg, #1b4332, #2d6a4f);
+color: #fff;
+border: none;
+font-size: 24px;
+cursor: pointer;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+transition: all 0.3s ease;
+z-index: 1000;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.feedback-button:hover {
+transform: scale(1.1);
+box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+background: linear-gradient(135deg, #2d6a4f, #1b4332);
+}
+
+.feedback-button:active {
+transform: scale(0.95);
+}
+
+.feedback-button:focus {
+outline: none;
+box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.5);
+}
+
+@media (max-width: 768px) {
+.feedback-button {
+width: 50px;
+height: 50px;
+font-size: 20px;
+bottom: 15px;
+right: 15px;
+}
 }
