@@ -16,135 +16,135 @@
 
 <style>
 body {
-  padding-top: 70px;
-  min-height: 100vh;
-  background-color: #f5f7f6;
-  overflow-x: hidden;
+padding-top: 70px;
+min-height: 100vh;
+background-color: #f5f7f6;
+overflow-x: hidden;
 }
 
 .hero-section {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+position: relative;
+width: 100%;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow: hidden;
 }
 
 .hero-img {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  filter: blur(4px);
-  z-index: 0;
+position: absolute;
+top: 0; left: 0;
+width: 100%; height: 100%;
+object-fit: cover;
+filter: blur(4px);
+z-index: 0;
 }
 
 .hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.2);
-  z-index: 1;
+position: absolute;
+inset: 0;
+background: rgba(255,255,255,0.2);
+z-index: 1;
 }
 
 .hero-content {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 20px;
+position: relative;
+z-index: 2;
+width: 100%;
+display: flex;
+justify-content: center;
+padding: 20px;
 }
 
 .card-dashboard {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 30px;
-  width: 90%;
-  max-width: 800px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  text-align: center;
+background-color: #fff;
+border-radius: 12px;
+padding: 30px;
+width: 90%;
+max-width: 800px;
+box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+text-align: center;
 }
 
 footer {
-  background-color: #1b4332;
-  color: #d4edda;
-  text-align: center;
-  padding: 20px;
+background-color: #1b4332;
+color: #d4edda;
+text-align: center;
+padding: 20px;
 }
 
 @media (max-width: 768px) {
-  .card-dashboard {
-    width: 95%;
-    padding: 20px;
-  }
+.card-dashboard {
+width: 95%;
+padding: 20px;
+}
 }
 </style>
 </head>
 
 <body>
-  
+
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top" style="background-color:#1b4332;">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center" href="index.html">
-      <img src="assets/logo.png" alt="SDO Navotas" width="50" height="50" class="me-2">
-      <span class="fw-bold">SDO Navotas Teachers Appointment System</span>
-    </a>
-    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<div class="container-fluid">
+<a class="navbar-brand d-flex align-items-center" href="index.html">
+<img src="assets/logo.png" alt="SDO Navotas" width="50" height="50" class="me-2">
+<span class="fw-bold">SDO Navotas Teachers Appointment System</span>
+</a>
+<button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+<span class="navbar-toggler-icon"></span>
+</button>
 
-    <div class="collapse navbar-collapse" id="navbarContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+<div class="collapse navbar-collapse" id="navbarContent">
+<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
 
-        <li class="nav-item"><a class="nav-link" href="my-appointments.html"><i class="bi bi-calendar-check me-1"></i> My Appointments</a></li>
-        <li class="nav-item"><a class="nav-link" href="create-appointment.html"><i class="bi bi-plus-circle me-1"></i> Create Appointment</a></li>
-      </ul>
-    </div>
-  </div>
+<li class="nav-item"><a class="nav-link" href="my-appointments.html"><i class="bi bi-calendar-check me-1"></i> My Appointments</a></li>
+<li class="nav-item"><a class="nav-link" href="create-appointment.html"><i class="bi bi-plus-circle me-1"></i> Create Appointment</a></li>
+</ul>
+</div>
+</div>
 </nav>
 
 <div class="hero-section">
-  <img src="assets/school-hero2.jpg" alt="Schools Division Office" class="hero-img">
-  <div class="hero-overlay"></div>
+<img src="assets/school-hero2.jpg" alt="Schools Division Office" class="hero-img">
+<div class="hero-overlay"></div>
 
-  <div class="hero-content">
-    <div class="card-dashboard">
-      <h2 class="fw-bold mb-3">Welcome, <span id="userName">User</span> 👋</h2>
-      <p class="text-muted">Here’s a quick look at your appointment activity.</p>
+<div class="hero-content">
+<div class="card-dashboard">
+<h2 class="fw-bold mb-3">Welcome, <span id="userName">User</span> 👋</h2>
+<p class="text-muted">Here’s a quick look at your appointment activity.</p>
 
-      <div class="row text-center my-4">
-        <div class="col-md-4 mb-3">
-          <div class="p-3 bg-light rounded shadow-sm">
-            <i class="bi bi-hourglass-split fs-1 text-warning"></i>
-            <h5 class="mt-2">Pending</h5>
-            <p id="pendingCount" class="fw-bold fs-4">0</p>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="p-3 bg-light rounded shadow-sm">
-            <i class="bi bi-check-circle fs-1 text-success"></i>
-            <h5 class="mt-2">Confirmed</h5>
-            <p id="confirmedCount" class="fw-bold fs-4">0</p>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="p-3 bg-light rounded shadow-sm">
-            <i class="bi bi-x-circle fs-1 text-danger"></i>
-            <h5 class="mt-2">Cancelled</h5>
-            <p id="cancelledCount" class="fw-bold fs-4">0</p>
-          </div>
-        </div>
-      </div>
+<div class="row text-center my-4">
+<div class="col-md-4 mb-3">
+<div class="p-3 bg-light rounded shadow-sm">
+<i class="bi bi-hourglass-split fs-1 text-warning"></i>
+<h5 class="mt-2">Pending</h5>
+<p id="pendingCount" class="fw-bold fs-4">0</p>
+</div>
+</div>
+<div class="col-md-4 mb-3">
+<div class="p-3 bg-light rounded shadow-sm">
+<i class="bi bi-check-circle fs-1 text-success"></i>
+<h5 class="mt-2">Confirmed</h5>
+<p id="confirmedCount" class="fw-bold fs-4">0</p>
+</div>
+</div>
+<div class="col-md-4 mb-3">
+<div class="p-3 bg-light rounded shadow-sm">
+<i class="bi bi-x-circle fs-1 text-danger"></i>
+<h5 class="mt-2">Cancelled</h5>
+<p id="cancelledCount" class="fw-bold fs-4">0</p>
+</div>
+</div>
+</div>
 
-      <a href="my-appointments.html" class="btn btn-primary w-100">View All Appointments</a>
-    </div>
-  </div>
+<a href="my-appointments.html" class="btn btn-primary w-100">View All Appointments</a>
+</div>
+</div>
 </div>
 
 <footer>
-  <p>© 2025 Schools Division Office of Navotas City. All rights reserved. | <a href="#" class="text-white">Terms of Service</a></p>
+<p>© 2025 Schools Division Office of Navotas City. All rights reserved. | <a href="#" class="text-white">Terms of Service</a></p>
 </footer>
 
 <script>
@@ -154,33 +154,33 @@ const userName = document.getElementById("userName");
 const logoutBtn = document.getElementById("logoutBtn");
 
 auth.onAuthStateChanged(user => {
-  if (user) {
-    userName.textContent = user.displayName || user.email.split("@")[0];
+if (user) {
+userName.textContent = user.displayName || user.email.split("@")[0];
 
-    db.collection("appointments")
-      .where("userId", "==", user.uid)
-      .get()
-      .then(snapshot => {
-        let pending = 0, confirmed = 0, cancelled = 0;
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          if (data.status === "Pending") pending++;
-          if (data.status === "Confirmed") confirmed++;
-          if (data.status === "Cancelled") cancelled++;
-        });
-        document.getElementById("pendingCount").textContent = pending;
-        document.getElementById("confirmedCount").textContent = confirmed;
-        document.getElementById("cancelledCount").textContent = cancelled;
-      });
-  } else {
-    window.location.href = "login.html";
-  }
+db.collection("appointments")
+.where("userId", "==", user.uid)
+.get()
+.then(snapshot => {
+let pending = 0, confirmed = 0, cancelled = 0;
+snapshot.forEach(doc => {
+const data = doc.data();
+if (data.status === "Pending") pending++;
+if (data.status === "Confirmed") confirmed++;
+if (data.status === "Cancelled") cancelled++;
+});
+document.getElementById("pendingCount").textContent = pending;
+document.getElementById("confirmedCount").textContent = confirmed;
+document.getElementById("cancelledCount").textContent = cancelled;
+});
+} else {
+window.location.href = "login.html";
+}
 });
 
 logoutBtn.addEventListener("click", () => {
-  auth.signOut().then(() => {
-    window.location.href = "login.html";
-  });
+auth.signOut().then(() => {
+window.location.href = "login.html";
+});
 });
 </script>
 
