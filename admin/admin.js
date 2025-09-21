@@ -17,10 +17,12 @@ const reasonTextarea = document.getElementById('reasonTextarea');
 const updateBtn = document.getElementById('updateBtn');
 
 const feedbackTableBody = document.getElementById("feedbackTable");
+const helpRequestsTableBody = document.getElementById("helpRequestsTable");
 
 let currentAppointmentId = null;
 let allAppointments = [];
 let allFeedback = [];
+let allHelpRequests = [];
 
 function updateStats() {
   const pending = allAppointments.filter(a => a.status === "Pending").length;
@@ -146,6 +148,81 @@ function renderFeedback(list) {
   });
 }
 
+function renderHelpRequests(list) {
+  helpRequestsTableBody.innerHTML = "";
+
+  if (!list.length) {
+    helpRequestsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No help requests found.</td></tr>`;
+    return;
+  }
+
+  list.forEach(request => {
+    const tr = document.createElement("tr");
+    const statusBadge = getStatusBadge(request.status);
+    const priorityBadge = getPriorityBadge(request.priority);
+
+    tr.innerHTML = `
+      <td>${request.fullName}</td>
+      <td>${request.email}</td>
+      <td>${request.category}</td>
+      <td><span class="badge ${priorityBadge}">${request.priority}</span></td>
+      <td><span class="badge ${statusBadge}">${request.status}</span></td>
+      <td>${new Date(request.createdAt?.toDate?.() || request.createdAt).toLocaleString()}</td>
+      <td class="text-center">
+        <button class="btn btn-info btn-sm me-1" data-action="View" data-id="${request.id}">View</button>
+        <button class="btn btn-success btn-sm me-1" data-action="Resolve" data-id="${request.id}">Resolve</button>
+        <button class="btn btn-warning btn-sm" data-action="Pending" data-id="${request.id}">Pending</button>
+      </td>
+    `;
+
+    tr.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.action;
+        const requestId = btn.dataset.id;
+        handleHelpRequestAction(requestId, action);
+      });
+    });
+
+    helpRequestsTableBody.appendChild(tr);
+  });
+}
+
+function getStatusBadge(status) {
+  switch (status) {
+    case "Open": return "bg-danger";
+    case "In Progress": return "bg-warning";
+    case "Resolved": return "bg-success";
+    case "Closed": return "bg-secondary";
+    default: return "bg-secondary";
+  }
+}
+
+function getPriorityBadge(priority) {
+  switch (priority) {
+    case "Urgent": return "bg-danger";
+    case "Normal": return "bg-info";
+    default: return "bg-secondary";
+  }
+}
+
+async function handleHelpRequestAction(requestId, action) {
+  try {
+    let newStatus = "Open";
+    if (action === "Resolve") newStatus = "Resolved";
+    else if (action === "Pending") newStatus = "In Progress";
+
+    await db.collection("helpRequests").doc(requestId).update({
+      status: newStatus,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    console.log(`✅ Help request ${requestId} updated to ${newStatus}`);
+  } catch (err) {
+    console.error("Error updating help request:", err);
+    alert("Failed to update help request status.");
+  }
+}
+
 auth.onAuthStateChanged(async user => {
   if (!user) {
     overlay.style.display = "flex";
@@ -168,9 +245,8 @@ auth.onAuthStateChanged(async user => {
       allAppointments = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
-      })).filter(app => app.status !== "Cancelled"); // Exclude cancelled appointments
+      })).filter(app => app.status !== "Cancelled");
 
-      // Sort by createdAt descending
       allAppointments.sort((a, b) => {
         const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt || 0);
         const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt || 0);
@@ -196,6 +272,20 @@ auth.onAuthStateChanged(async user => {
     }, err => {
       console.error("Error loading feedback:", err);
       feedbackTableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Failed to load feedback. Check console for details.</td></tr>`;
+    });
+
+  db.collection("helpRequests")
+    .orderBy("createdAt", "desc")
+    .onSnapshot(snapshot => {
+      allHelpRequests = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      renderHelpRequests(allHelpRequests);
+    }, err => {
+      console.error("Error loading help requests:", err);
+      helpRequestsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load help requests. Check console for details.</td></tr>`;
     });
 });
 

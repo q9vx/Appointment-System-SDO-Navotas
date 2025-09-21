@@ -214,7 +214,6 @@ const message = document.getElementById('message').value;
 
 const alertDiv = document.getElementById('feedbackAlert');
 
-// Check if user is authenticated
 if (!auth.currentUser) {
 alertDiv.className = 'alert alert-danger';
 alertDiv.textContent = 'You must be logged in to submit feedback.';
@@ -222,7 +221,6 @@ alertDiv.classList.remove('d-none');
 return;
 }
 
-// Simple validation
 if (!name || !email || !subject || !message) {
 alertDiv.className = 'alert alert-danger';
 alertDiv.textContent = 'Please fill in all fields.';
@@ -230,7 +228,6 @@ alertDiv.classList.remove('d-none');
 return;
 }
 
-// Save to Firestore
 db.collection('feedback').add({
 name: name,
 email: email,
@@ -244,10 +241,8 @@ alertDiv.className = 'alert alert-success';
 alertDiv.textContent = 'Thank you for your feedback! We appreciate your input.';
 alertDiv.classList.remove('d-none');
 
-// Reset form
 this.reset();
 
-// Hide alert after 5 seconds
 setTimeout(() => {
 alertDiv.classList.add('d-none');
 }, 5000);

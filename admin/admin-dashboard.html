@@ -234,7 +234,6 @@ box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 </div>
 </header>
 
-<!-- ✅ Admin Capabilities Notice -->
 <section class="container mb-4">
 <div class="alert alert-info shadow-sm" role="alert">
 <h5 class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>Admin Capabilities</h5>
@@ -334,38 +333,67 @@ box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
 </div>
 </div>
 
-<!-- Feedback Section -->
 <div id="feedback" class="card shadow-sm">
-<div class="card-header bg-info text-white">
-<h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>User Feedback</h5>
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>User Feedback</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody id="feedbackTable">
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <div class="spinner-border text-info" role="status"></div>
+                            <p class="mt-2 mb-0">Loading feedback...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-<div class="card-body p-0">
-<div class="table-responsive">
-<table class="table table-hover align-middle mb-0">
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Subject</th>
-<th>Message</th>
-<th>Submitted At</th>
-</tr>
-</thead>
-<tbody id="feedbackTable">
-<tr>
-<td colspan="5" class="text-center text-muted py-4">
-<div class="spinner-border text-info" role="status"></div>
-<p class="mt-2 mb-0">Loading feedback...</p>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+
+<div id="helpDeskSection" class="card shadow-sm mt-4">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-headset me-2"></i>Help Desk Requests</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="helpRequestsTable">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <div class="spinner-border text-success" role="status"></div>
+                            <p class="mt-2 mb-0">Loading help requests...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 </main>
 
-<!-- Modal -->
 <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
 <div class="modal-dialog">
 <div class="modal-content">

@@ -63,7 +63,6 @@ id: doc.id,
 ...doc.data()
 }));
 
-// Sort by cancelledAt descending
 allCancelled.sort((a, b) => {
 const aTime = a.cancelledAt?.toDate?.() || new Date(a.cancelledAt || 0);
 const bTime = b.cancelledAt?.toDate?.() || new Date(b.cancelledAt || 0);

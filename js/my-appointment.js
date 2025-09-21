@@ -105,14 +105,12 @@ ${appt.adminNotes ? `<p class="mt-2 text-info"><strong>Admin Note:</strong> ${ap
 `;
 });
 
-// Add event listener for cancel buttons using event delegation
 list.addEventListener("click", (e) => {
   if (e.target.classList.contains("cancel-btn")) {
     const card = e.target.closest(".card");
     const apptId = card.getAttribute("data-id");
     if (!apptId) return;
 
-    // Show modal for cancellation reason and notes
     const cancelModal = new bootstrap.Modal(document.getElementById('cancelModal'));
     const cancelReasonSelect = document.getElementById('cancelReason');
     const cancelNotesTextarea = document.getElementById('cancelNotes');
