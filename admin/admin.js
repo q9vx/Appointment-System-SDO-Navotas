@@ -9,7 +9,6 @@ if (sidebarToggleBtn && wrapper) {
   console.error('Sidebar toggle button or wrapper element not found');
 }
 
-// Close sidebar when clicking on overlay (mobile)
 document.addEventListener('click', (e) => {
   if (window.innerWidth <= 768 && wrapper.classList.contains('toggled')) {
     const sidebar = document.getElementById('sidebar-wrapper');
@@ -29,7 +28,6 @@ const clearFiltersBtn = document.getElementById("clearFiltersBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const overlay = document.getElementById("guestOverlay");
 
-// Bulk action elements
 const selectAllCheckbox = document.getElementById("selectAllCheckbox");
 const bulkConfirmBtn = document.getElementById("bulkConfirmBtn");
 const bulkCancelBtn = document.getElementById("bulkCancelBtn");
@@ -55,7 +53,6 @@ let allAppointments = [];
 let allFeedback = [];
 let allHelpRequests = [];
 
-// Real-time features variables
 let realTimeMode = true;
 let refreshInterval = null;
 let lastUpdateTime = new Date();
@@ -64,7 +61,6 @@ let appointmentListener = null;
 let feedbackListener = null;
 let helpRequestsListener = null;
 
-// Notification variables
 let notifications = [];
 let maxNotifications = 10;
 let notificationTimeUpdateInterval = null;
@@ -93,7 +89,6 @@ function applyFilters() {
   const dateToValue = dateTo.value;
 
   const filtered = allAppointments.filter(app => {
-    // Enhanced search across multiple fields
     const matchSearch =
       (app.userName || "").toLowerCase().includes(search) ||
       app.userEmail.toLowerCase().includes(search) ||
@@ -101,10 +96,8 @@ function applyFilters() {
       app.purpose.toLowerCase().includes(search) ||
       (app.notes || "").toLowerCase().includes(search);
 
-    // Multi-select status filtering
     const matchStatus = selectedStatuses.length === 0 || selectedStatuses.includes(app.status);
 
-    // Date range filtering
     let matchDateRange = true;
     if (dateFromValue || dateToValue) {
       const appointmentDate = new Date(app.date);
@@ -114,7 +107,7 @@ function applyFilters() {
       }
       if (dateToValue) {
         const toDate = new Date(dateToValue);
-        toDate.setHours(23, 59, 59, 999); // Include the entire day
+        toDate.setHours(23, 59, 59, 999);
         matchDateRange = matchDateRange && appointmentDate <= toDate;
       }
     }
@@ -129,13 +122,12 @@ function applyFilters() {
 
 function clearFilters() {
   searchInput.value = "";
-  statusFilter.selectedIndex = -1; // Clear multi-select
+  statusFilter.selectedIndex = -1;
   dateFrom.value = "";
   dateTo.value = "";
   applyFilters();
 }
 
-// Event listeners
 searchInput.addEventListener("input", applyFilters);
 statusFilter.addEventListener("change", applyFilters);
 dateFrom.addEventListener("change", applyFilters);
@@ -146,7 +138,6 @@ clearFiltersBtn.addEventListener("click", clearFilters);
 function renderAppointments(list) {
   tableBody.innerHTML = "";
 
-  // Reset select all checkbox when re-rendering
   if (selectAllCheckbox) {
     selectAllCheckbox.checked = false;
     selectAllCheckbox.indeterminate = false;
@@ -329,11 +320,9 @@ async function handleHelpRequestAction(requestId, action) {
   }
 }
 
-// Real-time features functions
 function startRealTimeListeners() {
   console.log("Starting real-time listeners...");
 
-  // Appointments listener
   appointmentListener = db.collection("appointments")
     .onSnapshot(snapshot => {
       const previousCount = allAppointments.length;
@@ -364,7 +353,6 @@ function startRealTimeListeners() {
       tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Failed to load appointments. Check console for details.</td></tr>`;
     });
 
-  // Feedback listener
   feedbackListener = db.collection("feedback")
     .orderBy("timestamp", "desc")
     .onSnapshot(snapshot => {
@@ -431,13 +419,12 @@ function stopRealTimeListeners() {
     helpRequestsListener = null;
   }
 
-  // Stop notification time update interval
   stopNotificationTimeUpdate();
 }
 
 async function fetchDataPeriodically() {
   try {
-    // Fetch appointments
+
     const appointmentsSnapshot = await db.collection("appointments").get();
     allAppointments = appointmentsSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -450,14 +437,12 @@ async function fetchDataPeriodically() {
       return bTime - aTime;
     });
 
-    // Fetch feedback
     const feedbackSnapshot = await db.collection("feedback").orderBy("timestamp", "desc").get();
     allFeedback = feedbackSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
 
-    // Fetch help requests
     const helpRequestsSnapshot = await db.collection("helpRequests").orderBy("createdAt", "desc").get();
     allHelpRequests = helpRequestsSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -501,11 +486,10 @@ function updateNotificationBadge() {
   }
 }
 
-// Notification dropdown functions
 function addNotification(type, message, data = {}) {
   const notification = {
     id: Date.now(),
-    type: type, // 'appointment', 'feedback', 'helpRequest'
+    type: type,
     message: message,
     data: data,
     timestamp: new Date(),
@@ -514,7 +498,6 @@ function addNotification(type, message, data = {}) {
 
   notifications.unshift(notification);
 
-  // Keep only the most recent notifications
   if (notifications.length > maxNotifications) {
     notifications = notifications.slice(0, maxNotifications);
   }
@@ -613,24 +596,23 @@ function markAsRead(notificationId) {
 }
 
 function handleNotificationClick(notification) {
-  // Navigate to the appropriate section based on notification type
+
   switch (notification.type) {
     case 'appointment':
-      // Switch to appointments tab
+
       const appointmentsTab = document.querySelector('[data-bs-target="#appointments"]');
       if (appointmentsTab) {
         appointmentsTab.click();
       }
       break;
     case 'feedback':
-      // Switch to feedback tab
+
       const feedbackTab = document.querySelector('[data-bs-target="#feedback"]');
       if (feedbackTab) {
         feedbackTab.click();
       }
       break;
     case 'helpRequest':
-      // Switch to help requests tab
       const helpTab = document.querySelector('[data-bs-target="#help-requests"]');
       if (helpTab) {
         helpTab.click();
@@ -645,12 +627,12 @@ function clearAllNotifications() {
 }
 
 function startNotificationTimeUpdate() {
-  // Update notification times every minute
+
   notificationTimeUpdateInterval = setInterval(() => {
     if (notifications.length > 0) {
       updateNotificationDropdown();
     }
-  }, 60000); // Update every 60 seconds
+  }, 60000);
 }
 
 function stopNotificationTimeUpdate() {
@@ -660,7 +642,6 @@ function stopNotificationTimeUpdate() {
   }
 }
 
-// Event listener for real-time toggle
 document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
   realTimeMode = e.target.checked;
 
@@ -680,30 +661,25 @@ document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
   }
 });
 
-// Notification button click handler
 document.getElementById('notificationBtn').addEventListener('click', () => {
   newItemsCount = 0;
   updateNotificationBadge();
 });
 
-// Clear all notifications button handler
 document.getElementById('clearAllNotificationsBtn')?.addEventListener('click', () => {
   clearAllNotifications();
   newItemsCount = 0;
   updateNotificationBadge();
 });
 
-// View all notifications button handler
 document.getElementById('viewAllNotificationsBtn')?.addEventListener('click', () => {
-  // Switch to appointments tab and scroll to top to show all activity
+
   const appointmentsTab = document.querySelector('[data-bs-target="#appointments"]');
   if (appointmentsTab) {
     appointmentsTab.click();
-    // Scroll to top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Close the dropdown
   const dropdown = document.querySelector('.dropdown-menu');
   if (dropdown) {
     dropdown.classList.remove('show');
@@ -727,16 +703,13 @@ auth.onAuthStateChanged(async user => {
 
   console.log("Admin access granted");
 
-  // Initialize real-time toggle switch
   const toggleSwitch = document.getElementById('autoRefreshToggle');
   if (toggleSwitch) {
     toggleSwitch.checked = realTimeMode;
   }
 
-  // Start real-time listeners by default
   startRealTimeListeners();
 
-  // Start notification time update interval
   startNotificationTimeUpdate();
 });
 
@@ -789,7 +762,7 @@ updateBtn.addEventListener("click", async () => {
 });
 
 function editAppointment(app) {
-  // Placeholder: Implement the logic to open an edit form/modal pre-filled with appointment data
+
   alert(`Edit appointment for ${app.userEmail} (ID: ${app.id}) - Feature to be implemented.`);
 }
 
@@ -806,17 +779,14 @@ async function deleteAppointment(id) {
   }
 }
 
-// Utility function to convert array of objects to CSV string
 function arrayToCSV(data) {
   if (!data.length) return '';
 
   const keys = Object.keys(data[0]);
   const csvRows = [];
 
-  // Header row
   csvRows.push(keys.join(','));
 
-  // Data rows
   for (const row of data) {
     const values = keys.map(k => {
       let val = row[k] === null || row[k] === undefined ? '' : row[k];
@@ -832,7 +802,6 @@ function arrayToCSV(data) {
   return csvRows.join('\n');
 }
 
-// Export appointments to CSV
 document.getElementById('exportAppointmentsBtn').addEventListener('click', async () => {
   try {
     const snapshot = await firebase.firestore().collection('appointments').get();
@@ -855,7 +824,6 @@ document.getElementById('exportAppointmentsBtn').addEventListener('click', async
   }
 });
 
-// Export feedback to CSV
 document.getElementById('exportFeedbackBtn').addEventListener('click', async () => {
   try {
     const snapshot = await firebase.firestore().collection('feedback').get();
@@ -877,7 +845,6 @@ document.getElementById('exportFeedbackBtn').addEventListener('click', async () 
   }
 });
 
-// Export help requests to CSV
 document.getElementById('exportHelpRequestsBtn').addEventListener('click', async () => {
   try {
     const snapshot = await firebase.firestore().collection('helpRequests').get();
@@ -900,11 +867,10 @@ document.getElementById('exportHelpRequestsBtn').addEventListener('click', async
   }
 });
 
-// Helper function to trigger CSV download
 function downloadCSV(csv, filename) {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
-  if (navigator.msSaveBlob) { // IE 10+
+  if (navigator.msSaveBlob) { 
     navigator.msSaveBlob(blob, filename);
   } else {
     const url = URL.createObjectURL(blob);
@@ -1021,7 +987,6 @@ async function bulkExportAppointments() {
   }
 }
 
-// Event Listeners for Bulk Actions
 selectAllCheckbox.addEventListener('change', (e) => {
   const checkboxes = document.querySelectorAll('.appointment-checkbox');
   checkboxes.forEach(cb => {
@@ -1034,12 +999,10 @@ bulkConfirmBtn.addEventListener('click', bulkConfirmAppointments);
 bulkCancelBtn.addEventListener('click', bulkCancelAppointments);
 bulkExportBtn.addEventListener('click', bulkExportAppointments);
 
-// Update bulk button states when checkboxes change
 document.addEventListener('change', (e) => {
   if (e.target.classList.contains('appointment-checkbox')) {
     updateBulkButtonStates();
 
-    // Update select all checkbox state
     const allCheckboxes = document.querySelectorAll('.appointment-checkbox');
     const checkedCheckboxes = document.querySelectorAll('.appointment-checkbox:checked');
     selectAllCheckbox.checked = allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length;
@@ -1047,7 +1010,6 @@ document.addEventListener('change', (e) => {
   }
 });
 
-// User Management Variables
 const usersTableBody = document.getElementById("usersTable");
 const userSearchInput = document.getElementById("userSearchInput");
 const userRoleFilter = document.getElementById("userRoleFilter");
@@ -1068,7 +1030,6 @@ let allUsers = [];
 let currentUserId = null;
 let userListener = null;
 
-// User Management Functions
 async function loadUsers() {
   try {
     const snapshot = await db.collection("users").get();
@@ -1223,7 +1184,6 @@ async function saveUserChanges() {
   try {
     await db.collection("users").doc(currentUserId).update(updatedData);
 
-    // Log the activity
     await db.collection("userActivity").add({
       userId: currentUserId,
       action: "Profile Updated",
@@ -1247,7 +1207,6 @@ async function deleteUser(userId) {
   try {
     await db.collection("users").doc(userId).delete();
 
-    // Log the activity
     await db.collection("userActivity").add({
       userId: userId,
       action: "Account Deleted",
@@ -1277,13 +1236,11 @@ function handleUserAction(userId, action) {
   }
 }
 
-// Event Listeners for User Management
 userSearchInput.addEventListener("input", applyUserFilters);
 userRoleFilter.addEventListener("change", applyUserFilters);
 saveUserBtn.addEventListener("click", saveUserChanges);
 deleteUserBtn.addEventListener("click", () => deleteUser(currentUserId));
 
-// Integrate User Management with Real-time Listeners
 function startUserListener() {
   userListener = db.collection("users")
     .onSnapshot(snapshot => {
@@ -1314,11 +1271,9 @@ function startUserListener() {
     });
 }
 
-// Update startRealTimeListeners to include user listener
 function startRealTimeListeners() {
   console.log("Starting real-time listeners...");
 
-  // Existing listeners
   appointmentListener = db.collection("appointments")
     .onSnapshot(snapshot => {
       const previousCount = allAppointments.length;
@@ -1397,11 +1352,9 @@ function startRealTimeListeners() {
       helpRequestsTableBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Failed to load help requests. Check console for details.</td></tr>`;
     });
 
-  // Add user listener
   startUserListener();
 }
 
-// Update stopRealTimeListeners to include user listener
 function stopRealTimeListeners() {
   console.log("Stopping real-time listeners...");
 
@@ -1422,14 +1375,12 @@ function stopRealTimeListeners() {
     userListener = null;
   }
 
-  // Stop notification time update interval
   stopNotificationTimeUpdate();
 }
 
-// Update fetchDataPeriodically to include users
 async function fetchDataPeriodically() {
   try {
-    // Fetch appointments
+
     const appointmentsSnapshot = await db.collection("appointments").get();
     allAppointments = appointmentsSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -1442,21 +1393,18 @@ async function fetchDataPeriodically() {
       return bTime - aTime;
     });
 
-    // Fetch feedback
     const feedbackSnapshot = await db.collection("feedback").orderBy("timestamp", "desc").get();
     allFeedback = feedbackSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
 
-    // Fetch help requests
     const helpRequestsSnapshot = await db.collection("helpRequests").orderBy("createdAt", "desc").get();
     allHelpRequests = helpRequestsSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
 
-    // Fetch users
     const usersSnapshot = await db.collection("users").get();
     allUsers = usersSnapshot.docs.map(doc => ({
       id: doc.id,
@@ -1481,11 +1429,9 @@ async function fetchDataPeriodically() {
   }
 }
 
-// Chart.js analytics setup
 document.addEventListener('DOMContentLoaded', () => {
   const db = firebase.firestore();
 
-  // Fetch appointments data for charts
   db.collection('appointments').get().then(snapshot => {
     const appointments = snapshot.docs.map(doc => {
       const data = doc.data();
@@ -1495,7 +1441,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }).filter(a => a.date !== null);
 
-    // Prepare data for appointment trends (by month)
     const trendsData = {};
     appointments.forEach(a => {
       const month = a.date.getFullYear() + '-' + (a.date.getMonth() + 1);
@@ -1505,7 +1450,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const trendLabels = Object.keys(trendsData).sort();
     const trendCounts = trendLabels.map(label => trendsData[label]);
 
-    // Prepare data for status distribution
     const statusCounts = {};
     appointments.forEach(a => {
       statusCounts[a.status] = (statusCounts[a.status] || 0) + 1;
@@ -1513,7 +1457,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusLabels = Object.keys(statusCounts);
     const statusData = statusLabels.map(label => statusCounts[label]);
 
-    // Render charts
     const ctxTrends = document.getElementById('appointmentTrendsChart').getContext('2d');
     new Chart(ctxTrends, {
       type: 'line',
@@ -1546,10 +1489,10 @@ document.addEventListener('DOMContentLoaded', () => {
           label: 'Appointment Status Distribution',
           data: statusData,
           backgroundColor: [
-            '#ffc107', // Pending - yellow
-            '#28a745', // Confirmed - green
-            '#0d6efd', // Completed - blue
-            '#dc3545'  // Cancelled - red
+            '#ffc107',
+            '#28a745',
+            '#0d6efd',
+            '#dc3545'
           ]
         }]
       },
@@ -1565,10 +1508,9 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Dashboard preferences
 const defaultPreferences = {
   autoRefresh: true,
-  autoRefreshInterval: 5, // minutes
+  autoRefreshInterval: 5,
   soundNotifications: true,
   desktopNotifications: true,
   showCompleted: true,
@@ -1589,11 +1531,10 @@ function savePreferences(prefs) {
 }
 
 function applyPreferences(prefs) {
-  // Auto-refresh
+
   realTimeMode = prefs.autoRefresh;
   if (autoRefreshToggle) autoRefreshToggle.checked = realTimeMode;
 
-  // Settings panel
   const intervalSelect = document.getElementById('autoRefreshInterval');
   const soundCheckbox = document.getElementById('soundNotifications');
   const desktopCheckbox = document.getElementById('desktopNotifications');
@@ -1606,12 +1547,11 @@ function applyPreferences(prefs) {
   if (showCompletedCheckbox) showCompletedCheckbox.checked = prefs.showCompleted;
   if (showCancelledCheckbox) showCancelledCheckbox.checked = prefs.showCancelled;
 
-  // Apply data display filters
   applyDataDisplayFilters(prefs);
 }
 
 function applyDataDisplayFilters(prefs) {
-  // Filter appointments based on showCompleted and showCancelled
+
   let filtered = allAppointments;
   if (!prefs.showCompleted) {
     filtered = filtered.filter(a => a.status !== 'Completed');
@@ -1643,11 +1583,9 @@ function resetSettings() {
   alert('Settings reset to defaults!');
 }
 
-// Dark mode toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
 
-    // Load saved theme from localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -1669,11 +1607,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Load and apply dashboard preferences
     const prefs = loadPreferences();
     applyPreferences(prefs);
 
-    // Settings panel event listeners
     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
     const resetSettingsBtn = document.getElementById('resetSettingsBtn');
 

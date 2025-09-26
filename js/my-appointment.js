@@ -266,18 +266,16 @@ list.innerHTML += cardHTML;
 function loadAndRenderAppointments() {
 showSkeleton();
 
-// Apply current filter and sort
 filteredAppointments = applyFilter(allAppointments, currentFilter);
 filteredAppointments = applySort(filteredAppointments, currentSort);
 
-// Reset to first page when filter/sort changes
 currentPage = 1;
 
 const currentAppointments = getCurrentPageAppointments();
-setTimeout(() => {  // Small delay to show skeleton
+setTimeout(() => { 
 renderAppointments(currentAppointments);
 updatePageInfo();
-}, 800);  // Adjust delay as needed
+}, 800);
 }
 
 function loadMoreAppointments() {
@@ -291,7 +289,6 @@ updatePageInfo();
 hideLoading();
 }
 
-// Event listeners
 document.querySelectorAll(".quick-filter-btn").forEach(btn => {
 btn.addEventListener("click", () => {
 document.querySelectorAll(".quick-filter-btn").forEach(b => b.classList.remove("active"));
@@ -320,7 +317,6 @@ showToast("Filters cleared!");
 
 loadMoreBtn.addEventListener("click", loadMoreAppointments);
 
-// Initialize
 updateQuickFilterButtons();
 showSkeleton();
 
@@ -358,10 +354,8 @@ const appt = { id: doc.id, ...doc.data() };
 allAppointments.push(appt);
 });
 
-// Initial load and render
 loadAndRenderAppointments();
 
-// Set up cancel button event listener (delegated)
 list.addEventListener("click", (e) => {
 if (e.target.classList.contains("cancel-btn")) {
 const card = e.target.closest(".appointment-card");
@@ -394,12 +388,12 @@ cancellationNotes: notes || null,
 cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
 }).then(() => {
 showToast("Appointment cancelled successfully!");
-// Update the appointment in our local array
+
 const apptIndex = allAppointments.findIndex(a => a.id === apptId);
 if (apptIndex !== -1) {
 allAppointments[apptIndex].status = "Cancelled";
 }
-// Re-render current view
+
 loadAndRenderAppointments();
 cancelModal.hide();
 confirmCancelBtn.removeEventListener('click', onConfirm);

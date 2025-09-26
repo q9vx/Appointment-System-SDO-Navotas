@@ -229,10 +229,9 @@ helpForm.addEventListener("submit", async (e) => {
   formMsg.textContent = "⏳ Verifying...";
   formMsg.style.display = "block";
 
-  // Get the reCAPTCHA token
   const token = await grecaptcha.execute("6Ld0ONErAAAAAPOPMkFA-pvrSqgJsnepGUc8OCco", { action: "submit" });
 
-  // Send token to your Cloudflare Worker
+
   const verifyRes = await fetch("https://sdo-navotas-appoint-system.amsprojectict.workers.dev/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -242,7 +241,7 @@ helpForm.addEventListener("submit", async (e) => {
   const verifyData = await verifyRes.json();
 
   if (!verifyRes.ok) {
-    // Handle HTTP errors (400, 403, 429, 500, etc.)
+
     let errorMessage = "❌ Request failed. Please try again.";
     
     if (verifyRes.status === 429) {
@@ -266,7 +265,6 @@ helpForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  // Proceed to save to Firestore
   const fullName = document.getElementById("fullName").value.trim();
   const email = document.getElementById("email").value.trim();
   const category = document.getElementById("category").value;

@@ -175,7 +175,6 @@ border-color: #1b4332;
 box-shadow: 0 0 0 0.2rem rgba(27, 67, 50, 0.25);
 }
 
-/* Loading State */
 .loading {
 position: relative;
 pointer-events: none;
@@ -201,7 +200,6 @@ animation: spin 1s linear infinite;
 100% { transform: rotate(360deg); }
 }
 
-/* Enhanced Responsive Design */
 @media (max-width: 1200px) {
 .card-appointments {
 max-width: 700px;
@@ -346,7 +344,6 @@ font-size: 0.95rem;
 }
 }
 
-/* Touch-friendly interactions */
 @media (hover: none) and (pointer: coarse) {
 .submit-btn:hover {
 transform: none;
@@ -362,7 +359,6 @@ box-shadow: none;
 }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
 .form-section,
 .schedule-card {
@@ -373,7 +369,6 @@ border-width: 2px;
 }
 }
 
-/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
 .form-section,
 .schedule-card,
@@ -424,7 +419,7 @@ animation: none;
 
 <div class="hero-content">
 <div class="card-appointments">
-<!-- Page Header -->
+
 <div class="page-header mb-4">
 <div class="d-flex align-items-center justify-content-center mb-3">
 <i class="bi bi-calendar-plus text-primary me-3" style="font-size: 2rem;"></i>
@@ -434,7 +429,7 @@ animation: none;
 </div>
 
 <form id="createAppointmentForm">
-<!-- Purpose Section -->
+
 <div class="form-section mb-4">
 <h5 class="section-title mb-3">
 <i class="bi bi-question-circle me-2 text-primary"></i>Purpose of Visit
@@ -455,7 +450,6 @@ animation: none;
 </div>
 </div>
 
-<!-- Notes Section -->
 <div class="form-section mb-4">
 <h5 class="section-title mb-3">
 <i class="bi bi-pencil-square me-2 text-primary"></i>Additional Details
@@ -470,7 +464,6 @@ animation: none;
 </div>
 </div>
 
-<!-- Date & Time Section -->
 <div class="form-section mb-4">
 <h5 class="section-title mb-3">
 <i class="bi bi-clock me-2 text-primary"></i>Appointment Schedule
@@ -507,7 +500,6 @@ animation: none;
 </div>
 </div>
 
-<!-- Submit Section -->
 <div class="form-section">
 <div class="d-grid gap-3">
 <button type="submit" class="btn btn-primary btn-lg submit-btn" id="submitBtn">
@@ -531,11 +523,9 @@ Your appointment will be reviewed and confirmed by our office staff
 </footer>
 
 <script>
-// Navigation and auth handling is now handled in create-appointment.js
-// This script block is kept for any additional page-specific logic if needed
+
 </script>
 
-<!-- Toast Container -->
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9998;">
 <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
 <div class="d-flex">

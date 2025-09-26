@@ -17,7 +17,6 @@ const toastMessage = document.getElementById("toastMessage");
 let currentUser = null;
 let userDoc = null;
 
-// Show toast
 function showToast(message, type = "success") {
   toastMessage.textContent = message;
   const toastEl = document.getElementById("successToast");
@@ -25,12 +24,10 @@ function showToast(message, type = "success") {
   successToast.show();
 }
 
-// Show error
 function showError(message) {
   showToast(message, "error");
 }
 
-// Load user data
 function loadUserData() {
   if (!currentUser) return;
 
@@ -50,7 +47,6 @@ function loadUserData() {
   });
 }
 
-// Update profile
 profileForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if (!currentUser || !userDoc) return;
@@ -70,14 +66,13 @@ profileForm.addEventListener("submit", (e) => {
     school
   }).then(() => {
     showToast("Profile updated successfully!");
-    loadUserData(); // Reload to confirm
+    loadUserData();
   }).catch(err => {
     console.error("Error updating profile:", err);
     showError("Failed to update profile.");
   });
 });
 
-// Change password
 passwordForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if (!currentUser) return;
@@ -96,7 +91,6 @@ passwordForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // Reauthenticate
   const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPassword);
   currentUser.reauthenticateWithCredential(credential).then(() => {
     currentUser.updatePassword(newPassword).then(() => {
@@ -112,7 +106,6 @@ passwordForm.addEventListener("submit", (e) => {
   });
 });
 
-// Save preferences
 savePreferencesBtn.addEventListener("click", () => {
   if (!currentUser || !userDoc) return;
 
@@ -130,7 +123,6 @@ savePreferencesBtn.addEventListener("click", () => {
   });
 });
 
-// Logout
 logoutBtn.addEventListener("click", () => {
   auth.signOut().then(() => {
     showToast("Logged out successfully!");
@@ -141,7 +133,6 @@ logoutBtn.addEventListener("click", () => {
   });
 });
 
-// Delete account
 confirmDeleteBtn.addEventListener("click", () => {
   if (!currentUser) return;
 
@@ -181,7 +172,6 @@ confirmDeleteBtn.addEventListener("click", () => {
   });
 });
 
-// Auth state listener
 auth.onAuthStateChanged(user => {
   currentUser = user;
   if (!user) {
@@ -197,7 +187,6 @@ auth.onAuthStateChanged(user => {
   document.body.classList.remove("guest-blur");
   if (overlay) overlay.style.display = "none";
 
-  // Check admin role
   db.collection("users").doc(user.uid).get().then(doc => {
     const isAdmin = doc.exists && doc.data().role === "admin";
     if (navProfile) navProfile.href = isAdmin ? "admin/admin-dashboard.html" : "settings.html"; // Default to settings for non-admin

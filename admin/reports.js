@@ -12,7 +12,6 @@ let allCancelled = [];
 
 let monthlyTrendsChart, statusPieChart, purposeBarChart;
 
-// Filter variables
 let currentFilters = {
   dateFrom: null,
   dateTo: null,
@@ -28,7 +27,6 @@ logoutBtn.addEventListener("click", async (e) => {
   window.location.href = "../index.html";
 });
 
-// Export CSV
 exportCSVBtn.addEventListener("click", () => {
   let csv = "Status,Count,Percentage\n";
   const total = allAppointments.length;
@@ -47,23 +45,19 @@ exportCSVBtn.addEventListener("click", () => {
   window.URL.revokeObjectURL(url);
 });
 
-// Export PDF using jsPDF
 exportPDFBtn.addEventListener("click", () => {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
-  // Set up fonts and colors
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.setTextColor(30, 58, 138); // Navy blue
+  doc.setTextColor(30, 58, 138);
 
-  // Header
   doc.text("SDO Navotas - Appointments Report", 20, 30);
   doc.setFontSize(12);
   doc.setTextColor(100, 116, 139);
   doc.text(`Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 20, 40);
 
-  // Summary Statistics
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.setTextColor(30, 58, 138);
@@ -90,14 +84,12 @@ exportPDFBtn.addEventListener("click", () => {
     yPos += 8;
   });
 
-  // Status Distribution Table
   yPos += 10;
   doc.setFont("helvetica", "bold");
   doc.setFontSize(14);
   doc.text("Status Distribution", 20, yPos);
   yPos += 10;
 
-  // Table headers
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
   doc.setFillColor(248, 250, 252);
@@ -108,7 +100,6 @@ exportPDFBtn.addEventListener("click", () => {
   doc.text("Percentage", 140, yPos);
   yPos += 8;
 
-  // Table data
   doc.setFont("helvetica", "normal");
   const filteredAppointments = getFilteredAppointments();
   const total = filteredAppointments.length;
@@ -124,7 +115,6 @@ exportPDFBtn.addEventListener("click", () => {
     yPos += 8;
   });
 
-  // Purpose Distribution (if space allows)
   if (yPos < 250) {
     yPos += 10;
     doc.setFont("helvetica", "bold");
@@ -172,7 +162,6 @@ function renderReports(list) {
     return;
   }
 
-  // Sort by cancelled date (most recent first)
   list.sort((a, b) => {
     const aDate = a.cancelledAt?.toDate?.() || a.updatedAt?.toDate?.() || new Date(a.createdAt || 0);
     const bDate = b.cancelledAt?.toDate?.() || b.updatedAt?.toDate?.() || new Date(b.createdAt || 0);
@@ -265,17 +254,15 @@ function populatePurposeFilter() {
 
 function getFilteredAppointments() {
   return allAppointments.filter(appointment => {
-    // Date filter
+
     if (currentFilters.dateFrom || currentFilters.dateTo) {
       const appointmentDate = new Date(appointment.createdAt?.toDate?.() || appointment.createdAt);
       if (currentFilters.dateFrom && appointmentDate < new Date(currentFilters.dateFrom)) return false;
       if (currentFilters.dateTo && appointmentDate > new Date(currentFilters.dateTo + 'T23:59:59')) return false;
     }
 
-    // Status filter
     if (currentFilters.status && appointment.status !== currentFilters.status) return false;
 
-    // Purpose filter
     if (currentFilters.purpose && appointment.purpose !== currentFilters.purpose) return false;
 
     return true;
@@ -321,7 +308,6 @@ function updateStats(filteredAppointments = allAppointments) {
 
   const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-  // Avg response time for confirmed/completed (hours)
   let totalResponseTime = 0;
   let responseCount = 0;
   filteredAppointments.forEach(a => {
@@ -335,7 +321,6 @@ function updateStats(filteredAppointments = allAppointments) {
   });
   const avgResponseTime = responseCount > 0 ? Math.round(totalResponseTime / responseCount * 10) / 10 : 0;
 
-  // Cancelled this month (from all appointments for this stat)
   const now = new Date();
   const thisMonthCancelled = allAppointments.filter(a => {
     const cancelledAt = a.cancelledAt?.toDate?.() || a.updatedAt?.toDate?.() || new Date(a.createdAt || 0);
@@ -358,7 +343,6 @@ function renderCharts(filteredAppointments = allAppointments) {
   const pending = filteredAppointments.filter(a => a.status === "Pending").length;
   const confirmed = filteredAppointments.filter(a => a.status === "Confirmed").length;
 
-  // Monthly Trends Chart (last 12 months) - Enhanced with pending/confirmed
   const months = [];
   const completedData = [];
   const cancelledData = [];
@@ -372,7 +356,6 @@ function renderCharts(filteredAppointments = allAppointments) {
     const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
     const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-    // Use filtered appointments for trends when filters are applied
     const appointmentsToUse = currentFilters.dateFrom || currentFilters.dateTo || currentFilters.status || currentFilters.purpose ? filteredAppointments : allAppointments;
 
     const completedMonth = appointmentsToUse.filter(a => {
@@ -485,7 +468,6 @@ function renderCharts(filteredAppointments = allAppointments) {
     }
   });
 
-  // Status Pie Chart - Enhanced with tooltips
   const statusCtx = document.getElementById("statusPieChart").getContext("2d");
   const statusCounts = {
     Pending: pending,
@@ -529,7 +511,6 @@ function renderCharts(filteredAppointments = allAppointments) {
     }
   });
 
-  // Purpose Bar Chart - Enhanced with tooltips and responsiveness
   const purposeCtx = document.getElementById("purposeBarChart").getContext("2d");
   const purposes = [...new Set(filteredAppointments.map(a => a.purpose))].filter(p => p); // Filter out empty purposes
   const purposeCounts = purposes.map(p => filteredAppointments.filter(a => a.purpose === p).length);
@@ -598,7 +579,6 @@ auth.onAuthStateChanged(async user => {
     return;
   }
 
-  // Load all appointments
   db.collection("appointments")
     .onSnapshot(snapshot => {
       allAppointments = snapshot.docs.map(doc => ({
@@ -614,7 +594,6 @@ auth.onAuthStateChanged(async user => {
       renderReports(allCancelled);
     }, err => console.error("Error loading appointments:", err));
 
-  // Load feedback
   db.collection("feedback")
     .orderBy("timestamp", "desc")
     .onSnapshot(snapshot => {
@@ -623,7 +602,6 @@ auth.onAuthStateChanged(async user => {
       updateStats();
     }, err => console.error("Error loading feedback:", err));
 
-  // Load help requests
   db.collection("helpRequests")
     .orderBy("createdAt", "desc")
     .onSnapshot(snapshot => {
@@ -632,7 +610,6 @@ auth.onAuthStateChanged(async user => {
       updateStats();
     }, err => console.error("Error loading help requests:", err));
 
-  // Add filter event listeners
   document.getElementById("applyFiltersBtn").addEventListener("click", applyFilters);
   document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
 });
