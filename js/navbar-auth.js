@@ -31,8 +31,10 @@ navProfile.classList.remove("d-none");
 navMyAppointments.classList.remove("d-none");
 
 if (userData.role === "admin") {
+navProfile.href = "admin/admin-dashboard.html";
 navCreateAppointment.classList.add("d-none");
 } else {
+navProfile.href = "settings.html";
 navCreateAppointment.classList.remove("d-none");
 }
 } else {

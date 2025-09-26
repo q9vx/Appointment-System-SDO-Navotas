@@ -20,6 +20,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="reports.js" defer></script>
 
 <style>
@@ -851,6 +852,52 @@ footer {
 
         <!-- Main Content -->
         <main class="container-fluid">
+            <!-- Filters Section -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <div class="card-title">
+                        <i class="bi bi-funnel"></i>
+                        <span>Filters</span>
+                    </div>
+                </div>
+                <div class="card-body-custom">
+                    <div class="filters-grid">
+                        <div class="form-group">
+                            <label for="dateFrom" class="form-label">From Date</label>
+                            <input type="date" class="form-control" id="dateFrom">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateTo" class="form-label">To Date</label>
+                            <input type="date" class="form-control" id="dateTo">
+                        </div>
+                        <div class="form-group">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="purposeFilter" class="form-label">Purpose</label>
+                            <select class="form-select" id="purposeFilter">
+                                <option value="">All Purposes</option>
+                            </select>
+                        </div>
+                        <div class="form-group d-flex align-items-end">
+                            <button id="applyFiltersBtn" class="btn btn-primary-custom me-2">
+                                <i class="bi bi-check-circle me-1"></i>Apply Filters
+                            </button>
+                            <button id="clearFiltersBtn" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Statistics Cards -->
             <div class="stats-grid">
                 <div class="stat-card">

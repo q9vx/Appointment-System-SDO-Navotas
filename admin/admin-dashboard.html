@@ -1180,13 +1180,75 @@
                         </button>
                     </div>
                     <div id="analyticsCollapse" class="collapse show card-body-custom">
-                        <div class="row g-4 p-4">
+                        <!-- Performance Metrics -->
+                        <div class="row mb-4 p-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body text-center">
+                                        <h5 id="totalAppointments">0</h5>
+                                        <p class="mb-0">Total Appointments</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body text-center">
+                                        <h5 id="completionRate">0%</h5>
+                                        <p class="mb-0">Completion Rate</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h5 id="avgResponseTime">0h</h5>
+                                        <p class="mb-0">Avg Response Time</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h5 id="totalFeedback">0</h5>
+                                        <p class="mb-0">Total Feedback</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts -->
+                        <div class="row mb-3 px-4">
                             <div class="col-lg-6">
+                                <h6>Monthly Trends</h6>
+                                <canvas id="monthlyTrendsChart" height="300"></canvas>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6>Status Distribution</h6>
+                                <canvas id="statusPieChart" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div class="row mb-3 px-4">
+                            <div class="col-lg-6">
+                                <h6>Purpose Distribution</h6>
+                                <canvas id="purposeBarChart" height="300"></canvas>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6>Appointment Trends</h6>
                                 <canvas id="appointmentTrendsChart" height="300"></canvas>
                             </div>
-                            <div class="col-lg-6">
-                                <canvas id="statusDistributionChart" height="300"></canvas>
-                            </div>
+                        </div>
+
+                        <!-- Export Buttons -->
+                        <div class="d-flex justify-content-end gap-2 px-4 pb-4">
+                            <button id="exportAnalyticsCSV" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                            </button>
+                            <button id="exportAnalyticsPDF" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                            </button>
+                            <a href="reports.html" class="btn btn-primary btn-sm">
+                                <i class="bi bi-graph-up"></i> Detailed Reports
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -14,6 +14,8 @@
 <script src="js/firebase-config.js"></script>
 <script src="js/my-appointment.js" defer></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+
 <style>
 body {
 padding-top: 70px;
@@ -64,6 +66,101 @@ padding: 30px;
 width: 90%;
 max-width: 1200px;
 box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.controls-section {
+background-color: #f8f9fa;
+border-radius: 8px;
+padding: 20px;
+margin-bottom: 20px;
+border: 1px solid #e9ecef;
+}
+
+.quick-filters {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin-bottom: 15px;
+}
+
+.quick-filter-btn {
+padding: 6px 12px;
+border: 1px solid #1b4332;
+background-color: transparent;
+color: #1b4332;
+border-radius: 6px;
+font-size: 0.875rem;
+transition: all 0.2s;
+}
+
+.quick-filter-btn:hover,
+.quick-filter-btn.active {
+background-color: #1b4332;
+color: white;
+}
+
+.sort-controls {
+display: flex;
+align-items: center;
+gap: 15px;
+}
+
+.sort-controls label {
+margin: 0;
+font-weight: 500;
+color: #495057;
+}
+
+.sort-controls select {
+padding: 8px 12px;
+border: 1px solid #ced4da;
+border-radius: 6px;
+background-color: white;
+font-size: 0.875rem;
+}
+
+.pagination-controls {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 15px;
+margin-top: 20px;
+}
+
+.load-more-btn {
+padding: 10px 20px;
+background-color: #1b4332;
+color: white;
+border: none;
+border-radius: 8px;
+font-weight: 500;
+cursor: pointer;
+transition: background-color 0.2s;
+}
+
+.load-more-btn:hover {
+background-color: #0f2922;
+}
+
+.load-more-btn:disabled {
+background-color: #6c757d;
+cursor: not-allowed;
+}
+
+.page-info {
+font-size: 0.875rem;
+color: #6c757d;
+}
+
+.loading-indicator {
+display: none;
+text-align: center;
+padding: 20px;
+color: #6c757d;
+}
+
+.loading-indicator.show {
+display: block;
 }
 
 .appointment-card-container {
@@ -127,39 +224,346 @@ text-align: center;
 padding: 20px;
 }
 
+/* Enhanced Responsive Design */
 @media (max-width: 1200px) {
 .card-appointments {
 width: 95%;
+max-width: 1000px;
+}
+.controls-section {
+padding: 18px;
+}
+.quick-filter-btn {
+padding: 8px 14px;
+font-size: 0.9rem;
 }
 }
 
 @media (max-width: 992px) {
+.hero-section {
+min-height: 90vh;
+}
 .card-appointments {
 width: 95%;
-padding: 25px;
+padding: 25px 20px;
+}
+.page-header h2 {
+font-size: 1.8rem;
+}
+.page-header p {
+font-size: 0.95rem;
+}
+.controls-section {
+padding: 16px;
+}
+.quick-filters h6,
+.sort-controls h6 {
+font-size: 0.95rem;
+margin-bottom: 12px;
+}
+.quick-filter-btn {
+padding: 7px 12px;
+font-size: 0.85rem;
+}
+.sort-controls select {
+font-size: 0.9rem;
+}
+.appointment-card-container {
+max-height: 65vh;
+gap: 16px;
+}
+.appointment-card {
+padding: 18px;
 }
 }
 
 @media (max-width: 768px) {
+body {
+padding-top: 60px;
+}
+.hero-section {
+min-height: 80vh;
+}
+.hero-content {
+padding: 15px;
+}
 .card-appointments {
-width: 95%;
-padding: 20px;
+width: 98%;
+padding: 20px 15px;
+border-radius: 10px;
+}
+.page-header {
+margin-bottom: 20px;
+}
+.page-header h2 {
+font-size: 1.6rem;
+}
+.page-header p {
+font-size: 0.9rem;
+margin-bottom: 20px;
+}
+.controls-section {
+padding: 15px;
+margin-bottom: 15px;
+border-radius: 6px;
+}
+.quick-filters {
+margin-bottom: 10px;
+}
+.quick-filters h6 {
+font-size: 0.9rem;
+margin-bottom: 8px;
+}
+.quick-filter-btn {
+padding: 6px 10px;
+font-size: 0.8rem;
+min-width: auto;
+}
+.sort-controls {
+gap: 10px;
+}
+.sort-controls h6 {
+font-size: 0.9rem;
+margin-bottom: 8px;
+}
+.sort-controls select {
+min-width: 180px;
+font-size: 0.85rem;
 }
 .appointment-card-container {
 max-height: 60vh;
+gap: 14px;
+padding-right: 3px;
 }
 .appointment-card {
-padding: 15px;
+padding: 16px;
+border-radius: 10px;
+}
+.appointment-card:hover {
+transform: none;
+}
+.pagination-controls {
+flex-direction: column;
+gap: 12px;
+margin-top: 15px;
+}
+.load-more-btn {
+width: 100%;
+max-width: 300px;
+padding: 12px;
+font-size: 0.95rem;
+}
+.page-info {
+font-size: 0.85rem;
+text-align: center;
+}
+}
+
+@media (max-width: 576px) {
+.hero-section {
+min-height: 70vh;
+}
+.hero-content {
+padding: 10px;
+}
+.card-appointments {
+width: 100%;
+padding: 15px 10px;
+border-radius: 8px;
+box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+.page-header h2 {
+font-size: 1.4rem;
+}
+.page-header p {
+font-size: 0.85rem;
+margin-bottom: 15px;
+}
+.controls-section {
+padding: 12px;
+margin-bottom: 12px;
+}
+.quick-filters h6,
+.sort-controls h6 {
+font-size: 0.85rem;
+margin-bottom: 6px;
+}
+.quick-filter-btn {
+padding: 5px 8px;
+font-size: 0.75rem;
+}
+.sort-controls select {
+min-width: 160px;
+font-size: 0.8rem;
+padding: 6px 8px;
+}
+.appointment-card-container {
+max-height: 55vh;
+gap: 12px;
+}
+.appointment-card {
+padding: 14px;
+border-left-width: 4px;
+}
+.appointment-card .row > div {
+margin-bottom: 8px;
+}
+.appointment-card .row > div:last-child {
+margin-bottom: 0;
+}
+.load-more-btn {
+max-width: 250px;
+padding: 10px;
+font-size: 0.9rem;
+}
+.page-info {
+font-size: 0.8rem;
 }
 }
 
 @media (max-width: 480px) {
 .card-appointments {
-width: 95%;
-padding: 15px;
+padding: 12px 8px;
+}
+.page-header {
+margin-bottom: 15px;
+}
+.page-header h2 {
+font-size: 1.3rem;
+}
+.page-header p {
+font-size: 0.8rem;
+}
+.controls-section {
+padding: 10px;
+}
+.quick-filter-btn {
+padding: 4px 6px;
+font-size: 0.7rem;
+}
+.sort-controls select {
+min-width: 140px;
+font-size: 0.75rem;
 }
 .appointment-card-container {
-max-height: 55vh;
+max-height: 50vh;
+}
+.appointment-card {
+padding: 12px;
+}
+.load-more-btn {
+max-width: 200px;
+padding: 8px;
+font-size: 0.85rem;
+}
+}
+
+/* Skeleton Loader Responsive */
+@media (max-width: 768px) {
+.skeleton-card {
+padding: 16px;
+margin-bottom: 14px;
+}
+}
+
+@media (max-width: 576px) {
+.skeleton-card {
+padding: 14px;
+margin-bottom: 12px;
+}
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+.appointment-card:hover {
+transform: none;
+}
+.quick-filter-btn:hover {
+transform: none;
+}
+.load-more-btn:hover {
+transform: none;
+}
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+.quick-filter-btn {
+border-width: 2px;
+}
+.appointment-card {
+border-left-width: 6px;
+}
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+.appointment-card,
+.quick-filter-btn,
+.load-more-btn {
+transition: none;
+}
+.appointment-card:hover {
+transform: none;
+}
+}
+
+/* Skeleton Loader Styles */
+.skeleton-loader {
+width: 100%;
+}
+
+.skeleton-card {
+background-color: #fff;
+border-left: 5px solid #e9ecef;
+border-radius: 12px;
+padding: 20px;
+margin-bottom: 20px;
+box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-header {
+height: 20px;
+background-color: #e9ecef;
+border-radius: 4px;
+margin-bottom: 12px;
+width: 60%;
+}
+
+.skeleton-line {
+height: 16px;
+background-color: #e9ecef;
+border-radius: 4px;
+margin-bottom: 8px;
+width: 100%;
+}
+
+.skeleton-line.short {
+width: 80%;
+}
+
+.skeleton-badge {
+height: 24px;
+background-color: #e9ecef;
+border-radius: 12px;
+width: 80px;
+margin-bottom: 12px;
+}
+
+.skeleton-button {
+height: 36px;
+background-color: #e9ecef;
+border-radius: 6px;
+width: 120px;
+}
+
+@keyframes pulse {
+0%, 100% {
+opacity: 1;
+}
+50% {
+opacity: 0.6;
 }
 }
 </style>
@@ -198,10 +602,107 @@ max-height: 55vh;
 
 <div class="hero-content">
 <div class="card-appointments">
-<h2 class="fw-bold mb-4 text-center">My Appointments</h2>
+<!-- Page Header -->
+<div class="page-header mb-4">
+<div class="d-flex align-items-center justify-content-center mb-3">
+<i class="bi bi-calendar-check text-primary me-3" style="font-size: 2rem;"></i>
+<h2 class="fw-bold mb-0 text-primary">My Appointments</h2>
+</div>
+<p class="text-muted text-center mb-4">Manage and track all your appointment requests</p>
+</div>
 
+<!-- Controls Section -->
+<div class="controls-section">
+<div class="row g-3">
+<div class="col-12">
+<div class="quick-filters">
+<h6 class="fw-semibold mb-3 text-muted">
+<i class="bi bi-funnel me-2"></i>Quick Filters
+</h6>
+<div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+<button class="quick-filter-btn active" data-filter="all">
+<i class="bi bi-grid me-1"></i>All
+</button>
+<button class="quick-filter-btn" data-filter="today">
+<i class="bi bi-calendar-day me-1"></i>Today
+</button>
+<button class="quick-filter-btn" data-filter="week">
+<i class="bi bi-calendar-week me-1"></i>This Week
+</button>
+<button class="quick-filter-btn" data-filter="month">
+<i class="bi bi-calendar-month me-1"></i>This Month
+</button>
+<button class="quick-filter-btn" data-filter="upcoming">
+<i class="bi bi-calendar-event me-1"></i>Upcoming
+</button>
+</div>
+</div>
+</div>
+
+<div class="col-12">
+<div class="sort-controls d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3">
+<h6 class="fw-semibold mb-3 mb-sm-0 text-muted text-center text-sm-start">
+<i class="bi bi-sort-down me-2"></i>Sort Options
+</h6>
+<div class="d-flex gap-2 align-items-center">
+<select id="sortSelect" class="form-select flex-grow-1" style="min-width: 200px;">
+<option value="createdAt-desc">🕒 Newest First</option>
+<option value="createdAt-asc">🕐 Oldest First</option>
+<option value="date-desc">📅 Date (Latest)</option>
+<option value="date-asc">📅 Date (Earliest)</option>
+<option value="status">📊 Status</option>
+</select>
+<button class="btn btn-outline-secondary btn-sm flex-shrink-0" id="clearFilters" title="Clear all filters">
+<i class="bi bi-x-circle"></i> Clear
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Appointments List -->
+<div class="appointments-section">
 <div class="appointment-card-container" id="appointmentsList">
-<p class="text-center text-muted">Loading your appointments...</p>
+<!-- Skeleton Loaders -->
+<div class="skeleton-loader" id="skeletonLoader" style="display: none;">
+<div class="skeleton-card">
+<div class="skeleton-header"></div>
+<div class="skeleton-line"></div>
+<div class="skeleton-line short"></div>
+<div class="skeleton-badge"></div>
+<div class="skeleton-button"></div>
+</div>
+<div class="skeleton-card">
+<div class="skeleton-header"></div>
+<div class="skeleton-line"></div>
+<div class="skeleton-line short"></div>
+<div class="skeleton-badge"></div>
+<div class="skeleton-button"></div>
+</div>
+<div class="skeleton-card">
+<div class="skeleton-header"></div>
+<div class="skeleton-line"></div>
+<div class="skeleton-line short"></div>
+<div class="skeleton-badge"></div>
+<div class="skeleton-button"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-controls">
+<div class="loading-indicator" id="loadingIndicator">
+<div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+<span class="visually-hidden">Loading...</span>
+</div>
+Loading more appointments...
+</div>
+<button class="load-more-btn" id="loadMoreBtn" style="display: none;">
+<i class="bi bi-chevron-down me-2"></i>Load More Appointments
+</button>
+<div class="page-info" id="pageInfo"></div>
 </div>
 
 <div class="text-center mt-3">
@@ -216,46 +717,19 @@ max-height: 55vh;
 <footer>
 <p>© 2025 Schools Division Office of Navotas City. All rights reserved. | <a href="#" class="text-white">Terms of Service</a></p>
 </footer>
-<script src="create-appointment.js" defer></script>
-<script>
-const auth = firebase.auth();
-const db = firebase.firestore();
-const navProfile = document.getElementById("navProfile");
-const guestOverlay = document.getElementById("guestOverlay");
-const goSignup = document.getElementById("goSignup");
 
-auth.onAuthStateChanged(user => {
-if (user) {
-navProfile.href = "dashboard.html";
-guestOverlay.style.display = "none";
-
-// Check if user is admin
-db.collection("users").doc(user.uid).get().then(doc => {
-if (doc.exists && doc.data().role === "admin") {
-navProfile.href = "admin/admin-dashboard.html";
-// Add Admin Dashboard link
-const navbar = document.getElementById("navbarContent");
-const ul = navbar.querySelector("ul");
-const li = document.createElement("li");
-li.className = "nav-item";
-li.innerHTML = '<a class="nav-link" href="admin/admin-dashboard.html"><i class="bi bi-speedometer2 me-1"></i> Admin Dashboard</a>';
-ul.appendChild(li);
-}
-});
-} else {
-navProfile.href = "login.html";
-guestOverlay.style.display = "flex";
-}
-});
-
-if (goSignup) {
-goSignup.addEventListener("click", () => {
-window.location.href = "signup.html";
-});
-}
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+<div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="d-flex">
+<div class="toast-body">
+<i class="bi bi-check-circle-fill me-2"></i>
+<span id="toastMessage">Appointment cancelled successfully!</span>
+</div>
+<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+</div>
+</div>
+</div>
 
 <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
 <div class="modal-dialog">

@@ -115,25 +115,97 @@ padding: 20px;
 <p class="text-muted">Here’s a quick look at your appointment activity.</p>
 
 <div class="row text-center my-4">
-<div class="col-md-4 mb-3">
+<div class="col-md-3 mb-3">
+<div class="p-3 bg-light rounded shadow-sm">
+<i class="bi bi-calendar fs-1 text-primary"></i>
+<h5 class="mt-2">Total</h5>
+<p id="totalCount" class="fw-bold fs-4">0</p>
+</div>
+</div>
+<div class="col-md-3 mb-3">
 <div class="p-3 bg-light rounded shadow-sm">
 <i class="bi bi-hourglass-split fs-1 text-warning"></i>
 <h5 class="mt-2">Pending</h5>
 <p id="pendingCount" class="fw-bold fs-4">0</p>
 </div>
 </div>
-<div class="col-md-4 mb-3">
+<div class="col-md-3 mb-3">
 <div class="p-3 bg-light rounded shadow-sm">
 <i class="bi bi-check-circle fs-1 text-success"></i>
 <h5 class="mt-2">Confirmed</h5>
 <p id="confirmedCount" class="fw-bold fs-4">0</p>
 </div>
 </div>
-<div class="col-md-4 mb-3">
+<div class="col-md-3 mb-3">
 <div class="p-3 bg-light rounded shadow-sm">
 <i class="bi bi-x-circle fs-1 text-danger"></i>
 <h5 class="mt-2">Cancelled</h5>
 <p id="cancelledCount" class="fw-bold fs-4">0</p>
+</div>
+</div>
+</div>
+
+<!-- Upcoming Appointments Section -->
+<div class="row my-4">
+<div class="col-md-6 mb-4">
+<div class="card h-100">
+<div class="card-header bg-primary text-white">
+<h5 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Upcoming Appointments</h5>
+</div>
+<div class="card-body">
+<div id="upcomingAppointments" class="list-group list-group-flush">
+<!-- Upcoming appointments will be populated here -->
+<p class="text-muted mb-0">No upcoming appointments</p>
+</div>
+</div>
+</div>
+</div>
+
+<div class="col-md-6 mb-4">
+<div class="card h-100">
+<div class="card-header bg-info text-white">
+<h5 class="mb-0"><i class="bi bi-bell me-2"></i>Reminders</h5>
+</div>
+<div class="card-body">
+<div id="reminders" class="list-group list-group-flush">
+<!-- Reminders will be populated here -->
+<p class="text-muted mb-0">No urgent reminders</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Recent Activity Section -->
+<div class="row my-4">
+<div class="col-12">
+<div class="card">
+<div class="card-header bg-success text-white">
+<h5 class="mb-0"><i class="bi bi-activity me-2"></i>Recent Activity</h5>
+</div>
+<div class="card-body">
+<div id="recentActivity" class="row">
+<!-- Recent activity will be populated here -->
+<div class="col-md-4 mb-3">
+<div class="text-center">
+<i class="bi bi-clock-history fs-2 text-muted"></i>
+<p class="text-muted mt-2">Last appointment: <span id="lastAppointment">None</span></p>
+</div>
+</div>
+<div class="col-md-4 mb-3">
+<div class="text-center">
+<i class="bi bi-graph-up fs-2 text-muted"></i>
+<p class="text-muted mt-2">Success rate: <span id="successRate">0%</span></p>
+</div>
+</div>
+<div class="col-md-4 mb-3">
+<div class="text-center">
+<i class="bi bi-calendar-week fs-2 text-muted"></i>
+<p class="text-muted mt-2">This month: <span id="thisMonthCount">0</span> appointments</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

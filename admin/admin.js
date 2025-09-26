@@ -675,7 +675,7 @@ document.getElementById('autoRefreshToggle').addEventListener('change', (e) => {
     console.log("Switched to real-time mode");
   } else {
     stopRealTimeListeners();
-    refreshInterval = setInterval(fetchDataPeriodically, 30000); // Refresh every 30 seconds
+    refreshInterval = setInterval(fetchDataPeriodically, 300000); // Refresh every 5 minutes
     console.log("Switched to periodic refresh mode");
   }
 });
@@ -1565,6 +1565,84 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Dashboard preferences
+const defaultPreferences = {
+  autoRefresh: true,
+  autoRefreshInterval: 5, // minutes
+  soundNotifications: true,
+  desktopNotifications: true,
+  showCompleted: true,
+  showCancelled: true
+};
+
+function loadPreferences() {
+  const prefs = { ...defaultPreferences };
+  const saved = localStorage.getItem('adminPreferences');
+  if (saved) {
+    Object.assign(prefs, JSON.parse(saved));
+  }
+  return prefs;
+}
+
+function savePreferences(prefs) {
+  localStorage.setItem('adminPreferences', JSON.stringify(prefs));
+}
+
+function applyPreferences(prefs) {
+  // Auto-refresh
+  realTimeMode = prefs.autoRefresh;
+  if (autoRefreshToggle) autoRefreshToggle.checked = realTimeMode;
+
+  // Settings panel
+  const intervalSelect = document.getElementById('autoRefreshInterval');
+  const soundCheckbox = document.getElementById('soundNotifications');
+  const desktopCheckbox = document.getElementById('desktopNotifications');
+  const showCompletedCheckbox = document.getElementById('showCompleted');
+  const showCancelledCheckbox = document.getElementById('showCancelled');
+
+  if (intervalSelect) intervalSelect.value = prefs.autoRefreshInterval;
+  if (soundCheckbox) soundCheckbox.checked = prefs.soundNotifications;
+  if (desktopCheckbox) desktopCheckbox.checked = prefs.desktopNotifications;
+  if (showCompletedCheckbox) showCompletedCheckbox.checked = prefs.showCompleted;
+  if (showCancelledCheckbox) showCancelledCheckbox.checked = prefs.showCancelled;
+
+  // Apply data display filters
+  applyDataDisplayFilters(prefs);
+}
+
+function applyDataDisplayFilters(prefs) {
+  // Filter appointments based on showCompleted and showCancelled
+  let filtered = allAppointments;
+  if (!prefs.showCompleted) {
+    filtered = filtered.filter(a => a.status !== 'Completed');
+  }
+  if (!prefs.showCancelled) {
+    filtered = filtered.filter(a => a.status !== 'Cancelled');
+  }
+  renderAppointments(filtered);
+  updateStats();
+}
+
+function saveSettings() {
+  const prefs = {
+    autoRefresh: document.getElementById('autoRefreshToggle').checked,
+    autoRefreshInterval: parseInt(document.getElementById('autoRefreshInterval').value),
+    soundNotifications: document.getElementById('soundNotifications').checked,
+    desktopNotifications: document.getElementById('desktopNotifications').checked,
+    showCompleted: document.getElementById('showCompleted').checked,
+    showCancelled: document.getElementById('showCancelled').checked
+  };
+  savePreferences(prefs);
+  applyPreferences(prefs);
+  alert('Settings saved successfully!');
+}
+
+function resetSettings() {
+  savePreferences(defaultPreferences);
+  applyPreferences(defaultPreferences);
+  alert('Settings reset to defaults!');
+}
+
 // Dark mode toggle functionality
 document.addEventListener('DOMContentLoaded', () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
@@ -1590,4 +1668,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Load and apply dashboard preferences
+    const prefs = loadPreferences();
+    applyPreferences(prefs);
+
+    // Settings panel event listeners
+    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+    const resetSettingsBtn = document.getElementById('resetSettingsBtn');
+
+    if (saveSettingsBtn) saveSettingsBtn.addEventListener('click', saveSettings);
+    if (resetSettingsBtn) resetSettingsBtn.addEventListener('click', resetSettings);
 });
