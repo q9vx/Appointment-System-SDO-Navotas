@@ -1,273 +1,1143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reports - SDO Navotas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - SDO Navotas</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="../js/firebase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-<script src="reports.js" defer></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="reports.js" defer></script>
 
 <style>
-html, body {
-height: 100%;
-margin: 0;
+:root {
+    /* Light mode - Professional Government Theme */
+    --bg-color: #ffffff;
+    --text-color: #1e293b;
+    --card-bg: #f8fafc;
+    --header-bg: #1e40af;
+    --sidebar-bg: #f1f5f9;
+    --navbar-bg: #ffffff;
+    --border-color: #ffffff;
+    --table-header-bg: #f1f5f9;
+    --table-row-hover: #f8fafc;
+    --modal-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --overlay-bg: rgba(255, 255, 255, 0.95);
+    --light-bg: #f8fafc;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --primary-color: #1e40af;
+    --secondary-color: #64748b;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --danger-color: #dc2626;
+    --info-color: #0ea5e9;
+    --border-radius: 12px;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
+
+/* Dark mode styles - Professional Government Theme */
+[data-theme="dark"] {
+    --bg-color: #0f172a;
+    --text-color: #000000;
+    --card-bg: #9d9ea0;
+    --header-bg: #334155;
+    --sidebar-bg: #0f172a;
+    --navbar-bg: #334155;
+    --border-color: #334155;
+    --table-header-bg: #b1b2b3;
+    --table-row-hover: #334155;
+    --modal-bg: #1e293b;
+    --input-bg: #334155;
+    --input-border: #334155;
+    --overlay-bg: rgba(15, 23, 42, 0.95);
+    --light-bg: #1e293b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --primary-color: #1e40af;
+    --secondary-color: #426aa1;
+    --success-color: #34d399;
+    --warning-color: #fbbf24;
+    --danger-color: #f87171;
+    --info-color: #22d3ee;
+    --border-radius: 12px;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
 body {
-display: flex;
-flex-direction: column;
-background: linear-gradient(135deg, #f5f7f6 0%, #e8f4f8 100%);
-font-family: "Segoe UI", sans-serif;
-animation: fadeIn 0.5s ease-in;
-}
-@keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-main { flex: 1; }
-
-.navbar {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-header {
-background: linear-gradient(135deg, #1b4332, #2d6a4f, #40916c);
-color: #fff;
-border-radius: 0 0 30px 30px;
-position: relative;
-overflow: hidden;
+/* Header - Professional solid navy for government style */
+.dashboard-header {
+    background: var(--header-bg);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: var(--shadow);
+    position: relative;
 }
-header::before {
-content: '';
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-opacity: 0.1;
+
+.dashboard-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-header h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.025em;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* Navigation */
+.navbar-custom {
+    background: white;
+    box-shadow: var(--card-shadow);
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+}
+
+.sidebar-toggle-btn {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
+/* Mobile user info in navbar */
+.mobile-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.mobile-user-info .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+/* Desktop user info in navbar */
+.desktop-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.desktop-user-info .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.desktop-user-info .user-details {
+    margin-left: 0.5rem;
+}
+
+.desktop-user-info .user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.125rem;
+}
+
+.desktop-user-info .user-role {
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .stat-card {
-border-radius: 20px;
-padding: 25px;
-color: #fff;
-display: flex;
-align-items: center;
-justify-content: space-between;
-box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.stat-card::before {
-content: '';
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
-transform: translateX(-100%);
-transition: transform 0.5s ease;
-}
-.stat-card:hover::before {
-transform: translateX(100%);
-}
+
 .stat-card:hover {
-transform: translateY(-8px) scale(1.02);
-box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-}
-.stat-card h3 { margin: 0; font-weight: bold; font-size: 2rem; }
-.stat-card i { font-size: 2.5rem; opacity: 0.9; animation: pulse 2s infinite; }
-@keyframes pulse {
-0%, 100% { transform: scale(1); }
-50% { transform: scale(1.1); }
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-.bg-cancelled { background: linear-gradient(135deg, #dc3545, #fd7e14); }
+.stat-card.pending { border-left-color: var(--warning-color); }
+.stat-card.confirmed { border-left-color: var(--success-color); }
+.stat-card.completed { border-left-color: var(--info-color); }
+.stat-card.cancelled { border-left-color: var(--danger-color); }
 
-.table {
-border-radius: 15px;
-overflow: hidden;
-box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-.table thead {
-background: linear-gradient(135deg, #edf2f4, #d4edda);
-color: #1b4332;
-font-weight: bold;
-}
-.table-hover tbody tr {
-transition: all 0.2s ease;
-}
-.table-hover tbody tr:hover {
-background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-transform: scale(1.01);
-box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.stat-content h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-color);
 }
 
-.btn {
-border-radius: 25px;
-transition: all 0.3s ease;
-}
-.btn:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+.stat-content p {
+    margin: 0.25rem 0 0 0;
+    color: var(--secondary-color);
+    font-weight: 500;
 }
 
-.filters {
-background: rgba(255,255,255,0.8);
-backdrop-filter: blur(10px);
-border-radius: 15px;
-padding: 20px;
-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-margin-bottom: 20px;
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
 }
 
-@media(max-width: 768px) {
-.stat-card { margin-bottom: 15px; }
-table thead { display: none; }
-table tbody tr {
-display: block;
-margin-bottom: 20px;
-background: #fff;
-border-radius: 15px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-padding: 15px;
-animation: slideIn 0.5s ease;
-}
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
-table tbody td {
-display: flex;
-justify-content: space-between;
-padding: 8px 10px;
-border: none;
-}
-table tbody td::before {
-content: attr(data-label);
-font-weight: 600;
-color: #1b4332;
-margin-right: 10px;
-}
+.stat-card.pending .stat-icon { background: var(--warning-color); }
+.stat-card.confirmed .stat-icon { background: var(--success-color); }
+.stat-card.completed .stat-icon { background: var(--info-color); }
+.stat-card.cancelled .stat-icon { background: var(--danger-color); }
+
+/* Content Cards */
+.content-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
 }
 
+.card-header-custom {
+    background: var(--card-bg);
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-body-custom {
+    padding: 0;
+}
+
+/* Filters */
+.filters-section {
+    background: #b1b2b3;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 2rem;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+/* Tables */
+.table-custom {
+    width: 100%;
+    margin: 0;
+}
+
+.table-custom thead th {
+    background: var(--table-header-bg);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+    color: var(--text-color);
+    padding: 1rem;
+    text-align: left;
+}
+
+.table-custom tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.table-custom tbody tr:hover {
+    background: var(--table-row-hover);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-pending { background: #fef3c7; color: #d97706; }
+.status-confirmed { background: #d1fae5; color: #059669; }
+.status-completed { background: #dbeafe; color: #2563eb; }
+.status-cancelled { background: #fee2e2; color: #dc2626; }
+
+/* Action Buttons */
+.action-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.btn-primary-custom { background: var(--primary-color); color: white; }
+.btn-primary-custom:hover { background: #1d4ed8; }
+
+.btn-success-custom { background: var(--success-color); color: white; }
+.btn-success-custom:hover { background: #047857; }
+
+.btn-info-custom { background: var(--info-color); color: white; }
+.btn-info-custom:hover { background: #0e7490; }
+
+.btn-danger-custom { background: var(--danger-color); color: white; }
+.btn-danger-custom:hover { background: #b91c1c; }
+
+/* Loading States */
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--secondary-color);
+}
+
+.loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Sidebar Styles */
+#sidebar-wrapper {
+    width: 250px;
+    min-width: 250px;
+    background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1000;
+    display: none; /* Hidden by default */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 80px !important;
+    min-width: 80px !important;
+}
+
+.sidebar-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.sidebar-header h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+#wrapper.toggled .sidebar-header h4 span:not(.sidebar-icon) {
+    display: none;
+}
+
+.sidebar-user-info {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.user-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#wrapper.toggled .sidebar-user-info {
+    padding: 0.75rem;
+    justify-content: center;
+}
+
+#wrapper.toggled .user-details {
+    display: none;
+}
+
+.sidebar-menu {
+    flex: 1;
+    padding: 0.75rem 0;
+}
+
+.sidebar-menu .nav-item {
+    margin: 0.125rem 0;
+}
+
+.sidebar-menu .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.625rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 0 20px 20px 0;
+    margin: 0 0.25rem 0 0;
+    font-size: 0.9rem;
+}
+
+.sidebar-menu .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.sidebar-menu .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+#wrapper.toggled .sidebar-menu .nav-link {
+    justify-content: center;
+    padding: 0.625rem;
+}
+
+#wrapper.toggled .sidebar-menu .nav-link span:not(.sidebar-icon) {
+    display: none;
+}
+
+#page-content-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 2rem;
+    background: var(--light-bg);
+    margin-left: 0px; /* No margin on desktop */
+    transition: margin-left 0.3s ease;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 60px;
+}
+
+/* Show sidebar toggle button */
+.sidebar-toggle-btn {
+    display: block;
+}
+
+/* Tablet Responsive */
+@media (max-width: 992px) {
+    #sidebar-wrapper {
+        display: flex; /* Show on tablet */
+        width: 200px;
+        min-width: 200px;
+    }
+
+    .sidebar-toggle-btn {
+        display: block; /* Show toggle button on tablet */
+    }
+
+    #page-content-wrapper {
+        margin-left: 200px;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 60px;
+    }
+}
+
+/* Desktop Responsive */
+@media (min-width: 992px) {
+    #wrapper.toggled #sidebar-wrapper {
+        display: flex;
+        width: 250px;
+        min-width: 250px;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 250px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    #sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 60px; /* Icon-only width */
+        transform: translateX(-100%);
+        z-index: 1050;
+        box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        transform: translateX(0);
+        width: 60px !important; /* Keep icon-only when open */
+    }
+
+    /* Hide text on mobile sidebar */
+    #sidebar-wrapper .sidebar-header h4 span:not(.sidebar-icon) {
+        display: none;
+    }
+
+    #sidebar-wrapper .sidebar-user-info {
+        padding: 0.5rem;
+        justify-content: center;
+    }
+
+    #sidebar-wrapper .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    #sidebar-wrapper .user-details {
+        display: none;
+    }
+
+    #sidebar-wrapper .sidebar-menu .nav-link span:not(.sidebar-icon) {
+        display: none;
+    }
+
+    #sidebar-wrapper .sidebar-menu .nav-link {
+        justify-content: center;
+        padding: 0.75rem;
+    }
+
+    .sidebar-toggle-btn {
+        display: block; /* Show toggle button on mobile */
+    }
+
+    #page-content-wrapper {
+        margin-left: 0px;
+        padding: 1rem;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 0px;
+    }
+
+    /* Overlay for mobile */
+    #wrapper.toggled::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        transition: opacity 0.3s ease;
+    }
+
+    .dashboard-header {
+        padding: 1.5rem 0;
+        text-align: center;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+/* Modal Styles */
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+/* Export Buttons */
+.export-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+    background: var(--light-bg);
+    border-color: var(--input-border);
+}
+
+/* Guest Overlay */
 #guestOverlay {
-position: fixed;
-inset: 0;
-background: rgba(255,255,255,0.95);
-backdrop-filter: blur(10px);
-display: none;
-justify-content: center;
-align-items: center;
-z-index: 9999;
-flex-direction: column;
-text-align: center;
-padding: 20px;
-animation: fadeIn 0.3s ease;
-}
-#guestOverlay h2 {
-color: #dc3545;
-font-weight: bold;
-margin-bottom: 10px;
+    position: fixed;
+    inset: 0;
+    background: var(--overlay-bg, rgba(255, 255, 255, 0.95));
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
 }
 
+#guestOverlay h2 {
+    color: var(--danger-color);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+/* Footer */
 footer {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
-color: #d4edda;
-text-align: center;
-padding: 25px;
-margin-top: auto;
-font-size: 0.9rem;
-box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    background: var(--card-bg);
+    color: var(--text-color);
+    text-align: center;
+    padding: 2rem;
+    margin-top: auto;
+    font-size: 0.875rem;
 }
 </style>
 </head>
 
 <body>
 <div id="guestOverlay">
-<h2>⚠️ Access Denied</h2>
-<p>You must be an <strong>admin</strong> to access this page.</p>
-<a href="../index.html" class="btn btn-secondary mt-3">Go Back</a>
+    <h2>⚠️ Access Denied</h2>
+    <p>You must be an <strong>admin</strong> to access this page.</p>
+    <a href="../index.html" class="btn btn-secondary mt-3">Go Back</a>
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
-<div class="container">
-<a class="navbar-brand fw-bold" href="../index.html" aria-label="Return to homepage">
-<i class="bi bi-speedometer2 me-2"></i>SDO Navotas
-</a>
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item">
-<a class="nav-link" href="../create-appointment.html">Create Appointment</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="admin-dashboard.html">Dashboard</a>
-</li>
-</ul>
-<button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
-</div>
-</nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <div class="sidebar-header">
+            <h4><i class="bi bi-speedometer2 sidebar-icon"></i> <span>SDO Navotas</span></h4>
+        </div>
 
-<header class="py-5 shadow-sm mb-4 text-center">
-<div class="container">
-<h2 class="fw-bold">📊 Appointment Reports</h2>
-<p class="mb-0">View cancellation reports and statistics</p>
-</div>
-</header>
+        <div class="sidebar-user-info">
+            <div class="user-avatar">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" id="sidebarUserName">Admin User</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
 
-<main class="container mb-5">
+        <nav class="sidebar-menu">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="../index.html">
+                        <i class="bi bi-house-door sidebar-icon"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin-dashboard.html">
+                        <i class="bi bi-speedometer2 sidebar-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="reports.html">
+                        <i class="bi bi-graph-up sidebar-icon"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../create-appointment.html">
+                        <i class="bi bi-calendar-plus sidebar-icon"></i>
+                        <span>Create Appointment</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../my-appointments.html">
+                        <i class="bi bi-calendar-check sidebar-icon"></i>
+                        <span>My Appointments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../feedback.html">
+                        <i class="bi bi-chat-dots sidebar-icon"></i>
+                        <span>Feedback</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../help.html">
+                        <i class="bi bi-headset sidebar-icon"></i>
+                        <span>Help</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
-<div class="row g-3 mb-4 text-center">
-<div class="col-md-6">
-<div class="stat-card bg-cancelled">
-<div>
-<h3 id="totalCancelled">0</h3>
-<p class="mb-0">Total Cancelled</p>
-</div>
-<i class="bi bi-x-circle"></i>
-</div>
-</div>
-<div class="col-md-6">
-<div class="stat-card bg-cancelled">
-<div>
-<h3 id="recentCancelled">0</h3>
-<p class="mb-0">Cancelled This Month</p>
-</div>
-<i class="bi bi-calendar-x"></i>
-</div>
-</div>
-</div>
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar-custom">
+            <div class="d-flex align-items-center justify-content-between w-100">
+                <div class="d-flex align-items-center">
+                    <button class="sidebar-toggle-btn me-3" id="sidebarToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h5 class="mb-0 fw-bold text-primary">Reports & Analytics</h5>
+                </div>
 
-<div class="card shadow-sm">
-<div class="card-body p-0">
-<div class="table-responsive">
-<table class="table table-hover align-middle mb-0">
-<thead>
-<tr>
-<th>User</th>
-<th>Purpose</th>
-<th>Date/Time</th>
-<th>Cancellation Reason</th>
-<th>Cancelled At</th>
-</tr>
-</thead>
-<tbody id="reportsTable">
-<tr>
-<td colspan="5" class="text-center text-muted py-4">
-<div class="spinner-border text-success" role="status"></div>
-<p class="mt-2 mb-0">Loading reports...</p>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+                <div class="d-flex align-items-center">
+                    <div class="desktop-user-info me-3">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name" id="navbarUserName">Admin User</div>
+                            <div class="user-role">Administrator</div>
+                        </div>
+                    </div>
+                    <button id="logoutBtn" class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-box-arrow-right me-1"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="container-fluid">
+                <h1><i class="bi bi-graph-up me-3"></i>Reports & Analytics</h1>
+                <p>Comprehensive appointment analytics, trends, and detailed reports</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container-fluid">
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3 id="totalAppointments">0</h3>
+                        <p>Total Appointments</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card completed">
+                    <div class="stat-content">
+                        <h3 id="completedAppointments">0</h3>
+                        <p>Completed</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card cancelled">
+                    <div class="stat-content">
+                        <h3 id="cancelledAppointments">0</h3>
+                        <p>Cancelled</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3 id="completionRate">0%</h3>
+                        <p>Completion Rate</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3 id="avgResponseTime">0h</h3>
+                        <p>Avg Response Time</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3 id="totalFeedback">0</h3>
+                        <p>Total Feedback</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <h3 id="totalHelpRequests">0</h3>
+                        <p>Help Requests</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card cancelled">
+                    <div class="stat-content">
+                        <h3 id="cancelledThisMonth">0</h3>
+                        <p>Cancelled This Month</p>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-calendar-x"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <div class="card-title">
+                        <i class="bi bi-download"></i>
+                        <span>Export Reports</span>
+                    </div>
+                </div>
+                <div class="card-body-custom">
+                    <div class="p-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="mb-2">Analytics & Reports</h5>
+                                <p class="text-muted mb-0">Generate and export detailed reports for analysis</p>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                <button id="exportCSVBtn" class="btn btn-success me-2">
+                                    <i class="bi bi-download me-1"></i>Export CSV
+                                </button>
+                                <button id="exportPDFBtn" class="btn btn-info">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i>Export PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-8">
+                    <div class="content-card">
+                        <div class="card-header-custom">
+                            <div class="card-title">
+                                <i class="bi bi-graph-up"></i>
+                                <span>Monthly Trends</span>
+                            </div>
+                        </div>
+                        <div class="card-body-custom">
+                            <canvas id="monthlyTrendsChart" style="padding: 1rem;"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="content-card">
+                        <div class="card-header-custom">
+                            <div class="card-title">
+                                <i class="bi bi-pie-chart"></i>
+                                <span>Status Distribution</span>
+                            </div>
+                        </div>
+                        <div class="card-body-custom">
+                            <canvas id="statusPieChart" height="300" style="padding: 1rem;"></canvas>
+                        </div>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-header-custom">
+                            <div class="card-title">
+                                <i class="bi bi-bar-chart"></i>
+                                <span>Appointments by Purpose</span>
+                            </div>
+                        </div>
+                        <div class="card-body-custom">
+                            <canvas id="purposeBarChart" height="300" style="padding: 1rem;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!-- Detailed Reports Section -->
+<div class="content-card">
+    <div class="card-header-custom">
+        <div class="card-title">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>Detailed Reports</span>
+        </div>
+    </div>
+    <div class="card-body-custom">
+        <div class="accordion" id="reportsAccordion">
+            <!-- Appointments Summary -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#appointmentsSummary">
+                        <i class="bi bi-calendar-check me-2"></i>Appointments Summary
+                    </button>
+                </h2>
+                <div id="appointmentsSummary" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Count</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointmentsSummaryTable">
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cancelled Appointments -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cancelledReports">
+                        <i class="bi bi-x-circle me-2"></i>Cancellation Reports
+                    </button>
+                </h2>
+                <div id="cancelledReports" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Purpose</th>
+                                        <th>Date/Time</th>
+                                        <th>Cancellation Reason</th>
+                                        <th>Cancelled At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <div class="spinner-border text-success" role="status"></div>
+                                            <p class="mt-2 mb-0">Loading reports...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Analytics -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#feedbackReports">
+                        <i class="bi bi-chat-dots me-2"></i>Feedback Analytics
+                    </button>
+                </h2>
+                <div id="feedbackReports" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feedbackTable">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted">Loading feedback...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Requests -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#helpReports">
+                        <i class="bi bi-headset me-2"></i>Help Requests
+                    </button>
+                </h2>
+                <div id="helpReports" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="helpTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">Loading help requests...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </main>
 

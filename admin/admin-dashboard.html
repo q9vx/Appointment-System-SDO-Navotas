@@ -1,439 +1,1955 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard - SDO Navotas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SDO Navotas</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- External CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="../js/firebase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-<script src="admin.js" defer></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
 
-<style>
-html, body {
-height: 100%;
-margin: 0;
-}
-body {
-display: flex;
-flex-direction: column;
-background: linear-gradient(135deg, #f5f7f6 0%, #e8f4f8 100%);
-font-family: "Segoe UI", sans-serif;
-animation: fadeIn 0.5s ease-in;
-}
-@keyframes fadeIn {
-from { opacity: 0; }
-to { opacity: 1; }
-}
-main { flex: 1; }
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin.js" defer></script>
 
-.navbar {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+    <style>
+        :root {
+            /* Professional Light Theme - Modern Government Dashboard */
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --header-bg: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            --sidebar-bg: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            --navbar-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --table-header-bg: #f1f5f9;
+            --table-row-hover: #f8fafc;
+            --modal-bg: #ffffff;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --overlay-bg: rgba(255, 255, 255, 0.95);
+            --light-bg: #f8fafc;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --primary-color: #1e40af;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --info-color: #0ea5e9;
+            --accent-color: #8b5cf6;
+            --border-radius-sm: 6px;
+            --border-radius: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-header {
-background: linear-gradient(135deg, #1b4332, #2d6a4f, #40916c);
-color: #fff;
-border-radius: 0 0 30px 30px;
-position: relative;
-overflow: hidden;
-}
-header::before {
-content: '';
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-opacity: 0.1;
-}
+        * {
+            font-family: 'Inter', sans-serif;
+        }
 
-.breadcrumb {
-background: transparent;
-margin-bottom: 0;
-font-size: 0.9rem;
-}
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-.stat-card {
-border-radius: 20px;
-padding: 25px;
-color: #fff;
-display: flex;
-align-items: center;
-justify-content: space-between;
-box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-}
-.stat-card::before {
-content: '';
-position: absolute;
-top: 0; left: 0;
-width: 100%; height: 100%;
-background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
-transform: translateX(-100%);
-transition: transform 0.5s ease;
-}
-.stat-card:hover::before {
-transform: translateX(100%);
-}
-.stat-card:hover {
-transform: translateY(-8px) scale(1.02);
-box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-}
-.stat-card h3 { margin: 0; font-weight: bold; font-size: 2rem; }
-.stat-card i { font-size: 2.5rem; opacity: 0.9; animation: pulse 2s infinite; }
-@keyframes pulse {
-0%, 100% { transform: scale(1); }
-50% { transform: scale(1.1); }
-}
+        /* Header - Professional solid navy for government style */
+        .dashboard-header {
+            background: var(--header-bg);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
 
-.bg-pending { background: linear-gradient(135deg, #ffc107, #ffca2c); color: #000; }
-.bg-confirmed { background: linear-gradient(135deg, #28a745, #20c997); }
-.bg-completed { background: linear-gradient(135deg, #0d6efd, #6610f2); }
-.bg-cancelled { background: linear-gradient(135deg, #dc3545, #fd7e14); }
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-.table {
-border-radius: 15px;
-overflow: hidden;
-box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-.table thead {
-background: linear-gradient(135deg, #edf2f4, #d4edda);
-color: #1b4332;
-font-weight: bold;
-}
-.table-hover tbody tr {
-transition: all 0.2s ease;
-}
-.table-hover tbody tr:hover {
-background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-transform: scale(1.01);
-box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-.badge {
-font-size: 0.85rem;
-border-radius: 20px;
-padding: 5px 10px;
-}
+        .dashboard-header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
 
-.btn {
-border-radius: 25px;
-transition: all 0.3s ease;
-}
-.btn:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
+        .dashboard-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+            font-weight: 400;
+        }
 
-.filters {
-background: rgba(255,255,255,0.8);
-backdrop-filter: blur(10px);
-border-radius: 15px;
-padding: 20px;
-box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
+        /* Navigation */
+        .navbar-custom {
+            background: white;
+            box-shadow: var(--card-shadow);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            padding: 1rem 1.5rem;
+        }
 
-@media(max-width: 768px) {
-.stat-card { margin-bottom: 15px; }
-table thead { display: none; }
-table tbody tr {
-display: block;
-margin-bottom: 20px;
-background: #fff;
-border-radius: 15px;
-box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-padding: 15px;
-animation: slideIn 0.5s ease;
-}
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
-table tbody td {
-display: flex;
-justify-content: space-between;
-padding: 8px 10px;
-border: none;
-}
-table tbody td::before {
-content: attr(data-label);
-font-weight: 600;
-color: #1b4332;
-margin-right: 10px;
-}
-}
+        .sidebar-toggle-btn {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
 
-#guestOverlay {
-position: fixed;
-inset: 0;
-background: rgba(255,255,255,0.95);
-backdrop-filter: blur(10px);
-display: none;
-justify-content: center;
-align-items: center;
-z-index: 9999;
-flex-direction: column;
-text-align: center;
-padding: 20px;
-animation: fadeIn 0.3s ease;
-}
-#guestOverlay h2 {
-color: #dc3545;
-font-weight: bold;
-margin-bottom: 10px;
-}
+        .sidebar-toggle-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
 
-footer {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
-color: #d4edda;
-text-align: center;
-padding: 25px;
-margin-top: auto;
-font-size: 0.9rem;
-box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-}
-</style>
+        /* Mobile user info in navbar */
+        .mobile-user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-user-info .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        /* Desktop user info in navbar */
+        .desktop-user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .desktop-user-info .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .desktop-user-info .user-details {
+            margin-left: 0.5rem;
+        }
+
+        .desktop-user-info .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.125rem;
+        }
+
+        .desktop-user-info .user-role {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.pending { border-left-color: var(--warning-color); }
+        .stat-card.confirmed { border-left-color: var(--success-color); }
+        .stat-card.completed { border-left-color: var(--info-color); }
+        .stat-card.cancelled { border-left-color: var(--danger-color); }
+
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .stat-content p {
+            margin: 0.25rem 0 0 0;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.pending .stat-icon { background: var(--warning-color); }
+        .stat-card.confirmed .stat-icon { background: var(--success-color); }
+        .stat-card.completed .stat-icon { background: var(--info-color); }
+        .stat-card.cancelled .stat-icon { background: var(--danger-color); }
+
+        /* Content Cards */
+        .content-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .card-header-custom {
+            background: var(--card-bg);
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body-custom {
+            padding: 0;
+        }
+
+        /* Filters */
+        .filters-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filters-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        /* Tables */
+        .table-custom {
+            width: 100%;
+            margin: 0;
+        }
+
+        .table-custom thead th {
+            background: var(--table-header-bg);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-color);
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .table-custom tbody td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .table-custom tbody tr:hover {
+            background: var(--table-row-hover);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-confirmed { background: #d1fae5; color: #059669; }
+        .status-completed { background: #dbeafe; color: #2563eb; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-color);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-primary-custom:hover::before { left: 100%; }
+        .btn-primary-custom:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(30, 64, 175, 0.5);
+        }
+
+        .btn-success-custom {
+            background: var(--success-color);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-success-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-success-custom:hover::before { left: 100%; }
+        .btn-success-custom:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(5, 150, 105, 0.5);
+        }
+
+        .btn-info-custom {
+            background: var(--info-color);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-info-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-info-custom:hover::before { left: 100%; }
+        .btn-info-custom:hover {
+            background: #0e7490;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(14, 165, 233, 0.5);
+        }
+
+        .btn-danger-custom {
+            background: var(--danger-color);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-danger-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-danger-custom:hover::before { left: 100%; }
+        .btn-danger-custom:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(220, 38, 38, 0.5);
+        }
+
+        /* Loading States */
+        .loading-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+        }
+
+        .loading-spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+
+        .skeleton-row {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .skeleton-cell {
+            flex: 1;
+            padding: 0 0.5rem;
+        }
+
+        .skeleton-cell:nth-child(1) { flex: 0 0 50px; }
+        .skeleton-cell:nth-child(2) { flex: 0 0 150px; }
+        .skeleton-cell:nth-child(3) { flex: 0 0 100px; }
+        .skeleton-cell:nth-child(4) { flex: 0 0 80px; }
+        .skeleton-cell:nth-child(5) { flex: 0 0 120px; }
+        .skeleton-cell:nth-child(6) { flex: 0 0 100px; }
+        .skeleton-cell:nth-child(7) { flex: 0 0 100px; }
+        .skeleton-cell:nth-child(8) { flex: 0 0 150px; }
+        .skeleton-cell:nth-child(9) { flex: 0 0 120px; }
+
+        /* Sidebar Styles */
+        #sidebar-wrapper {
+            width: 250px;
+            min-width: 250px;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            width: 80px !important;
+            min-width: 80px !important;
+        }
+
+        .sidebar-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .sidebar-header h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        #wrapper.toggled .sidebar-header h4 span:not(.sidebar-icon) {
+            display: none;
+        }
+
+        .sidebar-user-info {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.125rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #wrapper.toggled .sidebar-user-info {
+            padding: 0.75rem;
+            justify-content: center;
+        }
+
+        #wrapper.toggled .user-details {
+            display: none;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-menu .nav-item {
+            margin: 0.125rem 0;
+        }
+
+        .sidebar-menu .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.625rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0 20px 20px 0;
+            margin: 0 0.25rem 0 0;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        #wrapper.toggled .sidebar-menu .nav-link {
+            justify-content: center;
+            padding: 0.625rem;
+        }
+
+        #wrapper.toggled .sidebar-menu .nav-link span:not(.sidebar-icon) {
+            display: none;
+        }
+
+        #page-content-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            background: var(--light-bg);
+            margin-left: 0px; /* No margin on desktop */
+            transition: margin-left 0.3s ease;
+        }
+
+        #wrapper.toggled #page-content-wrapper {
+            margin-left: 60px;
+        }
+
+        /* Show sidebar toggle button */
+        .sidebar-toggle-btn {
+            display: block;
+        }
+
+        /* Tablet Responsive */
+        @media (max-width: 992px) {
+            #sidebar-wrapper {
+                display: flex; /* Show on tablet */
+                width: 200px;
+                min-width: 200px;
+            }
+
+            .sidebar-toggle-btn {
+                display: block; /* Show toggle button on tablet */
+            }
+
+            #page-content-wrapper {
+                margin-left: 200px;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 60px;
+            }
+        }
+
+        /* Desktop Responsive */
+        @media (min-width: 992px) {
+            #wrapper.toggled #sidebar-wrapper {
+                display: flex;
+                width: 250px;
+                min-width: 250px;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 250px;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            #sidebar-wrapper {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 60px; /* Icon-only width */
+                transform: translateX(-100%);
+                z-index: 1050;
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            #wrapper.toggled #sidebar-wrapper {
+                transform: translateX(0);
+                width: 60px !important; /* Keep icon-only when open */
+            }
+
+            /* Hide text on mobile sidebar */
+            #sidebar-wrapper .sidebar-header h4 span:not(.sidebar-icon) {
+                display: none;
+            }
+
+            #sidebar-wrapper .sidebar-user-info {
+                padding: 0.5rem;
+                justify-content: center;
+            }
+
+            #sidebar-wrapper .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+
+            #sidebar-wrapper .user-details {
+                display: none;
+            }
+
+            #sidebar-wrapper .sidebar-menu .nav-link span:not(.sidebar-icon) {
+                display: none;
+            }
+
+            #sidebar-wrapper .sidebar-menu .nav-link {
+                justify-content: center;
+                padding: 0.75rem;
+            }
+
+            .sidebar-toggle-btn {
+                display: block; /* Show toggle button on mobile */
+            }
+
+            #page-content-wrapper {
+                margin-left: 0px;
+                padding: 1rem;
+            }
+
+            #wrapper.toggled #page-content-wrapper {
+                margin-left: 0px;
+            }
+
+            /* Overlay for mobile */
+            #wrapper.toggled::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1040;
+                transition: opacity 0.3s ease;
+            }
+
+            .dashboard-header {
+                padding: 1.5rem 0;
+                text-align: center;
+            }
+
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Modal Styles */
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        /* Export Buttons */
+        .export-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            color: var(--secondary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--light-bg);
+            border-color: var(--input-border);
+        }
+
+        /* Guest Overlay */
+        #guestOverlay {
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-bg, rgba(255, 255, 255, 0.95));
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #guestOverlay h2 {
+            color: var(--danger-color);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            min-width: 350px;
+            max-width: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-dropdown .dropdown-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .notification-dropdown .dropdown-item:hover {
+            background: var(--light-bg);
+        }
+
+        .notification-dropdown .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.appointment { background: var(--warning-color); color: white; }
+        .notification-icon.feedback { background: var(--info-color); color: white; }
+        .notification-icon.help { background: var(--success-color); color: white; }
+
+        .notification-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.125rem;
+            line-height: 1.3;
+        }
+
+        .notification-message {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            line-height: 1.4;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-time {
+            font-size: 0.7rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .notification-unread {
+            background: #eff6ff;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .notification-unread .notification-title {
+            color: var(--primary-color);
+        }
+
+        /* Pulse animation for notification badge */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .notification-badge-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
 
 <body>
-<div id="guestOverlay">
-<h2>⚠️ Access Denied</h2>
-<p>You must be an <strong>admin</strong> to access this page.</p>
-<a href="../index.html" class="btn btn-secondary mt-3">Go Back</a>
-</div>
-
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top shadow-sm">
-<div class="container">
-<a class="navbar-brand fw-bold" href="../index.html" aria-label="Return to homepage">
-<i class="bi bi-speedometer2 me-2"></i>SDO Navotas
-</a>
-<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item">
-<a class="nav-link" href="../create-appointment.html">Create Appointment</a>
-</li>
-<li class="nav-item">
-<a class="nav-link" href="reports.html">Reports</a>
-</li>
-</ul>
-<button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
-</div>
-</nav>
-
-<header class="py-5 shadow-sm mb-4 text-center">
-<div class="container">
-<h2 class="fw-bold">📋 Manage Appointments & Feedback</h2>
-<p class="mb-0">Search, filter, and manage all appointments in real-time</p>
-</div>
-</header>
-
-<section class="container mb-4">
-<div class="alert alert-info shadow-sm" role="alert">
-<h5 class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>Admin Capabilities</h5>
-<ul class="mb-0">
-<li>✅ Admins can see all Help Desk submissions in one place.</li>
-<li>🔍 Filter requests by <strong>status</strong> (Pending, Confirmed, Completed, Cancelled).</li>
-<li>🖱 Update request status instantly with a button click.</li>
-<li>⚡ The system auto-updates in <strong>real-time</strong> as users submit or change appointments.</li>
-<li>💬 View user feedback submissions directly in the dashboard.</li>
-</ul>
-</div>
-</section>
-
-
-<main class="container mb-5">
-
-<div class="row g-3 mb-4 text-center">
-<div class="col-md-3 col-6">
-<div class="stat-card bg-pending">
-<div>
-<h3 id="statPending">0</h3>
-<p class="mb-0">Pending</p>
-</div>
-<i class="bi bi-hourglass-split"></i>
-</div>
-</div>
-<div class="col-md-3 col-6">
-<div class="stat-card bg-confirmed">
-<div>
-<h3 id="statConfirmed">0</h3>
-<p class="mb-0">Confirmed</p>
-</div>
-<i class="bi bi-check-circle"></i>
-</div>
-</div>
-<div class="col-md-3 col-6">
-<div class="stat-card bg-completed">
-<div>
-<h3 id="statCompleted">0</h3>
-<p class="mb-0">Completed</p>
-</div>
-<i class="bi bi-clipboard-check"></i>
-</div>
-</div>
-<div class="col-md-3 col-6">
-<div class="stat-card bg-cancelled">
-<div>
-<h3 id="statCancelled">0</h3>
-<p class="mb-0">Cancelled</p>
-</div>
-<i class="bi bi-x-circle"></i>
-</div>
-</div>
-</div>
-
-<div class="row g-3 align-items-center mb-4 filters">
-<div class="col-md-6">
-<input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by user or purpose..." aria-label="Search appointments">
-</div>
-<div class="col-md-3">
-<select id="statusFilter" class="form-select" aria-label="Filter appointments by status">
-<option value="">All Statuses</option>
-<option value="Pending">⏳ Pending</option>
-<option value="Confirmed">✅ Confirmed</option>
-<option value="Completed">✔ Completed</option>
-<option value="Cancelled">❌ Cancelled</option>
-</select>
-</div>
-</div>
-
-<div class="card shadow-sm mb-5">
-<div class="card-body p-0">
-<div class="table-responsive">
-<table class="table table-hover align-middle mb-0">
-<thead>
-<tr>
-<th>User</th>
-<th>Purpose</th>
-<th>Date/Time</th>
-<th>Status</th>
-<th>Created At</th>
-<th>Notes</th>
-<th class="text-center">Actions</th>
-<th class="text-center">Update</th>
-</tr>
-</thead>
-<tbody id="appointmentsTable">
-<tr>
-<td colspan="8" class="text-center text-muted py-4">
-<div class="spinner-border text-success" role="status"></div>
-<p class="mt-2 mb-0">Loading appointments...</p>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div id="feedback" class="card shadow-sm">
-    <div class="card-header bg-info text-white">
-        <h5 class="mb-0"><i class="bi bi-chat-dots me-2"></i>User Feedback</h5>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Subject</th>
-                        <th>Message</th>
-                        <th>Submitted At</th>
-                    </tr>
-                </thead>
-                <tbody id="feedbackTable">
-                    <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
-                            <div class="spinner-border text-info" role="status"></div>
-                            <p class="mt-2 mb-0">Loading feedback...</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Guest Access Overlay -->
+    <div id="guestOverlay">
+        <div class="text-center">
+            <i class="bi bi-shield-lock" style="font-size: 4rem; color: var(--danger-color); margin-bottom: 1rem;"></i>
+            <h2>Access Denied</h2>
+            <p class="mb-4">You must be an <strong>administrator</strong> to access this dashboard.</p>
+            <a href="../index.html" class="action-btn btn-primary-custom">
+                <i class="bi bi-arrow-left"></i>
+                Return to Home
+            </a>
         </div>
     </div>
-</div>
 
-<div id="helpDeskSection" class="card shadow-sm mt-4">
-    <div class="card-header bg-success text-white">
-        <h5 class="mb-0"><i class="bi bi-headset me-2"></i>Help Desk Requests</h5>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Category</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Submitted</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="helpRequestsTable">
-                    <tr>
-                        <td colspan="7" class="text-center text-muted py-4">
-                            <div class="spinner-border text-success" role="status"></div>
-                            <p class="mt-2 mb-0">Loading help requests...</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Main Layout -->
+    <div class="d-flex" id="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar-wrapper">
+            <div class="sidebar-header">
+                <h4>
+                    <i class="bi bi-speedometer2 sidebar-icon"></i>
+                    <span>SDO Navotas</span>
+                </h4>
+            </div>
+            <div class="sidebar-user-info">
+                <div class="user-avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name" id="sidebarUserName">Administrator</div>
+                    <div class="user-role">Admin Panel</div>
+                </div>
+            </div>
+            <ul class="sidebar-menu list-unstyled">
+                <li class="nav-item">
+                    <a href="../create-appointment.html" class="nav-link">
+                        <i class="bi bi-calendar-plus sidebar-icon"></i>
+                        <span>Create Appointment</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html" class="nav-link">
+                        <i class="bi bi-bar-chart-line sidebar-icon"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" id="logoutBtn" class="nav-link">
+                        <i class="bi bi-box-arrow-right sidebar-icon"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div id="page-content-wrapper">
+            <!-- Navigation -->
+            <nav class="navbar-custom">
+                <div class="d-flex align-items-center w-100">
+                    <button class="sidebar-toggle-btn me-3" id="sidebarToggle" aria-label="Toggle sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="mobile-user-info me-3 d-block d-md-none">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="mb-0 fw-bold">Administrator Dashboard</h5>
+                        <small class="text-muted">Manage appointments, feedback, and help requests</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Auto-refresh Toggle -->
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="autoRefreshToggle" checked>
+                            <label class="form-check-label text-muted small" for="autoRefreshToggle">
+                                <i class="bi bi-arrow-repeat"></i> Real-time
+                            </label>
+                        </div>
+                        <!-- Notification Dropdown -->
+                        <div class="dropdown">
+                            <button id="notificationBtn" class="btn btn-outline-primary btn-sm position-relative dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                                <i class="bi bi-bell"></i>
+                                <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                                    0
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationBtn">
+                                <li>
+                                    <h6 class="dropdown-header">
+                                        <i class="bi bi-bell me-2"></i>
+                                        Notifications
+                                        <button id="clearAllNotificationsBtn" class="btn btn-sm btn-outline-secondary ms-2" title="Clear all">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </h6>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <div id="notificationList">
+                                    <li>
+                                        <div class="dropdown-item text-center text-muted py-4">
+                                            <i class="bi bi-bell-slash d-block mb-2" style="font-size: 2rem;"></i>
+                                            <small>No new notifications</small>
+                                        </div>
+                                    </li>
+                                </div>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <div class="dropdown-item text-center">
+                                        <button id="viewAllNotificationsBtn" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-eye me-1"></i>
+                                            View All Activity
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="desktop-user-info d-none d-md-flex align-items-center">
+                            <button id="backToHomeBtn" class="btn btn-outline-secondary btn-sm me-3" title="Return to Home">
+                                <i class="bi bi-arrow-left"></i>
+                                Back to Home
+                            </button>
+                            <div class="user-avatar me-2">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name fw-semibold">Administrator</div>
+                                <div class="user-role text-muted small">Admin Panel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h1>📊 Admin Dashboard</h1>
+                            <p>Monitor and manage all system activities in real-time</p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                            <div class="d-flex align-items-center justify-content-lg-end gap-3">
+                                <div class="text-white-50">
+                                    <small>Last updated</small>
+                                    <div id="currentTime" class="fw-bold"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="container-fluid">
+                <div class="stats-grid">
+                    <div class="stat-card pending">
+                        <div class="stat-content">
+                            <h3 id="statPending">0</h3>
+                            <p>Pending Appointments</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card confirmed">
+                        <div class="stat-content">
+                            <h3 id="statConfirmed">0</h3>
+                            <p>Confirmed Appointments</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card completed">
+                        <div class="stat-content">
+                            <h3 id="statCompleted">0</h3>
+                            <p>Completed Appointments</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card cancelled">
+                        <div class="stat-content">
+                            <h3 id="statCancelled">0</h3>
+                            <p>Cancelled Appointments</p>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Dashboard -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-bar-chart-line"></i>
+                            Analytics Dashboard
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#analyticsCollapse" aria-expanded="true" aria-controls="analyticsCollapse">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div id="analyticsCollapse" class="collapse show card-body-custom">
+                        <div class="row g-4 p-4">
+                            <div class="col-lg-6">
+                                <canvas id="appointmentTrendsChart" height="300"></canvas>
+                            </div>
+                            <div class="col-lg-6">
+                                <canvas id="statusDistributionChart" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div>
+                            <label for="searchInput" class="form-label fw-semibold">Search Appointments</label>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, role, purpose, or notes...">
+                        </div>
+                        <div>
+                            <label for="statusFilter" class="form-label fw-semibold">Filter by Status</label>
+                            <select id="statusFilter" class="form-select" multiple>
+                                <option value="Pending">⏳ Pending</option>
+                                <option value="Confirmed">✅ Confirmed</option>
+                                <option value="Completed">✔ Completed</option>
+                                <option value="Cancelled">❌ Cancelled</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="dateFrom" class="form-label fw-semibold">Date From</label>
+                            <input type="date" id="dateFrom" class="form-control">
+                        </div>
+                        <div>
+                            <label for="dateTo" class="form-label fw-semibold">Date To</label>
+                            <input type="date" id="dateTo" class="form-control">
+                        </div>
+                        <div class="d-flex align-items-end gap-2">
+                            <button id="applyFiltersBtn" class="btn btn-primary-custom">
+                                <i class="bi bi-funnel"></i>
+                                Apply Filters
+                            </button>
+                            <button id="clearFiltersBtn" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointments Management -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-calendar-check"></i>
+                            Appointments Management
+                        </h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="btn-group" role="group">
+                                <button id="bulkConfirmBtn" class="btn btn-success btn-sm" disabled>
+                                    <i class="bi bi-check-circle"></i>
+                                    Confirm Selected
+                                </button>
+                                <button id="bulkCancelBtn" class="btn btn-danger btn-sm" disabled>
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel Selected
+                                </button>
+                                <button id="bulkExportBtn" class="btn btn-info btn-sm" disabled>
+                                    <i class="bi bi-download"></i>
+                                    Export Selected
+                                </button>
+                            </div>
+                            <button id="exportAppointmentsBtn" class="export-btn">
+                                <i class="bi bi-download"></i>
+                                Export All CSV
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#appointmentsCollapse" aria-expanded="true" aria-controls="appointmentsCollapse">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="appointmentsCollapse" class="collapse show card-body-custom">
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Role</th>
+                                        <th>Purpose</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointmentsTable">
+                                    <!-- Skeleton rows for appointments -->
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 100%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Feedback -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-chat-dots"></i>
+                            User Feedback
+                        </h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button id="exportFeedbackBtn" class="export-btn">
+                                <i class="bi bi-download"></i>
+                                Export CSV
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#feedbackCollapse" aria-expanded="true" aria-controls="feedbackCollapse">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="feedbackCollapse" class="collapse show card-body-custom">
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Submitted</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feedbackTable">
+                                    <!-- Skeleton rows for feedback -->
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 100%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Desk Requests -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-headset"></i>
+                            Help Desk Requests
+                        </h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <button id="exportHelpRequestsBtn" class="export-btn">
+                                <i class="bi bi-download"></i>
+                                Export CSV
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#helpCollapse" aria-expanded="true" aria-controls="helpCollapse">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="helpCollapse" class="collapse show card-body-custom">
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Submitted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="helpRequestsTable">
+                                    <!-- Skeleton rows for help requests -->
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 45px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 65px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 45px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Management -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-people"></i>
+                            User Management
+                        </h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="text" id="userSearchInput" class="form-control form-control-sm" placeholder="Search users..." style="width: 200px;">
+                            <select id="userRoleFilter" class="form-select form-select-sm" style="width: 150px;">
+                                <option value="">All Roles</option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#userCollapse" aria-expanded="true" aria-controls="userCollapse">
+                                <i class="bi bi-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="userCollapse" class="collapse show card-body-custom">
+                        <div class="table-responsive">
+                            <table class="table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>ID Number</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Joined Date</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable">
+                                    <!-- Skeleton rows for users -->
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
+                                    </tr>
+                                    <tr class="skeleton-row">
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
+                                        <td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Settings -->
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-gear"></i>
+                            Dashboard Settings
+                        </h5>
+                        <button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#settingsCollapse" aria-expanded="true" aria-controls="settingsCollapse">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                    </div>
+                    <div id="settingsCollapse" class="collapse show card-body-custom">
+                        <div class="row g-4 p-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Auto-refresh Interval</label>
+                                    <select id="autoRefreshInterval" class="form-select">
+                                        <option value="30000">30 seconds</option>
+                                        <option value="60000">1 minute</option>
+                                        <option value="300000">5 minutes</option>
+                                        <option value="0">Disabled</option>
+                                    </select>
+                                    <small class="text-muted">Automatically refresh dashboard data</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Notification Settings</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="soundNotifications" checked>
+                                        <label class="form-check-label" for="soundNotifications">
+                                            Enable sound notifications
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="desktopNotifications" checked>
+                                        <label class="form-check-label" for="desktopNotifications">
+                                            Enable desktop notifications
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Data Display</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="showCompleted" checked>
+                                        <label class="form-check-label" for="showCompleted">
+                                            Show completed appointments
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="showCancelled" checked>
+                                        <label class="form-check-label" for="showCancelled">
+                                            Show cancelled appointments
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex gap-2">
+                                    <button id="saveSettingsBtn" class="btn btn-primary-custom">
+                                        <i class="bi bi-check-lg me-1"></i>
+                                        Save Settings
+                                    </button>
+                                    <button id="resetSettingsBtn" class="btn btn-outline-secondary">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                        Reset to Default
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-</main>
 
-<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header bg-success text-white">
-<h5 class="modal-title" id="appointmentModalLabel">Appointment Details</h5>
-<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
-<p><strong>User:</strong> <span id="modalUser"></span></p>
-<p><strong>Purpose:</strong> <span id="modalPurpose"></span></p>
-<p><strong>Date/Time:</strong> <span id="modalDateTime"></span></p>
-<p><strong>Status:</strong> <span id="modalStatus"></span></p>
-<p><strong>Notes:</strong> <span id="modalNotes"></span></p>
-<p><strong>Created At:</strong> <span id="modalCreatedAt"></span></p>
-<div>
-<label for="statusSelect">Update Status:</label>
-<select id="statusSelect" class="form-select">
-<option value="Pending">Pending</option>
-<option value="Confirmed">Confirmed</option>
-<option value="Completed">Completed</option>
-<option value="Cancelled">Cancelled</option>
-</select>
-</div>
-<div id="reasonDiv" style="display: none;">
-<label for="reasonTextarea">Reason for Cancellation:</label>
-<textarea id="reasonTextarea" class="form-control"></textarea>
-</div>
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-<button type="button" class="btn btn-primary" id="updateBtn">Update</button>
-</div>
-</div>
-</div>
-</div>
+    <!-- Appointment Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        Appointment Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">User Email</label>
+                                <p class="mb-0" id="modalUser"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Purpose</label>
+                                <p class="mb-0" id="modalPurpose"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Date & Time</label>
+                                <p class="mb-0" id="modalDateTime"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Current Status</label>
+                                <p class="mb-0" id="modalStatus"></p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Notes</label>
+                                <p class="mb-0" id="modalNotes">-</p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Created At</label>
+                                <p class="mb-0" id="modalCreatedAt"></p>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <hr>
+                            <h6 class="fw-bold mb-3">Update Status</h6>
+                            <div class="mb-3">
+                                <label for="statusSelect" class="form-label">New Status</label>
+                                <select id="statusSelect" class="form-select">
+                                    <option value="Pending">⏳ Pending</option>
+                                    <option value="Confirmed">✅ Confirmed</option>
+                                    <option value="Completed">✔ Completed</option>
+                                    <option value="Cancelled">❌ Cancelled</option>
+                                </select>
+                            </div>
+                            <div id="reasonDiv" style="display: none;">
+                                <label for="reasonTextarea" class="form-label">Cancellation Reason</label>
+                                <textarea id="reasonTextarea" class="form-control" rows="3" placeholder="Please provide a reason for cancellation..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>
+                        Close
+                    </button>
+                    <button type="button" class="action-btn btn-primary-custom" id="updateBtn">
+                        <i class="bi bi-check-lg me-1"></i>
+                        Update Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<footer>
-<p class="mb-1">© 2025 Schools Division Office of Navotas City. All rights reserved.</p>
-<p class="mb-0">Republic of the Philippines • Department of Education • Division of Navotas</p>
-</footer>
+    <!-- User Management Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-person-circle me-2"></i>
+                        User Profile
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">First Name</label>
+                                <input type="text" class="form-control" id="userFirstName" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Last Name</label>
+                                <input type="text" class="form-control" id="userLastName" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Email</label>
+                                <input type="email" class="form-control" id="userEmail" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">ID Number</label>
+                                <input type="text" class="form-control" id="userIdNumber" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Role</label>
+                                <select class="form-select" id="userRole">
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Status</label>
+                                <select class="form-select" id="userStatus">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="suspended">Suspended</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Joined Date</label>
+                                <input type="text" class="form-control" id="userJoinedDate" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Last Login</label>
+                                <input type="text" class="form-control" id="userLastLogin" readonly>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <hr>
+                            <h6 class="fw-bold mb-3">User Activity Logs</h6>
+                            <div class="activity-logs" id="userActivityLogs" style="max-height: 200px; overflow-y: auto; background: var(--light-bg); padding: 1rem; border-radius: 8px;">
+                                <p class="text-muted mb-0">Loading activity logs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-danger me-auto" id="deleteUserBtn">
+                        <i class="bi bi-trash me-1"></i>
+                        Delete User
+                    </button>
+                    <button type="button" class="action-btn btn-primary-custom" id="saveUserBtn">
+                        <i class="bi bi-check-lg me-1"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Notification Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="bi bi-bell-fill me-2"></i>
+                <strong class="me-auto">New Activity</strong>
+                <small class="text-muted">just now</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastMessage">
+                New appointment received!
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="mb-2">© 2025 Schools Division Office of Navotas City. All rights reserved.</p>
+            <p class="mb-0">Republic of the Philippines • Department of Education • Division of Navotas</p>
+        </div>
+    </footer>
+
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Populate user info avatars
+        const mobileUserInfo = document.querySelector('.mobile-user-info .user-avatar');
+        const desktopUserInfo = document.querySelector('.desktop-user-info .user-avatar');
+
+        if (mobileUserInfo) {
+            mobileUserInfo.innerHTML = '<i class="bi bi-person-circle"></i>';
+        }
+
+        if (desktopUserInfo) {
+            desktopUserInfo.innerHTML = '<i class="bi bi-person-circle"></i>';
+        }
+
+        // Back to home button with confirmation
+        document.getElementById('backToHomeBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to go back to the home page?')) {
+                window.location.href = '../index.html';
+            }
+        });
+
+        // Sidebar Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const wrapper = document.getElementById('wrapper');
+
+            if (sidebarToggle && wrapper) {
+                sidebarToggle.addEventListener('click', function() {
+                    wrapper.classList.toggle('toggled');
+                });
+
+                // Close sidebar on outside click for mobile
+                document.addEventListener('click', function(event) {
+                    const sidebar = document.getElementById('sidebar-wrapper');
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isToggleClick = sidebarToggle.contains(event.target);
+
+                    if (window.innerWidth <= 768 && wrapper.classList.contains('toggled') && !isClickInsideSidebar && !isToggleClick) {
+                        wrapper.classList.remove('toggled');
+                    }
+                });
+            }
+
+            // Handle collapse button icons
+            const collapses = ['analyticsCollapse', 'appointmentsCollapse', 'feedbackCollapse', 'helpCollapse', 'userCollapse', 'settingsCollapse'];
+
+            collapses.forEach(collapseId => {
+                const collapseEl = document.getElementById(collapseId);
+                const button = collapseEl.previousElementSibling.querySelector('.collapse-btn');
+
+                if (collapseEl && button) {
+                    collapseEl.addEventListener('show.bs.collapse', function() {
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('bi-chevron-up');
+                            icon.classList.add('bi-chevron-down');
+                        }
+                    });
+
+                    collapseEl.addEventListener('hide.bs.collapse', function() {
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('bi-chevron-down');
+                            icon.classList.add('bi-chevron-up');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
