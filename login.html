@@ -56,12 +56,84 @@ align-items: center;
 justify-content: center;
 z-index: 2;
 }
+
+.signup-form-container {
+background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+border: none;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+border-radius: 15px;
+padding: 2rem;
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.signup-form-container:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.form-label {
+font-weight: 600;
+color: #495057;
+margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+border: 1px solid #dee2e6;
+transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+border-color: #007bff;
+box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.input-group .form-control {
+border-right: none;
+}
+
+.input-group .btn {
+border-left: none;
+background-color: #f8f9fa;
+border-color: #dee2e6;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+border: none;
+border-radius: 25px;
+padding: 0.75rem 1.5rem;
+font-weight: 600;
+transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+transform: translateY(-2px);
+}
+
+.form-check-label {
+font-size: 0.9rem;
+color: #6c757d;
+}
+
+.form-check-label a {
+color: #007bff;
+text-decoration: none;
+}
+
+.form-check-label a:hover {
+text-decoration: underline;
+}
+
 footer {
 background-color: #086e3b;
-color: #fff;
+color: #000000;
 padding: 30px;
 text-align: center;
 }
+   footer a{
+      color: rgb(1, 111, 255)
+    }
 </style>
 </head>
 <body>
@@ -79,7 +151,7 @@ text-align: center;
 <div class="hero-overlay"></div>
 
 <div class="hero-content">
-<div class="bg-white p-4 rounded shadow-sm w-100" style="max-width: 450px;">
+<div class="signup-form-container w-100" style="max-width: 450px;">
 <h3 class="text-center mb-4">Login</h3>
 <form id="loginForm">
 <div class="mb-3">
@@ -98,18 +170,31 @@ text-align: center;
 
 <div class="mb-3">
 <label for="loginEmail" class="form-label">Email address</label>
-<input type="email" class="form-control" id="loginEmail" placeholder="your.email@example.com" required>
+<input type="email" class="form-control" id="loginEmail" placeholder="your.email@domain.com" required>
 </div>
 
 <div class="mb-3">
 <label for="loginPassword" class="form-label">Password</label>
+<div class="input-group">
 <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+<button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+<i class="bi bi-eye"></i>
+</button>
+</div>
 <div class="text-end mt-1">
 <a href="forgot-password.html" class="small text-decoration-none">Forgot password?</a>
 </div>
 </div>
 
-<button type="submit" class="btn btn-primary w-100">Login</button>
+<div class="mb-3 form-check">
+<input type="checkbox" class="form-check-input" id="rememberMe">
+<label class="form-check-label" for="rememberMe">Remember me</label>
+</div>
+
+<button type="submit" class="btn btn-primary w-100" id="loginBtn">
+<span class="spinner-border spinner-border-sm me-2" id="loginSpinner" style="display: none;" role="status" aria-hidden="true"></span>
+Login
+</button>
 </form>
 <p class="text-center mt-3 mb-0">Don’t have an account? <a href="signup.html">Sign up</a></p>
 <div id="loginError" class="text-danger text-center mt-2"></div>

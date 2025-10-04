@@ -12,6 +12,9 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+window.auth = auth;
+window.db = db;
+
 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 .then(() => {
 console.log("Persistence set to LOCAL");

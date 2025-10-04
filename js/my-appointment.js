@@ -159,6 +159,45 @@ btn.classList.toggle("active", btn.dataset.filter === currentFilter);
 });
 }
 
+function renderStats(appointments) {
+const total = appointments.length;
+const pending = appointments.filter(a => a.status === 'Pending').length;
+const confirmed = appointments.filter(a => a.status === 'Confirmed').length;
+const completed = appointments.filter(a => a.status === 'Completed').length;
+const cancelled = appointments.filter(a => a.status === 'Cancelled').length;
+const feedbackReceived = appointments.filter(a => a.status === 'FeedbackReceived').length;
+
+const statsHTML = `
+<div class="stat-card">
+<span class="stat-number">${total}</span>
+<span class="stat-label">Total</span>
+</div>
+<div class="stat-card">
+<span class="stat-number">${pending}</span>
+<span class="stat-label">Pending</span>
+</div>
+<div class="stat-card">
+<span class="stat-number">${confirmed}</span>
+<span class="stat-label">Confirmed</span>
+</div>
+<div class="stat-card">
+<span class="stat-number">${completed}</span>
+<span class="stat-label">Completed</span>
+</div>
+<div class="stat-card">
+<span class="stat-number">${feedbackReceived}</span>
+<span class="stat-label">Feedback</span>
+</div>
+<div class="stat-card">
+<span class="stat-number">${cancelled}</span>
+<span class="stat-label">Cancelled</span>
+</div>
+`;
+
+document.getElementById('statsGrid').innerHTML = statsHTML;
+document.getElementById('statsSection').style.display = 'block';
+}
+
 function renderAppointments(appointments) {
 hideSkeleton();
 if (appointments.length === 0) {
@@ -189,38 +228,58 @@ statusIcon = "✅";
 } else if (appt.status === "Completed") {
 badgeClass = "bg-info";
 statusIcon = "✅";
+} else if (appt.status === "FeedbackReceived") {
+badgeClass = "bg-primary";
+statusIcon = "💬";
 } else if (appt.status === "Cancelled") {
 badgeClass = "bg-danger";
 statusIcon = "❌";
 }
 
+const statusSteps = [
+{ step: "Submitted", icon: "📝", message: "Your request has been submitted successfully." },
+{ step: "Viewing by HR Staff", icon: "👀", message: "Your request is up for viewing by the HR staff." },
+{ step: "Accepted", icon: "✅", message: "Your request has been accepted." },
+{ step: "Approved", icon: "🎉", message: "Appointment approved! Prepare for needed things to bring (e.g., documents, ID)." },
+{ step: "Completed", icon: "🏁", message: "Appointment completed successfully." },
+{ step: "Feedback Received", icon: "💬", message: "Thank you for your feedback!" }
+];
+
+let currentStepIndex = -1;
 let trackerHTML = "";
-if (appt.status === "Pending") {
+
+if (appt.status === "Cancelled") {
 trackerHTML = `
-<div class="d-flex align-items-center mt-2">
-<small class="text-muted me-2">Status:</small>
-<span class="badge bg-warning">${statusIcon} Pending</span>
+<div class="status-tracker mt-3">
+<div class="alert alert-danger d-flex align-items-center">
+<i class="bi bi-x-circle me-2"></i>
+<strong>Cancelled:</strong> ${appt.cancellationReason || 'No reason provided'}
+</div>
 </div>
 `;
-} else if (appt.status === "Confirmed") {
+} else {
+if (appt.status === "Pending") currentStepIndex = 0;
+else if (appt.status === "Confirmed") currentStepIndex = 2;
+else if (appt.status === "Completed") currentStepIndex = 4;
+else if (appt.status === "FeedbackReceived") currentStepIndex = 5;
+
 trackerHTML = `
-<div class="d-flex align-items-center mt-2">
-<small class="text-muted me-2">Status:</small>
-<span class="badge bg-success">${statusIcon} Confirmed</span>
+<div class="status-tracker mt-3">
+<h6 class="fw-semibold mb-3 text-primary"><i class="bi bi-graph-up me-2"></i>Appointment Progress</h6>
+<div class="timeline">
+${statusSteps.map((step, index) => {
+const isCompleted = index <= currentStepIndex;
+const isCurrent = index === currentStepIndex;
+return `
+<div class="step-item ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+<div class="step-content">
+<h6 class="mb-1">${step.step}</h6>
+<p class="mb-0 small">${step.message}</p>
+</div>
 </div>
 `;
-} else if (appt.status === "Completed") {
-trackerHTML = `
-<div class="d-flex align-items-center mt-2">
-<small class="text-muted me-2">Status:</small>
-<span class="badge bg-info">${statusIcon} Completed</span>
+}).join('')}
 </div>
-`;
-} else if (appt.status === "Cancelled") {
-trackerHTML = `
-<div class="d-flex align-items-center mt-2">
-<small class="text-muted me-2">Status:</small>
-<span class="badge bg-danger">${statusIcon} Cancelled</span>
 </div>
 `;
 }
@@ -251,7 +310,7 @@ ${appt.adminNotes ? `<p class="text-info small"><i class="bi bi-person-check tex
 </div>
 </div>
 <div class="status-tracker mt-3">${trackerHTML}</div>
-${appt.status !== "Cancelled" && appt.status !== "Completed" ? `
+${appt.status !== "Cancelled" && appt.status !== "Completed" && appt.status !== "FeedbackReceived" ? `
 <button class="btn btn-outline-danger btn-sm mt-3 cancel-btn" aria-label="Cancel this appointment">
 <i class="bi bi-x-circle me-1"></i>Cancel Appointment
 </button>
@@ -354,6 +413,7 @@ const appt = { id: doc.id, ...doc.data() };
 allAppointments.push(appt);
 });
 
+renderStats(allAppointments);
 loadAndRenderAppointments();
 
 list.addEventListener("click", (e) => {
@@ -394,6 +454,7 @@ if (apptIndex !== -1) {
 allAppointments[apptIndex].status = "Cancelled";
 }
 
+renderStats(allAppointments);
 loadAndRenderAppointments();
 cancelModal.hide();
 confirmCancelBtn.removeEventListener('click', onConfirm);

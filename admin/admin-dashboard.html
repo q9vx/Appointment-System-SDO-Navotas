@@ -196,6 +196,7 @@ transform: translateY(20px);
 .stat-card:nth-child(2) { animation-delay: 0.2s; }
 .stat-card:nth-child(3) { animation-delay: 0.3s; }
 .stat-card:nth-child(4) { animation-delay: 0.4s; }
+.stat-card:nth-child(5) { animation-delay: 0.5s; }
 
 @keyframes fadeInUp {
 to {
@@ -213,6 +214,7 @@ box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 8px 16px -4px rgba(0, 0, 0,
 .stat-card.confirmed { border-left-color: var(--success-color); }
 .stat-card.completed { border-left-color: var(--info-color); }
 .stat-card.cancelled { border-left-color: var(--danger-color); }
+.stat-card.feedback { border-left-color: var(--primary-color); }
 
 .stat-content h3 {
 font-size: 2rem;
@@ -1121,6 +1123,15 @@ Back to Home
 </div>
 <div class="stat-icon">
 <i class="bi bi-clipboard-check"></i>
+</div>
+</div>
+<div class="stat-card feedback">
+<div class="stat-content">
+<h3 id="statFeedbackReceived">0</h3>
+<p>Feedback Received</p>
+</div>
+<div class="stat-icon">
+<i class="bi bi-chat-dots"></i>
 </div>
 </div>
 <div class="stat-card cancelled">

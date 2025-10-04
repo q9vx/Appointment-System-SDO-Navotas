@@ -70,10 +70,12 @@ function updateStats() {
   const confirmed = allAppointments.filter(a => a.status === "Confirmed").length;
   const completed = allAppointments.filter(a => a.status === "Completed").length;
   const cancelled = allAppointments.filter(a => a.status === "Cancelled").length;
+  const feedbackReceived = allFeedback.length;
   document.getElementById("statPending").textContent = pending;
   document.getElementById("statConfirmed").textContent = confirmed;
   document.getElementById("statCompleted").textContent = completed;
   document.getElementById("statCancelled").textContent = cancelled;
+  document.getElementById("statFeedback").textContent = feedbackReceived;
 }
 
 logoutBtn.addEventListener("click", async (e) => {
