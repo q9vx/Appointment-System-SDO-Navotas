@@ -7,7 +7,7 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css"
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/signup.css">
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -98,7 +98,7 @@
 
         <div class="mb-3 form-check">
           <input type="checkbox" class="form-check-input" id="termsCheckbox" required>
-          <label class="form-check-label" for="termsCheckbox">I agree to the <a href="terms.html" target="_blank">Terms of Service</a></label>
+          <label class="form-check-label" for="termsCheckbox">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms of Service</a></label>
         </div>
 
         <button type="submit" class="btn btn-primary w-100" id="signupBtn">
@@ -151,5 +151,75 @@
 </script>
 
 <script src="js/signup.js"></script>
+
+<!-- Terms of Service Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsModalLabel">Terms of Use</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h3>Introduction</h3>
+        <p>These terms and conditions rule over how the Online Appointment System is accessed and used, as developed by Grade 12 Senior High School-JOBS ICT students of Navotas National High School. By accessing and using this system users acknowledge and agree to accept by the provisions set forth herein. If you do not agree with any of these Terms and Conditions, you are advised to discontinue any and all use of this service.</p>
+
+        <h3>User Responsibilities</h3>
+        <p>All registered users of the Online Appointment System are expected to:</p>
+        <ul>
+          <li>Provides accurate, complete, and truthful information when it comes to create or managing an appointments.</li>
+          <li>Therefore, anything that will be considered legitmate with respect to any and all education-related, administration-related, or school-related issues will be considered acceptable-use behavior.</li>
+          <li>Keep the account credentials secure to prevent the abuse or unauthorized utilization of the account</li>
+          <li>Do not engage in whatever fraudulent, malicious, or immoral activity which can damage or compromise the integrity of the system.</li>
+          <li>Maintain the confidentiality of all records and ensure that any information acquired through the system is used only for the purposes it was intended for in the first place.</li>
+        </ul>
+
+        <h3>Data Privacy</h3>
+        <p>The sytstem adheres to the principles of the Data Privacy Act of 2012 (Republic Act No. 10173) and other relevant issueances of the Department of Education (DePed).</p>
+        <ul>
+          <li>All personal and sensitive information collected shall be used strictly for official and legitimate purposes.</li>
+          <li>Data will not be disclosed to unauthorized third parties without consent, unless required by law.</li>
+          <li>Appropriate security measures shall be implemented to protect user information from loss, unauthorized access, or misuse.</li>
+        </ul>
+
+        <h3>System Use and Availability</h3>
+        <p>The Online Appointment System is designed to provide reliable access to school personnel and authorized users. However:</p>
+        <ul>
+          <li>Scheduled maintenance, system updates, or unforeseen technical issues can occur and may affect system availability.</li>
+          <li>There is no guarantee by either Navotas National High School or the SDO Navotas of uninterrupted or error-free service.</li>
+          <li>Users are encouraged to check official announcements for notifications regarding downtime or system changes.</li>
+        </ul>
+
+        <h3>Prohibited Activities</h3>
+        <ul>
+          <li>Unauthorized attempts to hack, disable, or manipulate the system.</li>
+          <li>The use of automated tools, bots, or scripts to create or manage appointments.</li>
+          <li>Submitting false, misleading, or harmful information.</li>
+          <li>Accessing, modifying, or attempting to penetrate restricted or administrative areas without proper authority.</li>
+          <li>Engaging in any activity that undermines the confidentiality, security, or lawful use of the system.</li>
+        </ul>
+
+        <h3>Legal Compliance</h3>
+        <p>The user must comply with all:</p>
+        <ul>
+          <li>The national laws and regulations of the Republic of the Philippines</li>
+          <li>All orders, policies, and memoranda of the Department of Education (DepEd); as well as</li>
+          <li>The guidelines of the Schools Division Office of Navotas City.</li>
+        </ul>
+        <p>Violations of these Terms of Use may result in administrative sanctions, termination of system access, and, when warranted, civil or criminal liability under Philippine law.</p>
+
+        <h3>Amendments and Revisions</h3>
+        <p>The developers of the Online Appointment System, in coordination with the SDO Navotas, reserve the right to amend, revise, or update these Terms of Use at any time without prior notice. Users are expected to review the latest version regularly to remain informed of their rights and obligations.</p>
+
+        <h3>Acceptance of Terms</h3>
+        <p>By accessing and using the Online Appointment System, users expressly confirm that they have read, understood, and agreed to these Terms of Use. Continued use of the system constitutes acceptance of all current and future revisions.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -91,6 +91,7 @@ background-color: #f8f9fa;
 transition: all 0.2s ease-in-out;
 max-height: 200px;
 overflow-y: scroll;
+
 }
 
 .form-section:hover {
@@ -107,6 +108,7 @@ padding-bottom: 8px;
 }
 
 .schedule-card {
+
 background-color: #fff;
 border: 1px solid #e9ecef;
 border-radius: 8px;
