@@ -43,12 +43,11 @@ padding: 20px;
 .card-appointments {
 background-color: #fff;
 border-radius: 12px;
-padding: 30px;
+padding: 50px 30px;
 width: 90%;
-max-width: 8000px;
-max-height: 100vh;
-overflow-y: auto;
+max-width: 1200px;
 box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+margin: 50px auto 50px auto;
 }
 
 #guestOverlay {

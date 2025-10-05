@@ -53,6 +53,13 @@ let allAppointments = [];
 let allFeedback = [];
 let allHelpRequests = [];
 
+const statusSteps = [
+  { status: "Pending", label: "Submitted", icon: "bi bi-send" },
+  { status: "Confirmed", label: "Accepted", icon: "bi bi-check-circle" },
+  { status: "Completed", label: "Approved & Completed", icon: "bi bi-check-circle-fill" },
+  { status: "Feedback Received", label: "Feedback Received", icon: "bi bi-chat-dots" }
+];
+
 let realTimeMode = true;
 let refreshInterval = null;
 let lastUpdateTime = new Date();
@@ -71,11 +78,16 @@ function updateStats() {
   const completed = allAppointments.filter(a => a.status === "Completed").length;
   const cancelled = allAppointments.filter(a => a.status === "Cancelled").length;
   const feedbackReceived = allFeedback.length;
-  document.getElementById("statPending").textContent = pending;
-  document.getElementById("statConfirmed").textContent = confirmed;
-  document.getElementById("statCompleted").textContent = completed;
-  document.getElementById("statCancelled").textContent = cancelled;
-  document.getElementById("statFeedback").textContent = feedbackReceived;
+  const statPendingEl = document.getElementById("statPending");
+  const statConfirmedEl = document.getElementById("statConfirmed");
+  const statCompletedEl = document.getElementById("statCompleted");
+  const statCancelledEl = document.getElementById("statCancelled");
+  const statFeedbackEl = document.getElementById("statFeedbackReceived");
+  if (statPendingEl) statPendingEl.textContent = pending;
+  if (statConfirmedEl) statConfirmedEl.textContent = confirmed;
+  if (statCompletedEl) statCompletedEl.textContent = completed;
+  if (statCancelledEl) statCancelledEl.textContent = cancelled;
+  if (statFeedbackEl) statFeedbackEl.textContent = feedbackReceived;
 }
 
 logoutBtn.addEventListener("click", async (e) => {
@@ -715,6 +727,34 @@ auth.onAuthStateChanged(async user => {
   startNotificationTimeUpdate();
 });
 
+function renderStatusTracker(status) {
+  const trackerContainer = document.getElementById('statusTracker');
+  if (!trackerContainer) return;
+
+  trackerContainer.innerHTML = '';
+
+  statusSteps.forEach((step, index) => {
+    const stepElement = document.createElement('div');
+    stepElement.className = 'status-step';
+
+    const currentIndex = statusSteps.findIndex(s => s.status === status);
+    const isCompleted = index <= currentIndex;
+    const isCurrent = index === currentIndex;
+
+    stepElement.classList.add(isCompleted ? 'completed' : 'pending');
+    if (isCurrent) stepElement.classList.add('current');
+
+    stepElement.innerHTML = `
+      <div class="status-icon">
+        <i class="${step.icon}"></i>
+      </div>
+      <div class="status-label">${step.label}</div>
+    `;
+
+    trackerContainer.appendChild(stepElement);
+  });
+}
+
 function openModal(app) {
   currentAppointmentId = app.id;
   modalUser.textContent = app.userEmail;
@@ -727,6 +767,8 @@ function openModal(app) {
   statusSelect.value = app.status || "Pending";
   reasonTextarea.value = app.adminNotes || "";
   reasonDiv.style.display = statusSelect.value === "Cancelled" ? "block" : "none";
+
+  renderStatusTracker(app.status);
 
   modal.show();
 }
@@ -1459,52 +1501,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusLabels = Object.keys(statusCounts);
     const statusData = statusLabels.map(label => statusCounts[label]);
 
-    const ctxTrends = document.getElementById('appointmentTrendsChart').getContext('2d');
-    new Chart(ctxTrends, {
-      type: 'line',
-      data: {
-        labels: trendLabels,
-        datasets: [{
-          label: 'Appointments per Month',
-          data: trendCounts,
-          borderColor: 'rgba(40, 167, 69, 1)',
-          backgroundColor: 'rgba(40, 167, 69, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { title: { display: true, text: 'Month' } },
-          y: { title: { display: true, text: 'Number of Appointments' }, beginAtZero: true }
+    const trendsCanvas = document.getElementById('appointmentTrendsChart');
+    if (trendsCanvas) {
+      const ctxTrends = trendsCanvas.getContext('2d');
+      new Chart(ctxTrends, {
+        type: 'line',
+        data: {
+          labels: trendLabels,
+          datasets: [{
+            label: 'Appointments per Month',
+            data: trendCounts,
+            borderColor: 'rgba(40, 167, 69, 1)',
+            backgroundColor: 'rgba(40, 167, 69, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: 'Month' } },
+            y: { title: { display: true, text: 'Number of Appointments' }, beginAtZero: true }
+          }
         }
-      }
-    });
+      });
+    }
 
-    const ctxStatus = document.getElementById('statusDistributionChart').getContext('2d');
-    new Chart(ctxStatus, {
-      type: 'doughnut',
-      data: {
-        labels: statusLabels,
-        datasets: [{
-          label: 'Appointment Status Distribution',
-          data: statusData,
-          backgroundColor: [
-            '#ffc107',
-            '#28a745',
-            '#0d6efd',
-            '#dc3545'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
+    const statusCanvas = document.getElementById('statusPieChart');
+    if (statusCanvas) {
+      const ctxStatus = statusCanvas.getContext('2d');
+      new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            label: 'Appointment Status Distribution',
+            data: statusData,
+            backgroundColor: [
+              '#ffc107',
+              '#28a745',
+              '#0d6efd',
+              '#dc3545'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom' }
+          }
         }
-      }
-    });
+      });
+    }
   }).catch(error => {
     console.error('Error loading appointment data for charts:', error);
   });

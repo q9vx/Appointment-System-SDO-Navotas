@@ -49,44 +49,54 @@
 <div class="hero-section">
 <img src="assets/school-hero2.jpg" alt="Schools Division Office" class="hero-img">
 <div class="hero-overlay"></div>
+<div class="hero-gradient"></div>
 
 <div class="hero-content">
-<div class="card-appointments">
-<div class="page-header mb-4">
-<div class="d-flex align-items-center justify-content-center mb-3">
-<i class="bi bi-calendar-check text-primary me-3" style="font-size: 2rem;"></i>
-<h2 class="fw-bold mb-0 text-primary">My Appointments</h2>
+<div class="card-appointments shadow-lg animate-fade-in">
+<div class="page-header text-center mb-5">
+<div class="d-flex align-items-center justify-content-center mb-4">
+<div class="icon-wrapper bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+<i class="bi bi-calendar-check text-primary" style="font-size: 2.5rem;"></i>
 </div>
-<p class="text-muted text-center mb-4">Manage and track all your appointment requests</p>
+<div>
+<h1 class="fw-bold mb-1 text-primary display-5">My Appointments</h1>
+<p class="text-muted fs-5 mb-0">Manage and track all your appointment requests</p>
+</div>
+</div>
 </div>
 
-<div class="stats-section" id="statsSection" style="display: none;">
+<div class="stats-section animate-slide-up" id="statsSection" style="display: none;">
+<h5 class="text-center mb-4 text-white">
+<i class="bi bi-bar-chart-line me-2"></i>Appointment Overview
+</h5>
 <div class="stats-grid" id="statsGrid">
 <!-- Stats will be populated here -->
 </div>
 </div>
 
-<div class="controls-section">
-<div class="row g-3">
+<div class="controls-section card border-0 shadow-sm animate-slide-up">
+<div class="card-body">
+<div class="row g-4">
 <div class="col-12">
 <div class="quick-filters">
-<h6 class="fw-semibold mb-3 text-muted">
-<i class="bi bi-funnel me-2"></i>Quick Filters
-</h6>
-<div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
-<button class="quick-filter-btn active" data-filter="all">
+<div class="d-flex align-items-center mb-3">
+<i class="bi bi-funnel-fill text-primary me-2 fs-5"></i>
+<h6 class="fw-bold mb-0 text-dark">Quick Filters</h6>
+</div>
+<div class="btn-group flex-wrap" role="group" aria-label="Quick filters">
+<button type="button" class="btn btn-outline-primary quick-filter-btn active" data-filter="all">
 <i class="bi bi-grid me-1"></i>All
 </button>
-<button class="quick-filter-btn" data-filter="today">
+<button type="button" class="btn btn-outline-primary quick-filter-btn" data-filter="today">
 <i class="bi bi-calendar-day me-1"></i>Today
 </button>
-<button class="quick-filter-btn" data-filter="week">
+<button type="button" class="btn btn-outline-primary quick-filter-btn" data-filter="week">
 <i class="bi bi-calendar-week me-1"></i>This Week
 </button>
-<button class="quick-filter-btn" data-filter="month">
+<button type="button" class="btn btn-outline-primary quick-filter-btn" data-filter="month">
 <i class="bi bi-calendar-month me-1"></i>This Month
 </button>
-<button class="quick-filter-btn" data-filter="upcoming">
+<button type="button" class="btn btn-outline-primary quick-filter-btn" data-filter="upcoming">
 <i class="bi bi-calendar-event me-1"></i>Upcoming
 </button>
 </div>
@@ -95,20 +105,27 @@
 
 <div class="col-12">
 <div class="sort-controls d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3">
-<h6 class="fw-semibold mb-3 mb-sm-0 text-muted text-center text-sm-start">
-<i class="bi bi-sort-down me-2"></i>Sort Options
-</h6>
-<div class="d-flex gap-2 align-items-center">
-<select id="sortSelect" class="form-select flex-grow-1" style="min-width: 200px;">
+<div class="d-flex align-items-center mb-3 mb-sm-0">
+<i class="bi bi-sort-down-alt text-primary me-2 fs-5"></i>
+<h6 class="fw-bold mb-0 text-dark">Sort Options</h6>
+</div>
+<div class="d-flex gap-3 align-items-center flex-grow-1">
+<div class="input-group">
+<span class="input-group-text bg-light border-end-0">
+<i class="bi bi-arrow-down-up"></i>
+</span>
+<select id="sortSelect" class="form-select border-start-0" style="min-width: 200px;">
 <option value="createdAt-desc">🕒 Newest First</option>
 <option value="createdAt-asc">🕐 Oldest First</option>
 <option value="date-desc">📅 Date (Latest)</option>
 <option value="date-asc">📅 Date (Earliest)</option>
 <option value="status">📊 Status</option>
 </select>
-<button class="btn btn-outline-secondary btn-sm flex-shrink-0" id="clearFilters" title="Clear all filters">
-<i class="bi bi-x-circle"></i> Clear
+</div>
+<button class="btn btn-outline-danger btn-sm px-3" id="clearFilters" title="Clear all filters">
+<i class="bi bi-x-circle me-1"></i>Clear Filters
 </button>
+</div>
 </div>
 </div>
 </div>
@@ -143,23 +160,29 @@
 </div>
 </div>
 
-<div class="pagination-controls">
-<div class="loading-indicator" id="loadingIndicator">
+<div class="pagination-controls d-flex flex-column align-items-center gap-3 mt-4">
+<div class="loading-indicator d-flex align-items-center justify-content-center p-3" id="loadingIndicator">
 <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
 <span class="visually-hidden">Loading...</span>
 </div>
-Loading more appointments...
+<span class="text-muted">Loading more appointments...</span>
 </div>
-<button class="load-more-btn" id="loadMoreBtn" style="display: none;">
+<button class="btn btn-outline-primary btn-lg px-4 py-2 load-more-btn shadow-sm" id="loadMoreBtn" style="display: none;">
 <i class="bi bi-chevron-down me-2"></i>Load More Appointments
 </button>
-<div class="page-info" id="pageInfo"></div>
+<div class="page-info badge bg-light text-dark fs-6 px-3 py-2" id="pageInfo"></div>
 </div>
 
-<div class="text-center mt-3">
-<a href="create-appointment.html" class="btn btn-primary btn-lg">
-<i class="bi bi-plus-circle me-2"></i> New Appointment
+<div class="text-center mt-5 mb-4">
+<div class="action-card p-4 bg-gradient-primary text-white rounded-4 shadow-lg">
+<h5 class="mb-3">
+<i class="bi bi-plus-circle-fill me-2"></i>Ready to Schedule?
+</h5>
+<p class="mb-4 opacity-75">Create a new appointment request to get started with your needs.</p>
+<a href="create-appointment.html" class="btn btn-light btn-lg px-4 py-3 shadow-sm">
+<i class="bi bi-plus-circle me-2"></i>Create New Appointment
 </a>
+</div>
 </div>
 </div>
 </div>
@@ -208,6 +231,69 @@ Loading more appointments...
 <div class="modal-footer">
 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 <button type="button" class="btn btn-danger" id="confirmCancel">Cancel Appointment</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header bg-primary text-white">
+<h5 class="modal-title" id="feedbackModalLabel">
+<i class="bi bi-chat-dots me-2"></i>Share Your Feedback
+</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div id="feedbackAlert" class="alert d-none" role="alert"></div>
+<form id="appointmentFeedbackForm">
+<div class="mb-3">
+<label for="feedbackSubject" class="form-label">Subject</label>
+<select class="form-select" id="feedbackSubject" required>
+<option value="">Select a subject</option>
+<option value="appointment-experience">Appointment Experience</option>
+<option value="system-usability">System Usability</option>
+<option value="general-feedback">General Feedback</option>
+<option value="bug-report">Bug Report</option>
+<option value="feature-request">Feature Request</option>
+<option value="other">Other</option>
+</select>
+</div>
+<div class="mb-3">
+<label for="feedbackRating" class="form-label">Rating</label>
+<div class="rating-stars" id="ratingStars">
+<div class="star-container" data-rating="1">
+<i class="bi bi-star"></i>
+</div>
+<div class="star-container" data-rating="2">
+<i class="bi bi-star"></i>
+</div>
+<div class="star-container" data-rating="3">
+<i class="bi bi-star"></i>
+</div>
+<div class="star-container" data-rating="4">
+<i class="bi bi-star"></i>
+</div>
+<div class="star-container" data-rating="5">
+<i class="bi bi-star"></i>
+</div>
+</div>
+<input type="hidden" id="feedbackRating" value="0">
+</div>
+<div class="mb-3">
+<label for="feedbackMessage" class="form-label">Your Message</label>
+<textarea class="form-control" id="feedbackMessage" rows="4" placeholder="Please share your thoughts about your appointment experience or the system..." required></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+<i class="bi bi-x-lg me-1"></i>Close
+</button>
+<button type="button" class="btn btn-primary" id="submitFeedback">
+<i class="bi bi-send me-1"></i>Submit Feedback
+</button>
 </div>
 </div>
 </div>

@@ -14,6 +14,12 @@ const clearFiltersBtn = document.getElementById("clearFilters");
 const navProfile = document.getElementById("navProfile");
 const successToast = new bootstrap.Toast(document.getElementById("successToast"));
 const toastMessage = document.getElementById("toastMessage");
+const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+const submitFeedbackBtn = document.getElementById('submitFeedback');
+const feedbackAlert = document.getElementById('feedbackAlert');
+const ratingStars = document.querySelectorAll('#ratingStars .star-container');
+const feedbackRatingInput = document.getElementById('feedbackRating');
+let currentFeedbackApptId = null;
 
 // Pagination and filtering state
 let allAppointments = [];
@@ -238,7 +244,6 @@ statusIcon = "❌";
 
 const statusSteps = [
 { step: "Submitted", icon: "📝", message: "Your request has been submitted successfully." },
-{ step: "Viewing by HR Staff", icon: "👀", message: "Your request is up for viewing by the HR staff." },
 { step: "Accepted", icon: "✅", message: "Your request has been accepted." },
 { step: "Approved", icon: "🎉", message: "Appointment approved! Prepare for needed things to bring (e.g., documents, ID)." },
 { step: "Completed", icon: "🏁", message: "Appointment completed successfully." },
@@ -259,9 +264,9 @@ trackerHTML = `
 `;
 } else {
 if (appt.status === "Pending") currentStepIndex = 0;
-else if (appt.status === "Confirmed") currentStepIndex = 2;
-else if (appt.status === "Completed") currentStepIndex = 4;
-else if (appt.status === "FeedbackReceived") currentStepIndex = 5;
+else if (appt.status === "Confirmed") currentStepIndex = 1;
+else if (appt.status === "Completed") currentStepIndex = 3;
+else if (appt.status === "FeedbackReceived") currentStepIndex = 4;
 
 trackerHTML = `
 <div class="status-tracker mt-3">
@@ -310,11 +315,18 @@ ${appt.adminNotes ? `<p class="text-info small"><i class="bi bi-person-check tex
 </div>
 </div>
 <div class="status-tracker mt-3">${trackerHTML}</div>
+<div class="d-flex gap-2 mt-3">
 ${appt.status !== "Cancelled" && appt.status !== "Completed" && appt.status !== "FeedbackReceived" ? `
-<button class="btn btn-outline-danger btn-sm mt-3 cancel-btn" aria-label="Cancel this appointment">
+<button class="btn btn-outline-danger btn-sm cancel-btn" aria-label="Cancel this appointment">
 <i class="bi bi-x-circle me-1"></i>Cancel Appointment
 </button>
 ` : ""}
+${appt.status === "Completed" ? `
+<button class="btn btn-outline-primary btn-sm feedback-btn" aria-label="Leave feedback for this appointment">
+<i class="bi bi-chat-dots me-1"></i>Leave Feedback
+</button>
+` : ""}
+</div>
 </div>
 `;
 
@@ -466,7 +478,114 @@ showToast("Failed to cancel appointment. Please try again.", 5000);
 
 confirmCancelBtn.addEventListener('click', onConfirm, { once: true });
 }
+
+if (e.target.classList.contains("feedback-btn")) {
+const card = e.target.closest(".appointment-card");
+const apptId = card.getAttribute("data-id");
+if (!apptId) return;
+
+feedbackModal.show();
+}
+
+
 });
+
+const feedbackModalEl = document.getElementById('feedbackModal');
+if (feedbackModalEl) {
+feedbackModalEl.addEventListener('show.bs.modal', () => {
+document.getElementById('feedbackSubject').value = "";
+document.getElementById('feedbackRating').value = "0";
+document.getElementById('feedbackMessage').value = "";
+feedbackAlert.classList.add('d-none');
+ratingStars.forEach(star => star.classList.remove('active', 'half-active'));
+});
+
+feedbackModalEl.addEventListener('click', (e) => {
+if (e.target.closest('.star-container')) {
+const container = e.target.closest('.star-container');
+const ratingBase = parseInt(container.dataset.rating);
+const rect = container.getBoundingClientRect();
+const clickX = e.clientX - rect.left;
+const halfWidth = rect.width / 2;
+let rating;
+if (clickX < halfWidth) {
+rating = ratingBase - 0.5;
+} else {
+rating = ratingBase;
+}
+feedbackRatingInput.value = rating;
+
+// Update visual
+ratingStars.forEach((cont, index) => {
+cont.classList.remove('active', 'half-active');
+});
+const fullRating = Math.floor(rating);
+const isHalf = rating % 1 !== 0;
+for (let i = 0; i < fullRating; i++) {
+ratingStars[i].classList.add('active');
+}
+if (isHalf) {
+ratingStars[fullRating].classList.add('half-active');
+}
+}
+});
+}
+
+if (submitFeedbackBtn) {
+submitFeedbackBtn.addEventListener('click', () => {
+const subject = document.getElementById('feedbackSubject').value;
+const rating = parseInt(document.getElementById('feedbackRating').value);
+const message = document.getElementById('feedbackMessage').value.trim();
+
+if (!subject || !message) {
+feedbackAlert.classList.remove('d-none');
+feedbackAlert.classList.add('alert-danger');
+feedbackAlert.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Please fill in all required fields.';
+return;
+}
+
+feedbackAlert.classList.add('d-none');
+submitFeedbackBtn.disabled = true;
+submitFeedbackBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Submitting...';
+
+db.collection("feedback").add({
+subject,
+rating,
+message,
+userId: auth.currentUser.uid,
+userEmail: auth.currentUser.email,
+timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+type: 'general'
+}).then(() => {
+showToast("Thank you for your feedback!");
+feedbackModal.hide();
+
+// Update appointment status to FeedbackReceived
+if (currentFeedbackApptId) {
+db.collection("appointments").doc(currentFeedbackApptId).update({
+status: "FeedbackReceived"
+}).then(() => {
+const apptIndex = allAppointments.findIndex(a => a.id === currentFeedbackApptId);
+if (apptIndex !== -1) {
+allAppointments[apptIndex].status = "FeedbackReceived";
+}
+renderStats(allAppointments);
+loadAndRenderAppointments();
+}).catch(error => {
+console.error("Error updating appointment status:", error);
+});
+}
+}).catch(error => {
+console.error('Feedback submission error:', error);
+feedbackAlert.classList.remove('d-none');
+feedbackAlert.classList.add('alert-danger');
+feedbackAlert.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Failed to submit feedback. Please try again.';
+}).finally(() => {
+submitFeedbackBtn.disabled = false;
+submitFeedbackBtn.innerHTML = '<i class="bi bi-send me-1"></i>Submit Feedback';
+});
+});
+}
 })
 .catch(err => {
 console.error("Error fetching appointments:", err);
