@@ -68,6 +68,11 @@ full: `${mm}/${dd}/${yy} ${hours}:${minutes} ${ampm}`
 };
 }
 
+function formatPreferredDate(dateStr) {
+const [year, month, day] = dateStr.split('-');
+return `${month}/${day}/${year.slice(-2)}`;
+}
+
 const dateField = document.getElementById("date");
 const timeField = document.getElementById("time");
 
@@ -80,6 +85,129 @@ if (timeField) timeField.value = formatted.time;
 }
 
 updateDateTime();
+
+// Set min attribute for preferredDate input to today's date in Asia/Manila timezone
+const preferredDateInput = document.getElementById("preferredDate");
+if (preferredDateInput) {
+  const phNow = getPHNow();
+  const year = phNow.getFullYear();
+  const month = String(phNow.getMonth() + 1).padStart(2, "0");
+  const day = String(phNow.getDate()).padStart(2, "0");
+  const minDateStr = `${year}-${month}-${day}`;
+  preferredDateInput.min = minDateStr;
+}
+
+let occupiedDates = new Set();
+
+async function fetchOccupiedDates() {
+  try {
+    const snapshot = await db.collection("appointments").get();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.date) {
+        const parts = data.date.split('/');
+        if (parts.length === 3) {
+          const formattedDate = `20${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+          occupiedDates.add(formattedDate);
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching occupied dates:", error);
+  }
+}
+
+fetchOccupiedDates().then(() => {
+  if (preferredDateInput) {
+    flatpickr(preferredDateInput, {
+      dateFormat: "Y-m-d",
+      minDate: preferredDateInput.min,
+      // Do not disable dates, allow all dates selectable
+      onChange: async function(selectedDates, dateStr, instance) {
+        // On date change, check if all time slots are occupied
+        const allTimesOccupied = await checkAllTimesOccupied(dateStr);
+        if (allTimesOccupied) {
+          showToast("Selected date has no available time slots. Please choose another date.", "error");
+          instance.clear();
+          submitBtn.disabled = true;
+          resetTimeOptions();
+        } else {
+          submitBtn.disabled = false;
+          await updateTimeOptions(dateStr);
+        }
+      }
+    });
+  }
+});
+
+async function checkAllTimesOccupied(dateStr) {
+  if (!timeSelect) return false;
+  try {
+    const snapshot = await db.collection("appointments")
+      .where("date", "==", formatPreferredDate(dateStr))
+      .get();
+
+    const occupiedTimes = new Set();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.time) {
+        occupiedTimes.add(data.time);
+      }
+    });
+
+    // Check if all time options are occupied
+    for (let option of timeSelect.options) {
+      if (!occupiedTimes.has(option.value)) {
+        return false; // Found an available time slot
+      }
+    }
+    return true; // All time slots occupied
+  } catch (error) {
+    console.error("Error checking all times occupied:", error);
+    return false;
+  }
+}
+
+const timeSelect = document.getElementById("sdoTimeSchedule");
+
+function resetTimeOptions() {
+  if (!timeSelect) return;
+  for (let option of timeSelect.options) {
+    option.disabled = false;
+  }
+}
+
+async function updateTimeOptions(dateStr) {
+  if (!timeSelect) return;
+  resetTimeOptions();
+
+  try {
+    const snapshot = await db.collection("appointments")
+      .where("date", "==", formatPreferredDate(dateStr))
+      .get();
+
+    const occupiedTimes = new Set();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.time) {
+        occupiedTimes.add(data.time);
+      }
+    });
+
+    for (let option of timeSelect.options) {
+      if (occupiedTimes.has(option.value)) {
+        option.disabled = true;
+        if (option.selected) {
+          option.selected = false;
+          showToast("Selected time is already occupied. Please choose another time.", "error");
+          submitBtn.disabled = true;
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching occupied times:", error);
+  }
+}
 
 const dateTimeInterval = setInterval(updateDateTime, 1000);
 
@@ -126,6 +254,8 @@ e.preventDefault();
 
 const purpose = purposeField?.value;
 const notes = notesField?.value.trim();
+const preferredDate = document.getElementById("preferredDate")?.value;
+const preferredTime = document.getElementById("sdoTimeSchedule")?.value;
 
 let isValid = true;
 
@@ -135,6 +265,22 @@ isValid = false;
 } else {
 purposeField?.classList.remove("is-invalid");
 purposeField?.classList.add("is-valid");
+}
+
+if (!preferredDate) {
+document.getElementById("preferredDate")?.classList.add("is-invalid");
+isValid = false;
+} else {
+document.getElementById("preferredDate")?.classList.remove("is-invalid");
+document.getElementById("preferredDate")?.classList.add("is-valid");
+}
+
+if (!preferredTime) {
+document.getElementById("sdoTimeSchedule")?.classList.add("is-invalid");
+isValid = false;
+} else {
+document.getElementById("sdoTimeSchedule")?.classList.remove("is-invalid");
+document.getElementById("sdoTimeSchedule")?.classList.add("is-valid");
 }
 
 if (!isValid) {
@@ -156,8 +302,8 @@ userEmail: user.email,
 purpose: purpose,
 notes: notes || null,
 status: "Pending",
-date: currentFormatted.date,
-time: currentFormatted.time,
+date: formatPreferredDate(preferredDate),
+time: preferredTime,
 appointmentDateTime: appointmentDateTime,
 createdAt: firebase.firestore.FieldValue.serverTimestamp()
 });
@@ -217,4 +363,5 @@ function showToast(message, type) {
 }
 
 if (charCount) charCount.textContent = "0";
+
 }

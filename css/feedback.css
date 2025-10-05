@@ -5,7 +5,7 @@ padding: 30px;
 background-color: #ffffff;
 border-radius: 15px;
 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-border-top: 5px solid #2e8b57;
+border-top: 5px solid #3c4741;
 transition: all 0.3s ease;
 }
 
@@ -77,5 +77,35 @@ font-size: 2rem;
 .feedback-form {
 margin: 30px 20px;
 padding: 20px;
+}
+}
+
+@media (max-width: 576px) {
+.hero-feedback {
+padding: 30px 15px;
+}
+
+.hero-feedback h1 {
+font-size: 1.8rem;
+}
+
+.hero-feedback p {
+font-size: 1rem;
+}
+
+.feedback-form {
+max-width: 100%;
+margin: 20px 15px;
+padding: 15px;
+}
+
+.feedback-form h2 {
+font-size: 1.5rem;
+margin-bottom: 20px;
+}
+
+.btn-submit {
+font-size: 1rem;
+padding: 10px 20px;
 }
 }

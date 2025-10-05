@@ -12,6 +12,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
+
+<!-- Add flatpickr CSS and JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script src="js/create-appointment.js" defer></script>
 
 </head>
@@ -27,7 +32,7 @@
 <div class="container-fluid">
 <a class="navbar-brand d-flex align-items-center" href="index.html">
 <img src="assets/logo.png" alt="SDO Navotas" width="50" height="50" class="me-2">
-<span class="fw-bold">SDO Navotas Teachers Appointment System</span>
+<span class="fw-bold">SDO Navotas Appointment System</span>
 </a>
 <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
 <span class="navbar-toggler-icon"></span>
@@ -131,29 +136,9 @@
 </div>
 </div>
 
-<div class="form-section mb-4">
-<h5 class="section-title mb-3">
-<i class="bi bi-clock-history me-2 text-primary"></i>SDO Appointment Time Schedule
-</h5>
-<div class="mb-3">
-<select class="form-select form-select-lg" id="sdoTimeSchedule" required style="max-height: 150px; overflow-y: auto;">
-<option value="" disabled selected>Select your preferred appointment time</option>
-<option value="8:00 AM - 9:00 AM">8:00 AM - 9:00 AM</option>
-<option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
-<option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
-<option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
-<option value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</option>
-<option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
-<option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
-<option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
-</select>
-<div class="form-text">Select your preferred time slot for the appointment</div>
-</div>
-</div>
-
 <div class="form-section mb-4 date-section">
 <h5 class="section-title mb-3">
-<i class="bi bi-calendar-event me-2 text-primary"></i>Preferred Appointment Date
+<i class="bi bi-calendar-event me-2 text-primary"></i>Preferred Appointment Schedule
 </h5>
 <div class="row g-3">
 <div class="col-md-6">
@@ -168,6 +153,30 @@
 <input type="date" class="form-control form-control-lg" id="preferredDate" required min="">
 </div>
 <div class="form-text">Select your preferred date for the appointment</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="schedule-card">
+<label for="sdoTimeSchedule" class="form-label fw-semibold">
+<i class="bi bi-clock me-1"></i>Preferred Appointment Time
+</label>
+<div class="input-group">
+<span class="input-group-text bg-light">
+<i class="bi bi-clock"></i>
+</span>
+<select class="form-select form-select-lg" id="sdoTimeSchedule" required>
+<option value="" disabled selected>Select your preferred time</option>
+<option value="8:00 AM - 9:00 AM">8:00 AM - 9:00 AM</option>
+<option value="9:00 AM - 10:00 AM">9:00 AM - 10:00 AM</option>
+<option value="10:00 AM - 11:00 AM">10:00 AM - 11:00 AM</option>
+<option value="11:00 AM - 12:00 PM">11:00 AM - 12:00 PM</option>
+<option value="1:00 PM - 2:00 PM">1:00 PM - 2:00 PM</option>
+<option value="2:00 PM - 3:00 PM">2:00 PM - 3:00 PM</option>
+<option value="3:00 PM - 4:00 PM">3:00 PM - 4:00 PM</option>
+<option value="4:00 PM - 5:00 PM">4:00 PM - 5:00 PM</option>
+</select>
+</div>
+<div class="form-text">Select your preferred time slot for the appointment</div>
 </div>
 </div>
 </div>

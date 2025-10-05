@@ -683,6 +683,16 @@ margin-left: 250px;
 }
 
 @media (max-width: 768px) {
+.navbar-custom {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+z-index: 1030;
+background: white;
+box-shadow: var(--shadow);
+}
+
 #sidebar-wrapper {
 position: fixed;
 top: 0;
@@ -734,6 +744,7 @@ display: block;
 #page-content-wrapper {
 margin-left: 0px;
 padding: 1rem;
+padding-top: 100px; /* Adjust for fixed navbar */
 }
 
 #wrapper.toggled #page-content-wrapper {

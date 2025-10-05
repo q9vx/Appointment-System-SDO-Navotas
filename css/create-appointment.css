@@ -89,8 +89,6 @@ border-radius: 8px;
 padding: 20px;
 background-color: #f8f9fa;
 transition: all 0.2s ease-in-out;
-max-height: 200px;
-overflow-y: scroll;
 
 }
 
@@ -237,7 +235,6 @@ font-size: 0.95rem;
 padding: 15px;
 margin-bottom: 20px;
 border-radius: 6px;
-max-height: 250px;
 }
 .section-title {
 font-size: 1.1rem;
@@ -283,7 +280,6 @@ margin-bottom: 20px;
 .form-section {
 padding: 12px;
 margin-bottom: 15px;
-max-height: 200px;
 }
 .section-title {
 font-size: 1rem;
@@ -317,8 +313,6 @@ font-size: 0.85rem;
 }
 .form-section {
 padding: 15px;
-max-height: none;
-overflow-y: visible;
 }
 .section-title {
 font-size: 0.95rem;
