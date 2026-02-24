@@ -1,64 +1,15 @@
-const sidebarToggleBtn = document.getElementById('sidebarToggle');
-const wrapper = document.getElementById('wrapper');
+// ============================================
+// VARIABLE INITIALIZATIONS - Moved to top
+// ============================================
 
-if (sidebarToggleBtn && wrapper) {
-  sidebarToggleBtn.addEventListener('click', () => {
-    wrapper.classList.toggle('toggled');
-  });
-} else {
-  console.error('Sidebar toggle button or wrapper element not found');
-}
-
-document.addEventListener('click', (e) => {
-  if (window.innerWidth <= 768 && wrapper.classList.contains('toggled')) {
-    const sidebar = document.getElementById('sidebar-wrapper');
-    if (sidebar && !sidebar.contains(e.target) && e.target !== sidebarToggleBtn) {
-      wrapper.classList.remove('toggled');
-    }
-  }
-});
-
-const tableBody = document.getElementById("appointmentsTable");
-const searchInput = document.getElementById("searchInput");
-const statusFilter = document.getElementById("statusFilter");
-const dateFrom = document.getElementById("dateFrom");
-const dateTo = document.getElementById("dateTo");
-const applyFiltersBtn = document.getElementById("applyFiltersBtn");
-const clearFiltersBtn = document.getElementById("clearFiltersBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const overlay = document.getElementById("guestOverlay");
-
-const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-const bulkConfirmBtn = document.getElementById("bulkConfirmBtn");
-const bulkCancelBtn = document.getElementById("bulkCancelBtn");
-const bulkExportBtn = document.getElementById("bulkExportBtn");
-
-const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
-const modalUser = document.getElementById('modalUser');
-const modalPurpose = document.getElementById('modalPurpose');
-const modalDateTime = document.getElementById('modalDateTime');
-const modalStatus = document.getElementById('modalStatus');
-const modalNotes = document.getElementById('modalNotes');
-const modalCreatedAt = document.getElementById('modalCreatedAt');
-const statusSelect = document.getElementById('statusSelect');
-const reasonDiv = document.getElementById('reasonDiv');
-const reasonTextarea = document.getElementById('reasonTextarea');
-const updateBtn = document.getElementById('updateBtn');
-
-const feedbackTableBody = document.getElementById("feedbackTable");
-const helpRequestsTableBody = document.getElementById("helpRequestsTable");
-
+// Data arrays
 let currentAppointmentId = null;
 let allAppointments = [];
 let allFeedback = [];
 let allHelpRequests = [];
-
-const statusSteps = [
-  { status: "Pending", label: "Submitted", icon: "bi bi-send" },
-  { status: "Confirmed", label: "Accepted", icon: "bi bi-check-circle" },
-  { status: "Completed", label: "Approved & Completed", icon: "bi bi-check-circle-fill" },
-  { status: "Feedback Received", label: "Feedback Received", icon: "bi bi-chat-dots" }
-];
+let allUsers = [];
+let currentUserId = null;
+let userListener = null;
 
 let realTimeMode = true;
 let refreshInterval = null;
@@ -71,6 +22,92 @@ let helpRequestsListener = null;
 let notifications = [];
 let maxNotifications = 10;
 let notificationTimeUpdateInterval = null;
+
+// DOM Elements - Core
+const tableBody = document.getElementById("appointmentsTable");
+const searchInput = document.getElementById("globalSearch");
+const statusFilter = document.getElementById("statusFilter");
+const dateFrom = document.getElementById("dateFrom");
+const dateTo = document.getElementById("dateTo");
+const applyFiltersBtn = document.getElementById("applyFiltersBtn");
+const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const overlay = document.getElementById("guestOverlay");
+
+// DOM Elements - Bulk Actions
+const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+const bulkConfirmBtn = document.getElementById("bulkConfirmBtn");
+const bulkCancelBtn = document.getElementById("bulkCancelBtn");
+const bulkExportBtn = document.getElementById("bulkExportBtn");
+
+// DOM Elements - Modal
+const modalElement = document.getElementById('appointmentModal');
+const modal = modalElement ? new bootstrap.Modal(modalElement) : null;
+const modalUser = document.getElementById('modalUser');
+const modalPurpose = document.getElementById('modalPurpose');
+const modalDateTime = document.getElementById('modalDateTime');
+const modalStatus = document.getElementById('modalStatus');
+const modalNotes = document.getElementById('modalNotes');
+const modalCreatedAt = document.getElementById('modalCreatedAt');
+const statusSelect = document.getElementById('statusSelect');
+const reasonDiv = document.getElementById('reasonDiv');
+const reasonTextarea = document.getElementById('reasonTextarea');
+const updateBtn = document.getElementById('updateBtn');
+
+// DOM Elements - Tables
+const feedbackTableBody = document.getElementById("feedbackTable");
+const helpRequestsTableBody = document.getElementById("helpRequestsTable");
+
+// DOM Elements - Users
+const usersTableBody = document.getElementById("usersTable");
+const userSearchInput = document.getElementById("userSearchInput");
+const userRoleFilter = document.getElementById("userRoleFilter");
+const userModalElement = document.getElementById('userModal');
+const userModal = userModalElement ? new bootstrap.Modal(userModalElement) : null;
+const userFirstName = document.getElementById('userFirstName');
+const userLastName = document.getElementById('userLastName');
+const userEmail = document.getElementById('userEmail');
+const userIdNumber = document.getElementById('userIdNumber');
+const userRole = document.getElementById('userRole');
+const userStatus = document.getElementById('userStatus');
+const userJoinedDate = document.getElementById('userJoinedDate');
+const userLastLogin = document.getElementById('userLastLogin');
+const userActivityLogs = document.getElementById('userActivityLogs');
+const saveUserBtn = document.getElementById('saveUserBtn');
+const deleteUserBtn = document.getElementById('deleteUserBtn');
+
+// DOM Elements - Settings
+const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+
+// Status steps
+const statusSteps = [
+  { status: "Pending", label: "Submitted", icon: "bi bi-send" },
+  { status: "Confirmed", label: "Accepted", icon: "bi bi-check-circle" },
+  { status: "Completed", label: "Approved & Completed", icon: "bi bi-check-circle-fill" },
+  { status: "Feedback Received", label: "Feedback Received", icon: "bi bi-chat-dots" }
+];
+
+// ============================================
+// SIDEBAR TOGGLE
+// ============================================
+
+const sidebarToggleBtn = document.getElementById('sidebarToggle');
+const wrapper = document.getElementById('wrapper');
+
+if (sidebarToggleBtn && wrapper) {
+  sidebarToggleBtn.addEventListener('click', () => {
+    wrapper.classList.toggle('toggled');
+  });
+}
+
+document.addEventListener('click', (e) => {
+  if (wrapper && window.innerWidth <= 768 && wrapper.classList.contains('toggled')) {
+    const sidebar = document.getElementById('sidebar-wrapper');
+    if (sidebar && !sidebar.contains(e.target) && e.target !== sidebarToggleBtn) {
+      wrapper.classList.remove('toggled');
+    }
+  }
+});
 
 function updateStats() {
   const pending = allAppointments.filter(a => a.status === "Pending").length;
@@ -90,11 +127,13 @@ function updateStats() {
   if (statFeedbackEl) statFeedbackEl.textContent = feedbackReceived;
 }
 
-logoutBtn.addEventListener("click", async (e) => {
-  e.preventDefault();
-  await auth.signOut();
-  window.location.href = "../index.html";
-});
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await auth.signOut();
+    window.location.href = "../index.html";
+  });
+}
 
 function applyFilters() {
   const search = searchInput.value.toLowerCase();
@@ -142,12 +181,12 @@ function clearFilters() {
   applyFilters();
 }
 
-searchInput.addEventListener("input", applyFilters);
-statusFilter.addEventListener("change", applyFilters);
-dateFrom.addEventListener("change", applyFilters);
-dateTo.addEventListener("change", applyFilters);
-applyFiltersBtn.addEventListener("click", applyFilters);
-clearFiltersBtn.addEventListener("click", clearFilters);
+if (searchInput) searchInput.addEventListener("input", applyFilters); // globalSearch bar used for filtering appointments
+if (statusFilter) statusFilter.addEventListener("change", applyFilters);
+if (dateFrom) dateFrom.addEventListener("change", applyFilters);
+if (dateTo) dateTo.addEventListener("change", applyFilters);
+if (applyFiltersBtn) applyFiltersBtn.addEventListener("click", applyFilters);
+if (clearFiltersBtn) clearFiltersBtn.addEventListener("click", clearFilters);
 
 function renderAppointments(list) {
   tableBody.innerHTML = "";
@@ -937,9 +976,9 @@ function updateBulkButtonStates() {
   const selectedIds = getSelectedAppointmentIds();
   const hasSelection = selectedIds.length > 0;
 
-  bulkConfirmBtn.disabled = !hasSelection;
-  bulkCancelBtn.disabled = !hasSelection;
-  bulkExportBtn.disabled = !hasSelection;
+  if (bulkConfirmBtn) bulkConfirmBtn.disabled = !hasSelection;
+  if (bulkCancelBtn) bulkCancelBtn.disabled = !hasSelection;
+  if (bulkExportBtn) bulkExportBtn.disabled = !hasSelection;
 }
 
 async function bulkConfirmAppointments() {
@@ -1053,26 +1092,6 @@ document.addEventListener('change', (e) => {
     selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
   }
 });
-
-const usersTableBody = document.getElementById("usersTable");
-const userSearchInput = document.getElementById("userSearchInput");
-const userRoleFilter = document.getElementById("userRoleFilter");
-const userModal = new bootstrap.Modal(document.getElementById('userModal'));
-const userFirstName = document.getElementById('userFirstName');
-const userLastName = document.getElementById('userLastName');
-const userEmail = document.getElementById('userEmail');
-const userIdNumber = document.getElementById('userIdNumber');
-const userRole = document.getElementById('userRole');
-const userStatus = document.getElementById('userStatus');
-const userJoinedDate = document.getElementById('userJoinedDate');
-const userLastLogin = document.getElementById('userLastLogin');
-const userActivityLogs = document.getElementById('userActivityLogs');
-const saveUserBtn = document.getElementById('saveUserBtn');
-const deleteUserBtn = document.getElementById('deleteUserBtn');
-
-let allUsers = [];
-let currentUserId = null;
-let userListener = null;
 
 async function loadUsers() {
   try {
@@ -1501,7 +1520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusLabels = Object.keys(statusCounts);
     const statusData = statusLabels.map(label => statusCounts[label]);
 
-    const trendsCanvas = document.getElementById('appointmentTrendsChart');
+const trendsCanvas = document.getElementById('monthlyTrendsChart');
     if (trendsCanvas) {
       const ctxTrends = trendsCanvas.getContext('2d');
       new Chart(ctxTrends, {

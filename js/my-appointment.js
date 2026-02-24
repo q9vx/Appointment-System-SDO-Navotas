@@ -418,15 +418,18 @@ ul.appendChild(li);
 }
 
 const query = isAdmin ? db.collection("appointments").orderBy("createdAt", "desc") : db.collection("appointments").where("userId", "==", user.uid);
-query.get().then(snapshot => {
-allAppointments = [];
-snapshot.forEach(doc => {
-const appt = { id: doc.id, ...doc.data() };
-allAppointments.push(appt);
-});
 
-renderStats(allAppointments);
-loadAndRenderAppointments();
+// listen for changes so user sees status updates immediately
+query.onSnapshot(snapshot => {
+  allAppointments = [];
+  snapshot.forEach(doc => {
+    const appt = { id: doc.id, ...doc.data() };
+    allAppointments.push(appt);
+  });
+
+  renderStats(allAppointments);
+  loadAndRenderAppointments();
+});
 
 list.addEventListener("click", (e) => {
 if (e.target.classList.contains("cancel-btn")) {
@@ -590,7 +593,6 @@ submitFeedbackBtn.innerHTML = '<i class="bi bi-send me-1"></i>Submit Feedback';
 .catch(err => {
 console.error("Error fetching appointments:", err);
 showError("Failed to load appointments. Please check your connection and try again.");
-});
 });
 });
 });

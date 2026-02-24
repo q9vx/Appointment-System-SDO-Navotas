@@ -1,1053 +1,739 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard - SDO Navotas</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="../css/style.css" rel="stylesheet">
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="../js/firebase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="admin.js" defer></script>
-<link rel="stylesheet" href="admin-dashboard.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SDO Navotas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- favicon to prevent 404 error -->
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin.js" defer></script>
+    <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 
 <body>
 
+<!-- Guest Overlay -->
 <div id="guestOverlay">
-<div class="text-center">
-<i class="bi bi-shield-lock" style="font-size: 4rem; color: var(--danger-color); margin-bottom: 1rem;"></i>
-<h2>Access Denied</h2>
-<p class="mb-4">You must be an <strong>administrator</strong> to access this dashboard.</p>
-<a href="../index.html" class="action-btn btn-primary-custom">
-<i class="bi bi-arrow-left"></i>
-Return to Home
-</a>
-</div>
+    <div class="text-center">
+        <i class="bi bi-shield-lock" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+        <h2>Access Denied</h2>
+        <p class="mb-4">You must be an <strong>administrator</strong> to access this dashboard.</p>
+        <a href="../index.html" class="btn btn-primary-custom">
+            <i class="bi bi-arrow-left"></i>
+            Return to Home
+        </a>
+    </div>
 </div>
 
+<!-- Main Wrapper -->
 <div class="d-flex" id="wrapper">
 
-<nav id="sidebar-wrapper">
-<div class="sidebar-header">
-<h4>
-<i class="bi bi-speedometer2 sidebar-icon"></i>
-<span>SDO Navotas</span>
-</h4>
-</div>
-<div class="sidebar-user-info">
-<div class="user-avatar">
-<i class="bi bi-person-circle"></i>
-</div>
-<div class="user-details">
-<div class="user-name" id="sidebarUserName">Administrator</div>
-<div class="user-role">Admin Panel</div>
-</div>
-</div>
-<ul class="sidebar-menu list-unstyled">
-<li class="nav-item">
-<a href="../create-appointment.html" class="nav-link">
-<i class="bi bi-calendar-plus sidebar-icon"></i>
-<span>Create Appointment</span>
-</a>
-</li>
-<li class="nav-item">
-<a href="reports.html" class="nav-link">
-<i class="bi bi-bar-chart-line sidebar-icon"></i>
-<span>Reports</span>
-</a>
-</li>
-<li class="nav-item">
-<a href="#" id="logoutBtn" class="nav-link">
-<i class="bi bi-box-arrow-right sidebar-icon"></i>
-<span>Logout</span>
-</a>
-</li>
-</ul>
-</nav>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div id="page-content-wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar-wrapper">
+        <!-- Brand Header -->
+        <div class="sidebar-header">
+            <div class="brand-logo">
+                <img src="../assets/logo.png" alt="SDO Navotas Logo" onerror="this.style.display='none'; document.querySelector('.brand-text').style.display='inline';">
+                <span class="brand-text" style="display:none;">🏛️</span>
+            </div>
+            <h4>
+                <span>SDO Navotas</span>
+            </h4>
+        </div>
 
-<nav class="navbar-custom">
-<div class="d-flex align-items-center w-100">
-<button class="sidebar-toggle-btn me-3" id="sidebarToggle" aria-label="Toggle sidebar">
-<i class="bi bi-list"></i>
-</button>
-<div class="mobile-user-info me-3 d-block d-md-none">
-<div class="user-avatar">
-<i class="bi bi-person-circle"></i>
-</div>
-</div>
-<div class="flex-grow-1">
-<h5 class="mb-0 fw-bold">Administrator Dashboard</h5>
-<small class="text-muted">Manage appointments, feedback, and help requests</small>
-</div>
-<div class="d-flex align-items-center gap-3">
+        <!-- User Info -->
+        <div class="sidebar-user-info">
+            <div class="user-avatar">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" id="sidebarUserName">Administrator</div>
+                <div class="user-role">Admin Panel</div>
+            </div>
+        </div>
 
-<div class="form-check form-switch">
-<input class="form-check-input" type="checkbox" id="autoRefreshToggle" checked>
-<label class="form-check-label text-muted small" for="autoRefreshToggle">
-<i class="bi bi-arrow-repeat"></i> Real-time
-</label>
-</div>
+        <!-- Navigation Menu -->
+        <ul class="sidebar-menu nav">
+            <li class="nav-item">
+                <a href="admin-dashboard.html" class="nav-link active">
+                    <i class="bi bi-speedometer2 sidebar-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="../create-appointment.html" class="nav-link">
+                    <i class="bi bi-calendar-plus sidebar-icon"></i>
+                    <span>Create Appointment</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="reports.html" class="nav-link">
+                    <i class="bi bi-bar-chart-line sidebar-icon"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="../feedback.html" class="nav-link">
+                    <i class="bi bi-chat-dots sidebar-icon"></i>
+                    <span>User Feedback</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="../help.html" class="nav-link">
+                    <i class="bi bi-headset sidebar-icon"></i>
+                    <span>Help Desk</span>
+                </a>
+            </li>
+        </ul>
 
-<div class="dropdown">
-<button id="notificationBtn" class="btn btn-outline-primary btn-sm position-relative dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
-<i class="bi bi-bell"></i>
-<span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
-0
-</span>
-</button>
-<ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationBtn">
-<li>
-<h6 class="dropdown-header">
-<i class="bi bi-bell me-2"></i>
-Notifications
-<button id="clearAllNotificationsBtn" class="btn btn-sm btn-outline-secondary ms-2" title="Clear all">
-<i class="bi bi-trash"></i>
-</button>
-</h6>
-</li>
-<li><hr class="dropdown-divider"></li>
-<div id="notificationList">
-<li>
-<div class="dropdown-item text-center text-muted py-4">
-<i class="bi bi-bell-slash d-block mb-2" style="font-size: 2rem;"></i>
-<small>No new notifications</small>
-</div>
-</li>
-</div>
-<li><hr class="dropdown-divider"></li>
-<li>
-<div class="dropdown-item text-center">
-<button id="viewAllNotificationsBtn" class="btn btn-primary btn-sm">
-<i class="bi bi-eye me-1"></i>
-View All Activity
-</button>
-</div>
-</li>
-</ul>
-</div>
-<div class="desktop-user-info d-none d-md-flex align-items-center">
-<button id="backToHomeBtn" class="btn btn-outline-secondary btn-sm me-3" title="Return to Home">
-<i class="bi bi-arrow-left"></i>
-Back to Home
-</button>
-<div class="user-avatar me-2">
-<i class="bi bi-person-circle"></i>
-</div>
-<div class="user-details">
-<div class="user-name fw-semibold">Administrator</div>
-<div class="user-role text-muted small">Admin Panel</div>
-</div>
-</div>
-</div>
-</div>
-</nav>
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+            <a href="#" id="logoutBtn" class="nav-link logout-link">
+                <i class="bi bi-box-arrow-right sidebar-icon"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </nav>
 
-<header class="dashboard-header">
-<div class="container">
-<div class="row align-items-center">
-<div class="col-lg-8">
-<h1>📊 Admin Dashboard</h1>
-<p>Monitor and manage all system activities in real-time</p>
-</div>
-<div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-<div class="d-flex align-items-center justify-content-lg-end gap-3">
-<div class="text-white-50">
-<small>Last updated</small>
-<div id="currentTime" class="fw-bold"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</header>
+    <!-- Main Content -->
+    <div id="page-content-wrapper">
 
-<div class="container-fluid">
-<div class="stats-grid">
-<div class="stat-card pending">
-<div class="stat-content">
-<h3 id="statPending">0</h3>
-<p>Pending Appointments</p>
-</div>
-<div class="stat-icon">
-<i class="bi bi-hourglass-split"></i>
-</div>
-</div>
-<div class="stat-card confirmed">
-<div class="stat-content">
-<h3 id="statConfirmed">0</h3>
-<p>Confirmed Appointments</p>
-</div>
-<div class="stat-icon">
-<i class="bi bi-check-circle"></i>
-</div>
-</div>
-<div class="stat-card completed">
-<div class="stat-content">
-<h3 id="statCompleted">0</h3>
-<p>Completed Appointments</p>
-</div>
-<div class="stat-icon">
-<i class="bi bi-clipboard-check"></i>
-</div>
-</div>
-<div class="stat-card feedback">
-<div class="stat-content">
-<h3 id="statFeedbackReceived">0</h3>
-<p>Feedback Received</p>
-</div>
-<div class="stat-icon">
-<i class="bi bi-chat-dots"></i>
-</div>
-</div>
-<div class="stat-card cancelled">
-<div class="stat-content">
-<h3 id="statCancelled">0</h3>
-<p>Cancelled Appointments</p>
-</div>
-<div class="stat-icon">
-<i class="bi bi-x-circle"></i>
-</div>
-</div>
-</div>
+        <!-- Top Navbar -->
+        <nav class="navbar-custom">
+            <div class="container-fluid">
+                <div class="d-flex align-items-center w-100">
 
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-bar-chart-line"></i>
-Analytics Dashboard
-</h5>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#analyticsCollapse" aria-expanded="true" aria-controls="analyticsCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-<div id="analyticsCollapse" class="collapse show card-body-custom">
+                    <!-- Search Bar -->
+                    <div class="search-wrapper flex-grow-1 me-3">
+                        <div class="search-box">
+                            <i class="bi bi-search"></i>
+                            <input type="text" class="form-control" placeholder="Search appointments by name or ID..." id="globalSearch">
+                        </div>
+                    </div>
 
-<div class="row mb-4 p-4">
-<div class="col-md-3">
-<div class="card bg-primary text-white">
-<div class="card-body text-center">
-<h5 id="totalAppointments">0</h5>
-<p class="mb-0">Total Appointments</p>
-</div>
-</div>
-</div>
-<div class="col-md-3">
-<div class="card bg-success text-white">
-<div class="card-body text-center">
-<h5 id="completionRate">0%</h5>
-<p class="mb-0">Completion Rate</p>
-</div>
-</div>
-</div>
-<div class="col-md-3">
-<div class="card bg-info text-white">
-<div class="card-body text-center">
-<h5 id="avgResponseTime">0h</h5>
-<p class="mb-0">Avg Response Time</p>
-</div>
-</div>
-</div>
-<div class="col-md-3">
-<div class="card bg-warning text-white">
-<div class="card-body text-center">
-<h5 id="totalFeedback">0</h5>
-<p class="mb-0">Total Feedback</p>
-</div>
-</div>
-</div>
-</div>
+                    <!-- Right Side Actions -->
+                    <div class="d-flex align-items-center gap-3">
+                        <!-- Real-time Status -->
+                        <div class="form-check form-switch d-flex align-items-center">
+                            <input class="form-check-input me-2" type="checkbox" id="autoRefreshToggle" checked>
+                            <label class="form-check-label text-muted small mb-0" for="autoRefreshToggle">
+                                <span class="pulse-dot" style="width:6px;height:6px;display:inline-block;vertical-align:middle;margin-right:4px;"></span> Real-time
+                            </label>
+                        </div>
 
-<div class="row mb-3 px-4">
-<div class="col-lg-6">
-<h6>Monthly Trends</h6>
-<canvas id="monthlyTrendsChart" height="300"></canvas>
-</div>
-<div class="col-lg-6">
-<h6>Status Distribution</h6>
-<canvas id="statusPieChart" height="300"></canvas>
-</div>
-</div>
-<div class="row mb-3 px-4">
-<div class="col-lg-6">
-<h6>Purpose Distribution</h6>
-<canvas id="purposeBarChart" height="300"></canvas>
-</div>
-<div class="col-lg-6">
-<h6>Appointment Trends</h6>
-<canvas id="appointmentTrendsChart" height="300"></canvas>
-</div>
-</div>
+                        <!-- Notifications -->
+                        <div class="dropdown">
+                            <button id="notificationBtn" class="btn btn-outline-primary btn-sm position-relative dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                                <i class="bi bi-bell"></i>
+                                <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                                    0
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationBtn">
+                                <li>
+                                    <h6 class="dropdown-header">
+                                        <i class="bi bi-bell me-2"></i>
+                                        Notifications
+                                        <button id="clearAllNotificationsBtn" class="btn btn-sm btn-outline-secondary ms-2" title="Clear all">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </h6>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <div id="notificationList">
+                                    <li>
+                                        <div class="dropdown-item text-center text-muted py-4">
+                                            <i class="bi bi-bell-slash d-block mb-2" style="font-size: 2rem;"></i>
+                                            <small>No new notifications</small>
+                                        </div>
+                                    </li>
+                                </div>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <div class="dropdown-item text-center">
+                                        <button id="viewAllNotificationsBtn" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-eye me-1"></i>
+                                            View All Activity
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
 
-<div class="d-flex justify-content-end gap-2 px-4 pb-4">
-<button id="exportAnalyticsCSV" class="btn btn-outline-primary btn-sm">
-<i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
-</button>
-<button id="exportAnalyticsPDF" class="btn btn-outline-danger btn-sm">
-<i class="bi bi-file-earmark-pdf"></i> Export PDF
-</button>
-<a href="reports.html" class="btn btn-primary btn-sm">
-<i class="bi bi-graph-up"></i> Detailed Reports
-</a>
-</div>
-</div>
-</div>
+                        <!-- Print Report -->
+                        <button class="btn btn-outline-secondary btn-sm" title="Print Report" onclick="window.print()">
+                            <i class="bi bi-printer"></i>
+                        </button>
 
-<div class="filters-section">
-<div class="filters-grid">
-<div>
-<label for="searchInput" class="form-label fw-semibold">Search Appointments</label>
-<input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, role, purpose, or notes...">
-</div>
-<div>
-<label for="statusFilter" class="form-label fw-semibold">Filter by Status</label>
-<select id="statusFilter" class="form-select" multiple>
-<option value="Pending">⏳ Pending</option>
-<option value="Confirmed">✅ Confirmed</option>
-<option value="Completed">✔ Completed</option>
-<option value="Cancelled">❌ Cancelled</option>
-</select>
-</div>
-<div>
-<label for="dateFrom" class="form-label fw-semibold">Date From</label>
-<input type="date" id="dateFrom" class="form-control">
-</div>
-<div>
-<label for="dateTo" class="form-label fw-semibold">Date To</label>
-<input type="date" id="dateTo" class="form-control">
-</div>
-<div class="d-flex align-items-end gap-2">
-<button id="applyFiltersBtn" class="btn btn-primary-custom">
-<i class="bi bi-funnel"></i>
-Apply Filters
-</button>
-<button id="clearFiltersBtn" class="btn btn-outline-secondary">
-<i class="bi bi-x-circle"></i>
-Clear All
-</button>
-</div>
-</div>
-</div>
+                        <!-- Desktop User Info -->
+                        <div class="desktop-user-info d-none d-md-flex align-items-center">
+                            <div class="user-avatar">
+                                <i class="bi bi-person-circle"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name fw-semibold">Administrator</div>
+                                <div class="user-role text-muted small">Admin Panel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
 
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-calendar-check"></i>
-Appointments Management
-</h5>
-<div class="d-flex gap-2 align-items-center">
-<div class="btn-group" role="group">
-<button id="bulkConfirmBtn" class="btn btn-success btn-sm" disabled>
-<i class="bi bi-check-circle"></i>
-Confirm Selected
-</button>
-<button id="bulkCancelBtn" class="btn btn-danger btn-sm" disabled>
-<i class="bi bi-x-circle"></i>
-Cancel Selected
-</button>
-<button id="bulkExportBtn" class="btn btn-info btn-sm" disabled>
-<i class="bi bi-download"></i>
-Export Selected
-</button>
-</div>
-<button id="exportAppointmentsBtn" class="export-btn">
-<i class="bi bi-download"></i>
-Export All CSV
-</button>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#appointmentsCollapse" aria-expanded="true" aria-controls="appointmentsCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-</div>
-<div id="appointmentsCollapse" class="collapse show card-body-custom">
-<div class="table-responsive">
-<table class="table-custom">
-<thead>
-<tr>
-<th><input type="checkbox" id="selectAllCheckbox"></th>
-<th>Name</th>
-<th>Date</th>
-<th>Time</th>
-<th>Role</th>
-<th>Purpose</th>
-<th>Status</th>
-<th>Notes</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="appointmentsTable">
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 100%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton" style="width: 20px; height: 20px; margin: auto;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="container-fluid px-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h1>📊 Administrator Dashboard</h1>
+                        <p>Monitor and manage all system activities in real-time</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <div class="d-flex align-items-center justify-content-lg-end gap-3">
+                            <div class="text-white-50">
+                                <small>Last updated</small>
+                                <div id="currentTime" class="fw-bold"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-chat-dots"></i>
-User Feedback
-</h5>
-<div class="d-flex gap-2 align-items-center">
-<button id="exportFeedbackBtn" class="export-btn">
-<i class="bi bi-download"></i>
-Export CSV
-</button>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#feedbackCollapse" aria-expanded="true" aria-controls="feedbackCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-</div>
-<div id="feedbackCollapse" class="collapse show card-body-custom">
-<div class="table-responsive">
-<table class="table-custom">
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Subject</th>
-<th>Message</th>
-<th>Submitted</th>
-</tr>
-</thead>
-<tbody id="feedbackTable">
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 100%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+        <!-- Main Content -->
+        <div class="container-fluid px-4">
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card pending">
+                    <div class="stat-content">
+                        <h3 id="statPending">0</h3>
+                        <p>Pending</p>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill" style="width: 60%; background: var(--warning-color);"></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                </div>
+                <div class="stat-card confirmed">
+                    <div class="stat-content">
+                        <h3 id="statConfirmed">0</h3>
+                        <p>Confirmed</p>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill" style="width: 40%; background: var(--primary-color);"></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-card completed">
+                    <div class="stat-content">
+                        <h3 id="statCompleted">0</h3>
+                        <p>Completed</p>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill" style="width: 80%; background: var(--success-color);"></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                </div>
+                <div class="stat-card cancelled">
+                    <div class="stat-content">
+                        <h3 id="statCancelled">0</h3>
+                        <p>Cancelled</p>
+                        <div class="progress-bar-mini">
+                            <div class="progress-fill" style="width: 10%; background: var(--danger-color);"></div>
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointments Section -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="bi bi-calendar-check"></i>
+                        Appointments
+                    </h5>
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                <select id="statusFilter" class="form-select form-select-sm" multiple style="width: 150px;">
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Feedback Received">Feedback Received</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <input type="date" id="dateFrom" class="form-control form-control-sm" style="width: 150px;" title="From">
+                        <input type="date" id="dateTo" class="form-control form-control-sm" style="width: 150px;" title="To">
+                        <button id="applyFiltersBtn" class="btn btn-sm btn-primary-custom">Apply</button>
+                        <button id="clearFiltersBtn" class="btn btn-sm btn-outline-secondary">Clear</button>
+                        <button id="exportAppointmentsBtn" class="export-btn">
+                            <i class="bi bi-download"></i>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllCheckbox"></th>
+                                    <th>User</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Role</th>
+                                    <th>Purpose</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appointmentsTable">
+                                <tr><td colspan="9" class="text-center text-muted py-4">Loading appointments...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Feedback -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="bi bi-chat-dots"></i>
+                        User Feedback
+                    </h5>
+                    <div class="d-flex gap-2 align-items-center">
+                        <button id="exportFeedbackBtn" class="export-btn">
+                            <i class="bi bi-download"></i>
+                            Export CSV
+                        </button>
+                        <button class="btn btn-sm collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#feedbackCollapse">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="feedbackCollapse" class="collapse show card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Message</th>
+                                    <th>Submitted</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackTable">
+                                <tr><td colspan="5" class="text-center text-muted py-4">Loading feedback...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Desk Requests -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="bi bi-headset"></i>
+                        Help Desk Requests
+                    </h5>
+                    <div class="d-flex gap-2 align-items-center">
+                        <button id="exportHelpRequestsBtn" class="export-btn">
+                            <i class="bi bi-download"></i>
+                            Export CSV
+                        </button>
+                        <button class="btn btn-sm collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#helpCollapse">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="helpCollapse" class="collapse show card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Category</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="helpRequestsTable">
+                                <tr><td colspan="7" class="text-center text-muted py-4">Loading help requests...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="bi bi-people"></i>
+                        User Management
+                    </h5>
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                        <input type="text" id="userSearchInput" class="form-control form-control-sm" placeholder="Search users..." style="width: 200px;">
+                        <select id="userRoleFilter" class="form-select form-select-sm" style="width: 150px;">
+                            <option value="">All Roles</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button class="btn btn-sm collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#userCollapse">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="userCollapse" class="collapse show card-body-custom">
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>ID Number</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined Date</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTable">
+                                <tr><td colspan="8" class="text-center text-muted py-4">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Settings -->
+            <div class="content-card">
+                <div class="card-header-custom">
+                    <h5 class="card-title">
+                        <i class="bi bi-gear"></i>
+                        Dashboard Settings
+                    </h5>
+                    <button class="btn btn-sm collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#settingsCollapse">
+                        <i class="bi bi-chevron-up"></i>
+                    </button>
+                </div>
+                <div id="settingsCollapse" class="collapse show card-body-custom">
+                    <div class="row g-4 p-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Auto-refresh Interval</label>
+                                <select id="autoRefreshInterval" class="form-select">
+                                    <option value="30000">30 seconds</option>
+                                    <option value="60000">1 minute</option>
+                                    <option value="300000">5 minutes</option>
+                                    <option value="0">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Notification Settings</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="soundNotifications" checked>
+                                    <label class="form-check-label" for="soundNotifications">Enable sound notifications</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="desktopNotifications" checked>
+                                    <label class="form-check-label" for="desktopNotifications">Enable desktop notifications</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <hr>
+                            <div class="d-flex gap-2">
+                                <button id="saveSettingsBtn" class="btn btn-primary-custom">
+                                    <i class="bi bi-check-lg me-1"></i>
+                                    Save Settings
+                                </button>
+                                <button id="resetSettingsBtn" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                    Reset to Default
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container-fluid px-4">
+                <p class="mb-2">© 2025 Schools Division Office of Navotas City. All rights reserved.</p>
+                <p class="mb-0">Republic of the Philippines • Department of Education • Division of Navotas</p>
+            </div>
+        </footer>
+
+    </div>
 </div>
 
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-headset"></i>
-Help Desk Requests
-</h5>
-<div class="d-flex gap-2 align-items-center">
-<button id="exportHelpRequestsBtn" class="export-btn">
-<i class="bi bi-download"></i>
-Export CSV
-</button>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#helpCollapse" aria-expanded="true" aria-controls="helpCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-</div>
-<div id="helpCollapse" class="collapse show card-body-custom">
-<div class="table-responsive">
-<table class="table-custom">
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Category</th>
-<th>Priority</th>
-<th>Status</th>
-<th>Submitted</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="helpRequestsTable">
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 45px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 65px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 45px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-people"></i>
-User Management
-</h5>
-<div class="d-flex gap-2 align-items-center">
-<input type="text" id="userSearchInput" class="form-control form-control-sm" placeholder="Search users..." style="width: 200px;">
-<select id="userRoleFilter" class="form-select form-select-sm" style="width: 150px;">
-<option value="">All Roles</option>
-<option value="student">Student</option>
-<option value="teacher">Teacher</option>
-<option value="admin">Admin</option>
-</select>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#userCollapse" aria-expanded="true" aria-controls="userCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-</div>
-<div id="userCollapse" class="collapse show card-body-custom">
-<div class="table-responsive">
-<table class="table-custom">
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>ID Number</th>
-<th>Role</th>
-<th>Status</th>
-<th>Joined Date</th>
-<th>Last Login</th>
-<th>Actions</th>
-</tr>
-</thead>
-<tbody id="usersTable">
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 80px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 50px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 40%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 90%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 95%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 80%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 70px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 90px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 60%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 75%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 50%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 40px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 45%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 60px; height: 32px;"></div></td>
-</tr>
-<tr class="skeleton-row">
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 85%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 70%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 55px; height: 24px; border-radius: 9999px;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 55%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton skeleton-text" style="width: 65%;"></div></td>
-<td class="skeleton-cell"><div class="skeleton" style="width: 75px; height: 32px;"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div class="content-card">
-<div class="card-header-custom">
-<h5 class="card-title">
-<i class="bi bi-gear"></i>
-Dashboard Settings
-</h5>
-<button class="btn btn-sm btn-outline-secondary collapse-btn" type="button" data-bs-toggle="collapse" data-bs-target="#settingsCollapse" aria-expanded="true" aria-controls="settingsCollapse">
-<i class="bi bi-chevron-up"></i>
-</button>
-</div>
-<div id="settingsCollapse" class="collapse show card-body-custom">
-<div class="row g-4 p-4">
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Auto-refresh Interval</label>
-<select id="autoRefreshInterval" class="form-select">
-<option value="30000">30 seconds</option>
-<option value="60000">1 minute</option>
-<option value="300000">5 minutes</option>
-<option value="0">Disabled</option>
-</select>
-<small class="text-muted">Automatically refresh dashboard data</small>
-</div>
-</div>
-
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Notification Settings</label>
-<div class="form-check">
-<input class="form-check-input" type="checkbox" id="soundNotifications" checked>
-<label class="form-check-label" for="soundNotifications">
-Enable sound notifications
-</label>
-</div>
-<div class="form-check">
-<input class="form-check-input" type="checkbox" id="desktopNotifications" checked>
-<label class="form-check-label" for="desktopNotifications">
-Enable desktop notifications
-</label>
-</div>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Data Display</label>
-<div class="form-check">
-<input class="form-check-input" type="checkbox" id="showCompleted" checked>
-<label class="form-check-label" for="showCompleted">
-Show completed appointments
-</label>
-</div>
-<div class="form-check">
-<input class="form-check-input" type="checkbox" id="showCancelled" checked>
-<label class="form-check-label" for="showCancelled">
-Show cancelled appointments
-</label>
-</div>
-</div>
-</div>
-<div class="col-12">
-<hr>
-<div class="d-flex gap-2">
-<button id="saveSettingsBtn" class="btn btn-primary-custom">
-<i class="bi bi-check-lg me-1"></i>
-Save Settings
-</button>
-<button id="resetSettingsBtn" class="btn btn-outline-secondary">
-<i class="bi bi-arrow-counterclockwise me-1"></i>
-Reset to Default
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
+<!-- Appointment Modal -->
 <div class="modal fade" id="appointmentModal" tabindex="-1">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title fw-bold">
-<i class="bi bi-calendar-event me-2"></i>
-Appointment Details
-</h5>
-<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-<div class="row g-3">
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">User Email</label>
-<p class="mb-0" id="modalUser"></p>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Purpose</label>
-<p class="mb-0" id="modalPurpose"></p>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Date & Time</label>
-<p class="mb-0" id="modalDateTime"></p>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Current Status</label>
-<p class="mb-0" id="modalStatus"></p>
-</div>
-</div>
-<div class="col-12">
-<div class="mb-3">
-<label class="form-label fw-semibold">Notes</label>
-<p class="mb-0" id="modalNotes">-</p>
-</div>
-</div>
-<div class="col-12">
-<div class="mb-3">
-<label class="form-label fw-semibold">Created At</label>
-<p class="mb-0" id="modalCreatedAt"></p>
-</div>
-</div>
-<div class="col-12">
-<hr>
-<h6 class="fw-bold mb-3">Appointment Progress</h6>
-<div class="status-tracker mb-4">
-<div class="timeline" id="modalStatusTracker">
-<!-- Status steps will be populated here -->
-</div>
-</div>
-<h6 class="fw-bold mb-3">Update Status</h6>
-<div class="mb-3">
-<label for="statusSelect" class="form-label">New Status</label>
-<select id="statusSelect" class="form-select">
-<option value="Pending">⏳ Pending</option>
-<option value="Confirmed">✅ Confirmed</option>
-<option value="Completed">✔ Completed</option>
-<option value="Cancelled">❌ Cancelled</option>
-</select>
-</div>
-<div id="reasonDiv" style="display: none;">
-<label for="reasonTextarea" class="form-label">Cancellation Reason</label>
-<textarea id="reasonTextarea" class="form-control" rows="3" placeholder="Please provide a reason for cancellation..."></textarea>
-</div>
-</div>
-</div>
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-<i class="bi bi-x-lg me-1"></i>
-Close
-</button>
-<button type="button" class="action-btn btn-primary-custom" id="updateBtn">
-<i class="bi bi-check-lg me-1"></i>
-Update Status
-</button>
-</div>
-</div>
-</div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="bi bi-calendar-event me-2"></i>Appointment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>User:</strong> <span id="modalUser"></span></p>
+                <p><strong>Purpose:</strong> <span id="modalPurpose"></span></p>
+                <p><strong>Date &amp; Time:</strong> <span id="modalDateTime"></span></p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Notes:</strong> <span id="modalNotes"></span></p>
+                <p><strong>Created At:</strong> <span id="modalCreatedAt"></span></p>
+
+                <hr>
+                <div class="mb-3">
+                    <label class="form-label">Change Status</label>
+                    <select id="statusSelect" class="form-select">
+                        <option value="Pending">Pending</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Feedback Received">Feedback Received</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div id="reasonDiv" class="mb-3" style="display:none;">
+                    <label class="form-label">Reason for cancellation</label>
+                    <textarea id="reasonTextarea" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary-custom" id="updateBtn">Update</button>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- User Modal -->
 <div class="modal fade" id="userModal" tabindex="-1">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title fw-bold">
-<i class="bi bi-person-circle me-2"></i>
-User Profile
-</h5>
-<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-<div class="row g-3">
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">First Name</label>
-<input type="text" class="form-control" id="userFirstName" readonly>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Last Name</label>
-<input type="text" class="form-control" id="userLastName" readonly>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Email</label>
-<input type="email" class="form-control" id="userEmail" readonly>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">ID Number</label>
-<input type="text" class="form-control" id="userIdNumber" readonly>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Role</label>
-<select class="form-select" id="userRole">
-<option value="student">Student</option>
-<option value="teacher">Teacher</option>
-<option value="admin">Admin</option>
-</select>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Status</label>
-<select class="form-select" id="userStatus">
-<option value="active">Active</option>
-<option value="inactive">Inactive</option>
-<option value="suspended">Suspended</option>
-</select>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Joined Date</label>
-<input type="text" class="form-control" id="userJoinedDate" readonly>
-</div>
-</div>
-<div class="col-md-6">
-<div class="mb-3">
-<label class="form-label fw-semibold">Last Login</label>
-<input type="text" class="form-control" id="userLastLogin" readonly>
-</div>
-</div>
-<div class="col-12">
-<hr>
-<h6 class="fw-bold mb-3">User Activity Logs</h6>
-<div class="activity-logs" id="userActivityLogs" style="max-height: 200px; overflow-y: auto; background: var(--light-bg); padding: 1rem; border-radius: 8px;">
-<p class="text-muted mb-0">Loading activity logs...</p>
-</div>
-</div>
-</div>
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-<i class="bi bi-x-lg me-1"></i>
-Close
-</button>
-<button type="button" class="btn btn-danger me-auto" id="deleteUserBtn">
-<i class="bi bi-trash me-1"></i>
-Delete User
-</button>
-<button type="button" class="action-btn btn-primary-custom" id="saveUserBtn">
-<i class="bi bi-check-lg me-1"></i>
-Save Changes
-</button>
-</div>
-</div>
-</div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">
+                    <i class="bi bi-person-circle me-2"></i>
+                    User Profile
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">First Name</label>
+                            <input type="text" class="form-control" id="userFirstName" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Last Name</label>
+                            <input type="text" class="form-control" id="userLastName" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" class="form-control" id="userEmail" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">ID Number</label>
+                            <input type="text" class="form-control" id="userIdNumber" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Role</label>
+                            <select class="form-select" id="userRole">
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="userStatus">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Close
+                </button>
+                <button type="button" class="btn btn-danger me-auto" id="deleteUserBtn">
+                    <i class="bi bi-trash me-1"></i>
+                    Delete User
+                </button>
+                <button type="button" class="btn btn-primary-custom" id="saveUserBtn">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- Toast Container -->
 <div class="toast-container position-fixed top-0 end-0 p-3">
-<div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-<div class="toast-header">
-<i class="bi bi-bell-fill me-2"></i>
-<strong class="me-auto">New Activity</strong>
-<small class="text-muted">just now</small>
-<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <i class="bi bi-bell-fill me-2"></i>
+            <strong class="me-auto">New Activity</strong>
+            <small class="text-muted">just now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            New appointment received!
+        </div>
+    </div>
 </div>
-<div class="toast-body" id="toastMessage">
-New appointment received!
-</div>
-</div>
-</div>
-
-<footer>
-<div class="container">
-<p class="mb-2">© 2025 Schools Division Office of Navotas City. All rights reserved.</p>
-<p class="mb-0">Republic of the Philippines • Department of Education • Division of Navotas</p>
-</div>
-</footer>
 
 <script>
+    // Time update function
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+        const timeEl = document.getElementById('currentTime');
+        if (timeEl) timeEl.textContent = timeString;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
 
-function updateTime() {
-const now = new Date();
-const timeString = now.toLocaleTimeString('en-US', {
-hour: '2-digit',
-minute: '2-digit',
-second: '2-digit'
-});
-document.getElementById('currentTime').textContent = timeString;
-}
+    // Back to home button
+    document.getElementById('backToHomeBtn')?.addEventListener('click', function() {
+        if (confirm('Are you sure you want to go back to the home page?')) {
+            window.location.href = '../index.html';
+        }
+    });
 
-updateTime();
-setInterval(updateTime, 1000);
+// Sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.getElementById('wrapper');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-const mobileUserInfo = document.querySelector('.mobile-user-info .user-avatar');
-const desktopUserInfo = document.querySelector('.desktop-user-info .user-avatar');
+        if (sidebarToggle && wrapper) {
+            sidebarToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+                
+                // Toggle overlay on mobile
+                if (window.innerWidth <= 992) {
+                    if (wrapper.classList.contains('toggled')) {
+                        sidebarOverlay?.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        sidebarOverlay?.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+            });
 
-if (mobileUserInfo) {
-mobileUserInfo.innerHTML = '<i class="bi bi-person-circle"></i>';
-}
+            // Close sidebar when clicking overlay on mobile
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    wrapper.classList.remove('toggled');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
 
-if (desktopUserInfo) {
-desktopUserInfo.innerHTML = '<i class="bi bi-person-circle"></i>';
-}
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('sidebar-wrapper');
+                if (sidebar && window.innerWidth <= 992 && wrapper.classList.contains('toggled')) {
+                    if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
+                        wrapper.classList.remove('toggled');
+                        sidebarOverlay?.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+            });
 
-document.getElementById('backToHomeBtn').addEventListener('click', function() {
-if (confirm('Are you sure you want to go back to the home page?')) {
-window.location.href = '../index.html';
-}
-});
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992) {
+                    wrapper.classList.remove('toggled');
+                    sidebarOverlay?.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-const sidebarToggle = document.getElementById('sidebarToggle');
-const wrapper = document.getElementById('wrapper');
-
-if (sidebarToggle && wrapper) {
-sidebarToggle.addEventListener('click', function() {
-wrapper.classList.toggle('toggled');
-});
-
-document.addEventListener('click', function(event) {
-const sidebar = document.getElementById('sidebar-wrapper');
-const isClickInsideSidebar = sidebar.contains(event.target);
-const isToggleClick = sidebarToggle.contains(event.target);
-
-if (window.innerWidth <= 768 && wrapper.classList.contains('toggled') && !isClickInsideSidebar && !isToggleClick) {
-wrapper.classList.remove('toggled');
-}
-});
-}
-
-const collapses = ['analyticsCollapse', 'appointmentsCollapse', 'feedbackCollapse', 'helpCollapse', 'userCollapse', 'settingsCollapse'];
-
-collapses.forEach(collapseId => {
-const collapseEl = document.getElementById(collapseId);
-const button = collapseEl.previousElementSibling.querySelector('.collapse-btn');
-
-if (collapseEl && button) {
-collapseEl.addEventListener('show.bs.collapse', function() {
-const icon = button.querySelector('i');
-if (icon) {
-icon.classList.remove('bi-chevron-up');
-icon.classList.add('bi-chevron-down');
-}
-});
-
-collapseEl.addEventListener('hide.bs.collapse', function() {
-const icon = button.querySelector('i');
-if (icon) {
-icon.classList.remove('bi-chevron-down');
-icon.classList.add('bi-chevron-up');
-}
-});
-}
-});
-});
+        // Collapse button icons
+        const collapses = ['feedbackCollapse', 'helpCollapse', 'userCollapse', 'settingsCollapse'];
+        collapses.forEach(collapseId => {
+            const collapseEl = document.getElementById(collapseId);
+            const button = collapseEl?.previousElementSibling?.querySelector('.collapse-btn');
+            if (collapseEl && button) {
+                collapseEl.addEventListener('show.bs.collapse', function() {
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('bi-chevron-up');
+                        icon.classList.add('bi-chevron-down');
+                    }
+                });
+                collapseEl.addEventListener('hide.bs.collapse', function() {
+                    const icon = button.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('bi-chevron-down');
+                        icon.classList.add('bi-chevron-up');
+                    }
+                });
+            }
+        });
+    });
 </script>
+
 </body>
 </html>
