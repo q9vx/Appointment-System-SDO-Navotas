@@ -340,25 +340,7 @@ transform: translateY(0);
 }
 }
 
-.appointment-card {
-opacity: 0;
-animation: fadeInUpSmooth 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-.appointment-card:nth-child(1) { animation-delay: 0.2s; }
-.appointment-card:nth-child(2) { animation-delay: 0.4s; }
-.appointment-card:nth-child(3) { animation-delay: 0.6s; }
-.appointment-card:nth-child(4) { animation-delay: 0.8s; }
-.appointment-card:nth-child(5) { animation-delay: 1s; }
-
-.appointment-card {
-opacity: 0;
-animation: fadeInUpSmooth 0.8s ease-out forwards;
-border-top: 3px solid #1b4332;
-border-radius: 10px;
-background-color: #fff;
-transition: box-shadow 0.3s ease, transform 0.2s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
+/* Appointment card styles moved to my-appointments.css */
 
 .appointment-card:hover {
 transform: translateY(-2px);
