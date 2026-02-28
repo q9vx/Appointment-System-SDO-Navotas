@@ -1,196 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="assets/logo.png" type="image/png">
-<title>Settings - SDO Navotas</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script src="js/settings.js" defer></script>
-<link rel="stylesheet" href="css/settings.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Account Settings - SDO Navotas Online Appointment System">
+    <link rel="icon" href="assets/logo.png" type="image/png">
+    <title>Settings - SDO Navotas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/settings.css">
 </head>
-
 <body>
+
 <div id="guestOverlay">
-<h2>⚠️ You must create an account first!</h2>
-<p>Please sign up to access your settings.</p>
-<button id="goSignup" class="btn btn-primary btn-lg mt-3">Go to Sign Up</button>
+    <i class="bi bi-person-circle" style="font-size: 5rem; margin-bottom: 20px;"></i>
+    <h2>You must create an account first!</h2>
+    <p>Please sign up to access your settings.</p>
+    <button id="goSignup" class="btn btn-light btn-lg mt-3">Go to Sign Up</button>
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top" style="background-color:#1b4332;">
-<div class="container-fluid">
-<a class="navbar-brand d-flex align-items-center" href="index.html">
-<img src="assets/logo.png" alt="SDO Navotas" width="50" height="50" class="me-2">
-<span class="fw-bold">SDO Navotas Teachers Appointment System</span>
-</a>
-<button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-<span class="navbar-toggler-icon"></span>
-</button>
-
-<div class="collapse navbar-collapse" id="navbarContent">
-<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-<li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house-door me-1"></i> Home</a></li>
-<li class="nav-item"><a class="nav-link" href="create-appointment.html"><i class="bi bi-plus-circle me-1"></i> Create Appointment</a></li>
-<li class="nav-item"><a class="nav-link" href="my-appointments.html"><i class="bi bi-calendar-check me-1"></i> My Appointments</a></li>
-<li class="nav-item"><a class="nav-link" id="navProfile" href="#"><i class="bi bi-person-circle fs-4"></i></a></li>
-</ul>
-</div>
-</div>
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">
+            <img src="assets/logo.png" alt="SDO Navotas">
+            <span>SDO Navotas</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="index.html"><i class="bi bi-house-door me-1"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="create-appointment.html"><i class="bi bi-plus-circle me-1"></i> Create Appointment</a></li>
+                <li class="nav-item"><a class="nav-link" href="my-appointments.html"><i class="bi bi-calendar-check me-1"></i> My Appointments</a></li>
+                <li class="nav-item"><a class="nav-link" href="settings.html"><i class="bi bi-gear me-1"></i> Settings</a></li>
+            </ul>
+        </div>
+    </div>
 </nav>
 
-<div class="hero-section">
-<img src="assets/school-hero2.jpg" alt="Schools Division Office" class="hero-img">
-<div class="hero-overlay"></div>
+<header class="header-section">
+    <div class="container text-center">
+        <h1>Account Settings</h1>
+        <p class="subtitle">Manage your profile, preferences, and security</p>
+    </div>
+</header>
 
-<div class="hero-content">
-<div class="card-settings">
+<div class="main-content">
+    <div class="container">
+        <div class="content-card">
+            
+            <!-- Profile Section -->
+            <div class="profile-header">
+                <div class="profile-avatar-container">
+                    <img src="assets/logo.png" alt="Profile" class="profile-avatar" id="profileAvatar">
+                    <label for="avatarUpload" class="avatar-upload-btn" title="Change Profile Picture">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                </div>
+                <h2 class="profile-name" id="displayName">User Name</h2>
+                <p class="profile-email" id="displayEmail">user@email.com</p>
+                <div class="email-verified" id="emailVerifiedStatus">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Email Verified</span>
+                </div>
+                <div class="email-unverified d-none" id="emailUnverifiedStatus">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Email Not Verified</span>
+                    <button class="btn btn-sm btn-outline-primary ms-2" id="verifyEmailBtn">Verify Now</button>
+                </div>
+            </div>
 
-<div class="text-center mb-4">
-<i class="bi bi-gear text-primary" style="font-size: 3rem;"></i>
-<h2 class="fw-bold text-primary mt-3">Account Settings</h2>
-<p class="text-muted">Manage your profile, preferences, and account</p>
-</div>
+            <!-- Profile Information -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-person-fill"></i>
+                    <h3>Profile Information</h3>
+                </div>
+                <form id="profileForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" readonly>
+                            <small class="text-muted">Email cannot be changed. Contact support if needed.</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="Enter phone number">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="school" class="form-label">School/Department</label>
+                            <input type="text" class="form-control" id="school" placeholder="Enter school or department">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">
+                        <i class="bi bi-save me-2"></i>Update Profile
+                    </button>
+                </form>
+            </div>
 
+            <!-- Change Password -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <h3>Change Password</h3>
+                </div>
+                <form id="passwordForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" minlength="6" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">
+                        <i class="bi bi-key-fill me-2"></i>Change Password
+                    </button>
+                </form>
+            </div>
 
-<div class="settings-section">
-<div class="settings-header">
-<i class="bi bi-person"></i>
-<h5>Profile Information</h5>
-</div>
-<form id="profileForm">
-<div class="row g-3">
-<div class="col-md-6">
-<label for="fullName" class="form-label">Full Name</label>
-<input type="text" class="form-control" id="fullName" required>
-</div>
-<div class="col-md-6">
-<label for="email" class="form-label">Email Address</label>
-<input type="email" class="form-control" id="email" readonly>
-<small class="text-muted">Email cannot be changed here. Contact support if needed.</small>
-</div>
-<div class="col-md-6">
-<label for="phone" class="form-label">Phone Number</label>
-<input type="tel" class="form-control" id="phone">
-</div>
-<div class="col-md-6">
-<label for="school" class="form-label">School/Department</label>
-<input type="text" class="form-control" id="school">
-</div>
-</div>
-<button type="submit" class="btn btn-primary mt-3">Update Profile</button>
-</form>
-</div>
+            <!-- Two-Factor Authentication -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-phone-lock-fill"></i>
+                    <h3>Two-Factor Authentication</h3>
+                </div>
+                <p class="text-muted mb-3">Add an extra layer of security to your account by enabling two-factor authentication.</p>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="twoFactorEnabled">
+                    <label class="form-check-label" for="twoFactorEnabled">
+                        Enable Two-Factor Authentication
+                    </label>
+                </div>
+                <button class="btn btn-outline-primary" id="setup2FA">
+                    <i class="bi bi-qr-code me-2"></i>Setup 2FA
+                </button>
+            </div>
 
+            <!-- Account Activity -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-clock-history"></i>
+                    <h3>Account Activity</h3>
+                </div>
+                <p class="text-muted mb-3">View your recent account activity and login history.</p>
+                <ul class="activity-list" id="activityList">
+                    <li class="activity-item">
+                        <div class="activity-icon login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Logged in successfully</div>
+                            <div class="activity-time">Today at 10:30 AM</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon update">
+                            <i class="bi bi-pencil"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Profile updated</div>
+                            <div class="activity-time">Yesterday at 2:15 PM</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                        </div>
+                        <div class="activity-details">
+                            <div class="activity-title">Logged in successfully</div>
+                            <div class="activity-time">Yesterday at 9:00 AM</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
 
-<div class="settings-section">
-<div class="settings-header">
-<i class="bi bi-lock"></i>
-<h5>Change Password</h5>
-</div>
-<form id="passwordForm">
-<div class="row g-3">
-<div class="col-md-6">
-<label for="currentPassword" class="form-label">Current Password</label>
-<input type="password" class="form-control" id="currentPassword" required>
-</div>
-<div class="col-md-6">
-<label for="newPassword" class="form-label">New Password</label>
-<input type="password" class="form-control" id="newPassword" minlength="6" required>
-</div>
-<div class="col-md-6">
-<label for="confirmPassword" class="form-label">Confirm New Password</label>
-<input type="password" class="form-control" id="confirmPassword" required>
-</div>
-</div>
-<button type="submit" class="btn btn-primary mt-3">Change Password</button>
-</form>
-</div>
+            <!-- Data Export -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-download"></i>
+                    <h3>Data Export</h3>
+                </div>
+                <p class="text-muted mb-3">Download a copy of your data for personal backup or migration purposes.</p>
+                <div class="export-options">
+                    <div class="export-card" id="exportProfile">
+                        <i class="bi bi-person-badge"></i>
+                        <h5>Profile Data</h5>
+                        <p>Your profile information</p>
+                    </div>
+                    <div class="export-card" id="exportAppointments">
+                        <i class="bi bi-calendar-event"></i>
+                        <h5>Appointment History</h5>
+                        <p>All your appointments</p>
+                    </div>
+                    <div class="export-card" id="exportAll">
+                        <i class="bi bi-database-fill"></i>
+                        <h5>All Data</h5>
+                        <p>Complete data export</p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Notification Preferences -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-bell-fill"></i>
+                    <h3>Notification Preferences</h3>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                    <label class="form-check-label" for="emailNotifications">
+                        Email notifications for appointment updates
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="reminderNotifications" checked>
+                    <label class="form-check-label" for="reminderNotifications">
+                        Email reminders for upcoming appointments
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="marketingNotifications">
+                    <label class="form-check-label" for="marketingNotifications">
+                        Receive updates and announcements
+                    </label>
+                </div>
+                <button class="btn btn-success" id="savePreferences">
+                    <i class="bi bi-check2-circle me-2"></i>Save Preferences
+                </button>
+            </div>
 
-<div class="settings-section">
-<div class="settings-header">
-<i class="bi bi-bell"></i>
-<h5>Notification Preferences</h5>
-</div>
-<div class="form-check form-switch mb-3">
-<input class="form-check-input" type="checkbox" id="emailNotifications">
-<label class="form-check-label" for="emailNotifications">
-Email notifications for appointment updates
-</label>
-</div>
-<div class="form-check form-switch mb-3">
-<input class="form-check-input" type="checkbox" id="reminderNotifications">
-<label class="form-check-label" for="reminderNotifications">
-Email reminders for upcoming appointments
-</label>
-</div>
-<button class="btn btn-primary" id="savePreferences">Save Preferences</button>
-</div>
+            <!-- Account Management -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="bi bi-shield-exclamation"></i>
+                    <h3>Account Management</h3>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-secondary" id="logoutBtn">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </button>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        <i class="bi bi-trash me-2"></i>Delete Account
+                    </button>
+                </div>
+            </div>
 
-
-<div class="settings-section">
-<div class="settings-header">
-<i class="bi bi-shield"></i>
-<h5>Account Management</h5>
-</div>
-<div class="d-flex flex-wrap gap-2">
-<button class="btn btn-outline-secondary" id="logoutBtn">Logout</button>
-<button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Delete Account</button>
-</div>
-</div>
-</div>
-</div>
+        </div>
+    </div>
 </div>
 
 <footer>
-<p>© 2025 Schools Division Office of Navotas City. All rights reserved. | <a href="#" class="text-white">Terms of Service</a></p>
+    <div class="container">
+        <p>&copy; 2025 Schools Division Office of Navotas City. All rights reserved.</p>
+    </div>
 </footer>
 
-
+<!-- Delete Account Modal -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header bg-danger text-white">
-<h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
-<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-</div>
-<div class="modal-body">
-<p>Are you sure you want to delete your account? This action cannot be undone and will permanently remove all your data.</p>
-<div class="mb-3">
-<label for="deletePassword" class="form-label">Enter your password to confirm</label>
-<input type="password" class="form-control" id="deletePassword" required>
-</div>
-</div>
-<div class="modal-footer">
-<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-<button type="button" class="btn btn-danger" id="confirmDelete">Delete Account</button>
-</div>
-</div>
-</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAccountModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Account
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger"><strong>Warning:</strong> This action cannot be undone and will permanently remove all your data.</p>
+                <div class="mb-3">
+                    <label for="deletePassword" class="form-label">Enter your password to confirm</label>
+                    <input type="password" class="form-control" id="deletePassword" required>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmDeleteCheck" required>
+                    <label class="form-check-label" for="confirmDeleteCheck">
+                        I understand this action is irreversible
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    <i class="bi bi-trash me-2"></i>Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
-
+<!-- Toast Notification -->
 <div class="toast-container position-fixed top-0 end-0 p-3">
-<div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-<div class="d-flex">
-<div class="toast-body">
-<i class="bi bi-check-circle-fill me-2"></i>
-<span id="toastMessage">Settings updated successfully!</span>
+    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span id="toastMessage">Settings updated successfully!</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 ms-dismiss="-auto" data-btoast" aria-label="Close"></button>
+        </div>
+    </div>
 </div>
-<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-</div>
-</div>
-</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/settings.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
