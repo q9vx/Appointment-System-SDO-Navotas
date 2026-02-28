@@ -1,25 +1,364 @@
+/* Government Professional Style for Terms Page */
+:root {
+    --gov-primary: #1b4332;
+    --gov-secondary: #2d6a4f;
+    --gov-accent: #40916c;
+    --gov-gold: #d4a017;
+    --gov-light: #f8f9fa;
+    --gov-border: #dee2e6;
+    --gov-text: #212529;
+    --gov-text-muted: #6c757d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-font-family: "Segoe UI", sans-serif;
-background: #ffffff;
+    font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+    background: #f5f6f8;
+    color: var(--gov-text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
-.navbar { background: #1b4332; }
-header {
-background: linear-gradient(135deg, #1b4332, #2d6a4f);
-color: #fff;
-padding: 60px 0;
-text-align: center;
+
+/* Navigation */
+.navbar {
+    background: linear-gradient(135deg, var(--gov-primary), var(--gov-secondary)) !important;
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
 }
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #fff !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-brand i {
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #fff !important;
+    background: rgba(255,255,255,0.15);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: var(--gov-gold);
+    border-radius: 2px;
+}
+
+/* Header / Hero Section */
+.header-section {
+    background: linear-gradient(135deg, var(--gov-primary) 0%, var(--gov-secondary) 50%, var(--gov-accent) 100%);
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+}
+
+.header-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.header-section h1 {
+    color: #fff;
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.header-section .subtitle {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.25rem;
+    font-weight: 400;
+}
+
+/* Main Content */
+.main-content {
+    margin-top: -40px;
+    position: relative;
+    z-index: 10;
+    padding-bottom: 40px;
+}
+
+.content-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 40px;
+    overflow: hidden;
+}
+
 section {
-padding: 50px 0;
+    padding: 30px 0;
 }
-h2 {
-font-weight: 700;
-margin-bottom: 20px;
+
+section h2 {
+    color: var(--gov-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
+section h2 i {
+    color: var(--gov-accent);
+}
+
+section p {
+    color: var(--gov-text-muted);
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+section ul {
+    list-style: none;
+    padding: 0;
+}
+
+section ul li {
+    padding: 10px 0;
+    color: var(--gov-text-muted);
+    position: relative;
+    padding-left: 25px;
+    line-height: 1.6;
+}
+
+section ul li::before {
+    content: '\f26e';
+    font-family: 'bootstrap-icons';
+    position: absolute;
+    left: 0;
+    color: var(--gov-accent);
+    font-weight: bold;
+}
+
+/* Footer */
 footer {
-background-color: #1b4332;
-color: #d4edda;
-text-align: center;
-padding: 20px;
-margin-top: auto;
+    margin-top: auto;
+    background: linear-gradient(135deg, var(--gov-primary), #0d2818);
+    color: rgba(255,255,255,0.9);
+    padding: 25px 0;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Responsive Styles */
+
+/* Large Desktop */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    
+    .header-section h1 {
+        font-size: 3rem;
+    }
+}
+
+/* Tablet Landscape */
+@media (max-width: 991px) {
+    .navbar-collapse {
+        background: var(--gov-primary);
+        padding: 15px;
+        border-radius: 0 0 10px 10px;
+        margin-top: 10px;
+    }
+    
+    .header-section {
+        padding: 70px 0 90px;
+    }
+    
+    .header-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .content-card {
+        padding: 30px;
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+    
+    .header-section {
+        padding: 50px 0 70px;
+    }
+    
+    .header-section h1 {
+        font-size: 2rem;
+    }
+    
+    .header-section .subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .main-content {
+        margin-top: -25px;
+        padding-bottom: 30px;
+    }
+    
+    .content-card {
+        border-radius: 8px;
+        padding: 20px;
+    }
+    
+    section {
+        padding: 20px 0;
+    }
+    
+    section h2 {
+        font-size: 1.3rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-brand span {
+        display: none;
+    }
+    
+    footer {
+        padding: 20px 15px;
+    }
+    
+    footer p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Large Phones */
+@media (max-width: 576px) {
+    .header-section {
+        padding: 45px 0 60px;
+    }
+    
+    .header-section h1 {
+        font-size: 1.75rem;
+    }
+    
+    .header-section .subtitle {
+        font-size: 1rem;
+    }
+    
+    .main-content {
+        margin-top: -20px;
+    }
+    
+    .content-card {
+        padding: 15px;
+    }
+    
+    section h2 {
+        font-size: 1.2rem;
+    }
+    
+    section h2 i {
+        font-size: 1.2rem;
+    }
+    
+    section p {
+        font-size: 0.9rem;
+    }
+    
+    section ul li {
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra Small Phones */
+@media (max-width: 400px) {
+    .header-section h1 {
+        font-size: 1.5rem;
+    }
+    
+    .header-section .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    section h2 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .content-card {
+    background: #16213e;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+[data-theme="dark"] section h2 {
+    color: #4ade80;
+}
+
+[data-theme="dark"] section h2 i {
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] section p {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] section ul li {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] footer {
+    background: linear-gradient(135deg, #0d2818, #1b4332);
+    color: #86efac;
 }
