@@ -595,6 +595,52 @@ outline: none;
 box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.5);
 }
 
+/* FAQ Button */
+.faq-button {
+position: fixed;
+bottom: 90px;
+right: 20px;
+width: 60px;
+height: 60px;
+border-radius: 50%;
+background: linear-gradient(135deg, #2d6a4f, #40916c);
+color: #fff;
+border: none;
+font-size: 24px;
+cursor: pointer;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+transition: all 0.3s ease;
+z-index: 1000;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.faq-button:hover {
+transform: scale(1.1);
+box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+background: linear-gradient(135deg, #40916c, #52b788);
+}
+
+.faq-button:active {
+transform: scale(0.95);
+}
+
+.faq-button:focus {
+outline: none;
+box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.5);
+}
+
+@media (max-width: 768px) {
+.faq-button {
+width: 50px;
+height: 50px;
+font-size: 20px;
+bottom: 80px;
+right: 15px;
+}
+}
+
 @media (max-width: 768px) {
 .feedback-button {
 width: 50px;
@@ -720,4 +766,12 @@ body {
 
 [data-theme="dark"] .feedback-button:hover {
     background: linear-gradient(135deg, #404040, #2d2d2d);
+}
+
+[data-theme="dark"] .faq-button {
+    background: linear-gradient(135deg, #1b4332, #2d6a4f);
+}
+
+[data-theme="dark"] .faq-button:hover {
+    background: linear-gradient(135deg, #2d6a4f, #40916c);
 }
